@@ -85,25 +85,4 @@ public class Border {
                 getRect().toString();
     }
 
-
-    //    public List<RectF> addLine(RectF rectF, Line.Direction direction, float ratio) {
-//        mRectList.remove(rectF);
-//        Line line = BorderUtil.createLine(rectF, direction, ratio);
-//        List<RectF> rectList = BorderUtil.cutRect(rectF, line);
-//        lines.add(line);
-//        mRectList.addAll(rectList);
-//
-//        return rectList;
-//    }
-//
-//
-//    public void cutRectEqualPart(RectF rectF, int part, Line.Direction direction) {
-//        RectF temp = rectF;
-//        for (int i = part; i > 1; i--) {
-//            temp = addLine(temp, direction, (float) 1 / i).get(1);
-//        }
-//
-//        System.out.println("hello");
-//    }
-
 }

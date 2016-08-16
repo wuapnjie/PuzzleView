@@ -4,7 +4,6 @@ import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Matrix;
 import android.graphics.Paint;
-import android.graphics.RectF;
 
 /**
  * Created by snowbean on 16-8-12.
@@ -13,8 +12,8 @@ public class LayoutBitmap extends LayoutPhoto {
 
     private Bitmap mBitmap;
 
-    public LayoutBitmap(Bitmap bitmap, Matrix matrix) {
-        super(matrix);
+    public LayoutBitmap(Bitmap bitmap, Border border, Matrix matrix) {
+        super(matrix, border);
         mBitmap = bitmap;
     }
 

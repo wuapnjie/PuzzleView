@@ -11,9 +11,11 @@ import android.graphics.RectF;
  */
 public abstract class LayoutPhoto {
     protected Matrix mMatrix;
+    protected Border mBorder;
 
-    public LayoutPhoto(Matrix matrix) {
+    public LayoutPhoto(Matrix matrix, Border border) {
         mMatrix = matrix;
+        mBorder = border;
     }
 
     public Matrix getMatrix() {
@@ -22,6 +24,14 @@ public abstract class LayoutPhoto {
 
     public void setMatrix(Matrix matrix) {
         mMatrix = matrix;
+    }
+
+    public Border getBorder() {
+        return mBorder;
+    }
+
+    public void setBorder(Border border) {
+        mBorder = border;
     }
 
     public abstract void draw(Canvas canvas, Paint paint);
@@ -73,6 +83,10 @@ public abstract class LayoutPhoto {
                 pointF.y
         });
         return new PointF(dst[0], dst[1]);
+    }
+
+    public boolean contains(float x, float y) {
+        return mBorder.getRect().contains(x, y);
     }
 
     public void release() {

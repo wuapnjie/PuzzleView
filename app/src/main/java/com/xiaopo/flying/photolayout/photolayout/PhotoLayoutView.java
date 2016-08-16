@@ -6,6 +6,7 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Matrix;
 import android.graphics.Paint;
+import android.graphics.PointF;
 import android.graphics.RectF;
 import android.support.v4.view.MotionEventCompat;
 import android.util.AttributeSet;
@@ -21,6 +22,7 @@ import java.util.List;
  */
 public class PhotoLayoutView extends View {
     private static final String TAG = "PhotoLayoutView";
+
 
     private enum Mode {
         NONE,   //
@@ -43,11 +45,19 @@ public class PhotoLayoutView extends View {
     private float mDownX;
     private float mDownY;
 
+    private float mOldDistance = 1f;
+    private float mOldRotation = 0;
+
+    private PointF mMidPoint;
+
     private List<LayoutPhoto> mLayoutPhotos = new ArrayList<>();
-    private Matrix mSizeMatrix;
+
     private Matrix mDownMatrix;
+    private Matrix mMoveMatrix;
+
 
     private Line mHandlingLine;
+    private LayoutPhoto mHandlingPhoto;
 
     public PhotoLayoutView(Context context) {
         this(context, null, 0);
@@ -72,13 +82,8 @@ public class PhotoLayoutView extends View {
         mBorderPaint.setColor(Color.WHITE);
         mBorderPaint.setStrokeWidth(mBorderWidth);
 
-        mSizeMatrix = new Matrix();
-
-    }
-
-    @Override
-    protected void onLayout(boolean changed, int left, int top, int right, int bottom) {
-        super.onLayout(changed, left, top, right, bottom);
+        mDownMatrix = new Matrix();
+        mMoveMatrix = new Matrix();
     }
 
     @Override
@@ -88,8 +93,8 @@ public class PhotoLayoutView extends View {
         mPhotoLayout.update();
 
 
-        for (int i = 0; i < mPhotoLayout.getBorders().size(); i++) {
-            Border border = mPhotoLayout.getBorders().get(i);
+        for (int i = 0; i < mPhotoLayout.getBorderSize(); i++) {
+            Border border = mPhotoLayout.getBorder(i);
             canvas.save();
             canvas.clipRect(border.getRect());
             mLayoutPhotos.get(i).draw(canvas, mBitmapPaint);
@@ -126,17 +131,52 @@ public class PhotoLayoutView extends View {
                     mCurrentMode = Mode.MOVE;
                 } else {
                     //TODO
+                    mHandlingPhoto = findHandlingPhoto();
+                    if (mHandlingPhoto != null) {
+                        mCurrentMode = Mode.DRAG;
+                        mDownMatrix.set(mHandlingPhoto.getMatrix());
+                    }
                 }
 
                 break;
+
+            case MotionEvent.ACTION_POINTER_DOWN:
+
+                mOldDistance = calculateDistance(event);
+//                mOldRotation = calculateRotation(event);
+
+                mMidPoint = calculateMidPoint(event);
+
+                if (mHandlingPhoto != null &&
+                        isInPhotoArea(mHandlingPhoto, event.getX(1), event.getY(1))) {
+                    mCurrentMode = Mode.ZOOM;
+                }
+                break;
+
 
             case MotionEvent.ACTION_MOVE:
                 switch (mCurrentMode) {
                     case NONE:
                         break;
                     case DRAG:
+                        if (mHandlingPhoto != null) {
+                            mMoveMatrix.set(mDownMatrix);
+                            mMoveMatrix.postTranslate(event.getX() - mDownX, event.getY() - mDownY);
+                            mHandlingPhoto.getMatrix().set(mMoveMatrix);
+                        }
                         break;
                     case ZOOM:
+
+                        if (mHandlingPhoto != null) {
+                            float newDistance = calculateDistance(event);
+
+                            mMoveMatrix.set(mDownMatrix);
+                            mMoveMatrix.postScale(
+                                    newDistance / mOldDistance, newDistance / mOldDistance, mMidPoint.x, mMidPoint.y);
+//                            mHandlingSticker.getMatrix().reset();
+                            mHandlingPhoto.getMatrix().set(mMoveMatrix);
+                        }
+
                         break;
                     case MOVE:
                         moveLine(event);
@@ -149,13 +189,19 @@ public class PhotoLayoutView extends View {
             case MotionEvent.ACTION_UP:
                 mHandlingLine = null;
                 mCurrentMode = Mode.NONE;
+                //TODO 回弹效果
+
+                invalidate();
+                break;
+
+            case MotionEvent.ACTION_POINTER_UP:
+                mCurrentMode = Mode.NONE;
                 break;
         }
-
-
         return true;
 
     }
+
 
     private void moveLine(MotionEvent event) {
         if (mHandlingLine == null) {
@@ -178,13 +224,47 @@ public class PhotoLayoutView extends View {
         return null;
     }
 
+    private LayoutPhoto findHandlingPhoto() {
+        for (LayoutPhoto photo : mLayoutPhotos) {
+            if (photo.contains(mDownX, mDownY)) {
+                return photo;
+            }
+        }
+        return null;
+    }
+
+    private boolean isInPhotoArea(LayoutPhoto handlingPhoto, float x, float y) {
+        return handlingPhoto.contains(x, y);
+    }
+
+    private float calculateDistance(MotionEvent event) {
+        float x = event.getX(0) - event.getX(1);
+        float y = event.getY(0) - event.getY(1);
+
+        return (float) Math.sqrt(x * x + y * y);
+    }
+
+    private PointF calculateMidPoint(MotionEvent event) {
+        float x = (event.getX(0) + event.getX(1)) / 2;
+        float y = (event.getY(0) + event.getY(1)) / 2;
+        return new PointF(x, y);
+    }
+
+    //计算两点形成的直线与x轴的旋转角度
+    private float calculateRotation(MotionEvent event) {
+        double x = event.getX(0) - event.getX(1);
+        double y = event.getY(0) - event.getY(1);
+        double radians = Math.atan2(y, x);
+        return (float) Math.toDegrees(radians);
+    }
+
     @Override
     protected void onSizeChanged(int w, int h, int oldw, int oldh) {
         super.onSizeChanged(w, h, oldw, oldh);
-        mBorderRect.left = 0;
-        mBorderRect.top = 0;
-        mBorderRect.right = w;
-        mBorderRect.bottom = h;
+        mBorderRect.left = getPaddingLeft();
+        mBorderRect.top = getPaddingTop();
+        mBorderRect.right = w - getPaddingRight();
+        mBorderRect.bottom = h - getPaddingBottom();
 
         if (mPhotoLayout == null) {
             mPhotoLayout = new PhotoLayout(mBorderRect);
@@ -205,7 +285,7 @@ public class PhotoLayoutView extends View {
 
         Matrix matrix = BorderUtil.createMatrix(mPhotoLayout.getBorder(index), bitmap);
 
-        LayoutBitmap layoutPhoto = new LayoutBitmap(bitmap, matrix);
+        LayoutBitmap layoutPhoto = new LayoutBitmap(bitmap, mPhotoLayout.getBorder(index), matrix);
 
         mLayoutPhotos.add(layoutPhoto);
 
