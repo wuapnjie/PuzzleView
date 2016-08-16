@@ -5,29 +5,29 @@ import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 
-import com.xiaopo.flying.photolayout.photolayout.PhotoLayoutView;
+import com.xiaopo.flying.puzzle.PuzzleView;
 
 public class MainActivity extends AppCompatActivity {
 
-    private PhotoLayoutView mPhotoLayoutView;
+    private PuzzleView mPuzzleView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        mPhotoLayoutView = (PhotoLayoutView) findViewById(R.id.photo_layout_view);
+        mPuzzleView = (PuzzleView) findViewById(R.id.photo_layout_view);
 
-        final Bitmap bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.photo1);
-        final Bitmap bitmap1 = BitmapFactory.decodeResource(getResources(), R.drawable.photo2);
-        final Bitmap bitmap2 = BitmapFactory.decodeResource(getResources(), R.drawable.photo3);
+        final Bitmap bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.demo1);
+        final Bitmap bitmap1 = BitmapFactory.decodeResource(getResources(), R.drawable.demo2);
+        final Bitmap bitmap2 = BitmapFactory.decodeResource(getResources(), R.drawable.demo3);
 
-        mPhotoLayoutView.post(new Runnable() {
+        mPuzzleView.post(new Runnable() {
             @Override
             public void run() {
-                mPhotoLayoutView.addPhoto(bitmap);
-                mPhotoLayoutView.addPhoto(bitmap1);
-                mPhotoLayoutView.addPhoto(bitmap2);
+                mPuzzleView.addPhoto(bitmap);
+                mPuzzleView.addPhoto(bitmap1);
+                mPuzzleView.addPhoto(bitmap2);
             }
         });
     }

@@ -1,4 +1,4 @@
-package com.xiaopo.flying.photolayout.photolayout;
+package com.xiaopo.flying.puzzle;
 
 import android.graphics.Bitmap;
 import android.graphics.Matrix;

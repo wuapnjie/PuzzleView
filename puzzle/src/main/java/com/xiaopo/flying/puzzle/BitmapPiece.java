@@ -1,4 +1,4 @@
-package com.xiaopo.flying.photolayout.photolayout;
+package com.xiaopo.flying.puzzle;
 
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
@@ -8,11 +8,11 @@ import android.graphics.Paint;
 /**
  * Created by snowbean on 16-8-12.
  */
-public class LayoutBitmap extends LayoutPhoto {
+public class BitmapPiece extends PuzzlePiece {
 
     private Bitmap mBitmap;
 
-    public LayoutBitmap(Bitmap bitmap, Border border, Matrix matrix) {
+    public BitmapPiece(Bitmap bitmap, Border border, Matrix matrix) {
         super(matrix, border);
         mBitmap = bitmap;
     }

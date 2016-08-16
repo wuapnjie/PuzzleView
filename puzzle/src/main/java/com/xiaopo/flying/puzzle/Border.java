@@ -1,4 +1,4 @@
-package com.xiaopo.flying.photolayout.photolayout;
+package com.xiaopo.flying.puzzle;
 
 import android.graphics.PointF;
 import android.graphics.RectF;
@@ -70,6 +70,11 @@ public class Border {
                 right(),
                 bottom());
     }
+
+    public boolean contains(Line line) {
+        return lineLeft == line || lineTop == line || lineRight == line || lineBottom == line;
+    }
+
 
     @Override
     public String toString() {

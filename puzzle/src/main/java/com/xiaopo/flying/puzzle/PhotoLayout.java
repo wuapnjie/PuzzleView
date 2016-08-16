@@ -1,4 +1,4 @@
-package com.xiaopo.flying.photolayout.photolayout;
+package com.xiaopo.flying.puzzle;
 
 import android.graphics.PointF;
 import android.graphics.RectF;
@@ -124,6 +124,12 @@ public class PhotoLayout {
                 line.setUpperLine(l);
             }
         }
+    }
+
+    public void reset() {
+        mLines.clear();
+        mBorders.clear();
+        mBorders.add(mOuterBorder);
     }
 
     public int getBorderSize() {

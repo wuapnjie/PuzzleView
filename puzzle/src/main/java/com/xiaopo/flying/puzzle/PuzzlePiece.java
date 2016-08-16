@@ -1,4 +1,4 @@
-package com.xiaopo.flying.photolayout.photolayout;
+package com.xiaopo.flying.puzzle;
 
 import android.graphics.Canvas;
 import android.graphics.Matrix;
@@ -9,13 +9,19 @@ import android.graphics.RectF;
 /**
  * Created by snowbean on 16-8-9.
  */
-public abstract class LayoutPhoto {
+public abstract class PuzzlePiece {
     protected Matrix mMatrix;
     protected Border mBorder;
+    protected Matrix mDownMatrix;
+    protected Matrix mMoveMatrix;
 
-    public LayoutPhoto(Matrix matrix, Border border) {
+
+    public PuzzlePiece(Matrix matrix, Border border) {
         mMatrix = matrix;
         mBorder = border;
+
+        mDownMatrix = new Matrix();
+        mMoveMatrix = new Matrix();
     }
 
     public Matrix getMatrix() {
@@ -24,6 +30,22 @@ public abstract class LayoutPhoto {
 
     public void setMatrix(Matrix matrix) {
         mMatrix = matrix;
+    }
+
+    public Matrix getDownMatrix() {
+        return mDownMatrix;
+    }
+
+    public void setDownMatrix(Matrix downMatrix) {
+        mDownMatrix = downMatrix;
+    }
+
+    public Matrix getMoveMatrix() {
+        return mMoveMatrix;
+    }
+
+    public void setMoveMatrix(Matrix moveMatrix) {
+        mMoveMatrix = moveMatrix;
     }
 
     public Border getBorder() {

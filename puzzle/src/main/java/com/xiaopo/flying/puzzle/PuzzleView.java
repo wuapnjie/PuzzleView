@@ -1,4 +1,4 @@
-package com.xiaopo.flying.photolayout.photolayout;
+package com.xiaopo.flying.puzzle;
 
 import android.content.Context;
 import android.graphics.Bitmap;
@@ -10,7 +10,6 @@ import android.graphics.PointF;
 import android.graphics.RectF;
 import android.support.v4.view.MotionEventCompat;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 
@@ -20,12 +19,11 @@ import java.util.List;
 /**
  * Created by snowbean on 16-8-9.
  */
-public class PhotoLayoutView extends View {
+public class PuzzleView extends View {
     private static final String TAG = "PhotoLayoutView";
 
-
     private enum Mode {
-        NONE,   //
+        NONE,
         DRAG,
         ZOOM,
         MOVE
@@ -50,24 +48,21 @@ public class PhotoLayoutView extends View {
 
     private PointF mMidPoint;
 
-    private List<LayoutPhoto> mLayoutPhotos = new ArrayList<>();
-
-    private Matrix mDownMatrix;
-    private Matrix mMoveMatrix;
-
+    private List<PuzzlePiece> mPuzzlePieces = new ArrayList<>();
 
     private Line mHandlingLine;
-    private LayoutPhoto mHandlingPhoto;
+    private PuzzlePiece mHandlingPhoto;
+    private List<PuzzlePiece> mChangedPhotos = new ArrayList<>();
 
-    public PhotoLayoutView(Context context) {
+    public PuzzleView(Context context) {
         this(context, null, 0);
     }
 
-    public PhotoLayoutView(Context context, AttributeSet attrs) {
+    public PuzzleView(Context context, AttributeSet attrs) {
         this(context, attrs, 0);
     }
 
-    public PhotoLayoutView(Context context, AttributeSet attrs, int defStyleAttr) {
+    public PuzzleView(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
 
         mBorderRect = new RectF();
@@ -82,8 +77,6 @@ public class PhotoLayoutView extends View {
         mBorderPaint.setColor(Color.WHITE);
         mBorderPaint.setStrokeWidth(mBorderWidth);
 
-        mDownMatrix = new Matrix();
-        mMoveMatrix = new Matrix();
     }
 
     @Override
@@ -92,15 +85,14 @@ public class PhotoLayoutView extends View {
 
         mPhotoLayout.update();
 
-
         for (int i = 0; i < mPhotoLayout.getBorderSize(); i++) {
             Border border = mPhotoLayout.getBorder(i);
             canvas.save();
             canvas.clipRect(border.getRect());
-            mLayoutPhotos.get(i).draw(canvas, mBitmapPaint);
+            mPuzzlePieces.get(i).draw(canvas, mBitmapPaint);
             canvas.restore();
-            Log.d(TAG, "\n");
-            Log.d(TAG, "onDraw: " + border.toString());
+//            Log.d(TAG, "\n");
+//            Log.d(TAG, "onDraw: " + border.toString());
         }
 
         for (Line line : mPhotoLayout.getLines()) {
@@ -112,7 +104,7 @@ public class PhotoLayoutView extends View {
         }
 
 
-//        for (LayoutPhoto photo : mLayoutPhotos) {
+//        for (PuzzlePiece photo : mPuzzlePieces) {
 //            photo.draw(canvas, mBitmapPaint);
 //        }
 
@@ -129,12 +121,18 @@ public class PhotoLayoutView extends View {
 
                 if (mHandlingLine != null) {
                     mCurrentMode = Mode.MOVE;
+                    mChangedPhotos.clear();
+                    mChangedPhotos.addAll(findChangedPhoto());
+
+                    for (int i = 0; i < mChangedPhotos.size(); i++) {
+                        mChangedPhotos.get(i).getDownMatrix().set(mChangedPhotos.get(i).getMatrix());
+                    }
+
                 } else {
-                    //TODO
                     mHandlingPhoto = findHandlingPhoto();
                     if (mHandlingPhoto != null) {
                         mCurrentMode = Mode.DRAG;
-                        mDownMatrix.set(mHandlingPhoto.getMatrix());
+                        mHandlingPhoto.getDownMatrix().set(mHandlingPhoto.getMatrix());
                     }
                 }
 
@@ -160,9 +158,9 @@ public class PhotoLayoutView extends View {
                         break;
                     case DRAG:
                         if (mHandlingPhoto != null) {
-                            mMoveMatrix.set(mDownMatrix);
-                            mMoveMatrix.postTranslate(event.getX() - mDownX, event.getY() - mDownY);
-                            mHandlingPhoto.getMatrix().set(mMoveMatrix);
+                            mHandlingPhoto.getMoveMatrix().set(mHandlingPhoto.getDownMatrix());
+                            mHandlingPhoto.getMoveMatrix().postTranslate(event.getX() - mDownX, event.getY() - mDownY);
+                            mHandlingPhoto.getMatrix().set(mHandlingPhoto.getMoveMatrix());
                         }
                         break;
                     case ZOOM:
@@ -170,16 +168,17 @@ public class PhotoLayoutView extends View {
                         if (mHandlingPhoto != null) {
                             float newDistance = calculateDistance(event);
 
-                            mMoveMatrix.set(mDownMatrix);
-                            mMoveMatrix.postScale(
+                            mHandlingPhoto.getMoveMatrix().set(mHandlingPhoto.getDownMatrix());
+                            mHandlingPhoto.getMoveMatrix().postScale(
                                     newDistance / mOldDistance, newDistance / mOldDistance, mMidPoint.x, mMidPoint.y);
 //                            mHandlingSticker.getMatrix().reset();
-                            mHandlingPhoto.getMatrix().set(mMoveMatrix);
+                            mHandlingPhoto.getMatrix().set(mHandlingPhoto.getMoveMatrix());
                         }
 
                         break;
                     case MOVE:
                         moveLine(event);
+                        updatePhotoInBorder(event);
                         break;
                 }
 
@@ -200,6 +199,31 @@ public class PhotoLayoutView extends View {
         }
         return true;
 
+    }
+
+    //TODO
+    private void updatePhotoInBorder(MotionEvent event) {
+        mPhotoLayout.update();
+        for (PuzzlePiece photo : mChangedPhotos) {
+//            photo.getMoveMatrix().set(photo.getDownMatrix());
+//            photo.getMoveMatrix().postTranslate(-(event.getX() - mDownX) / 2, 0);
+            photo.getMatrix().set(BorderUtil.createMatrix(photo.getBorder(), ((BitmapPiece) photo).getBitmap()));
+        }
+
+    }
+
+    private List<PuzzlePiece> findChangedPhoto() {
+        if (mHandlingLine == null) return new ArrayList<>();
+
+        List<PuzzlePiece> puzzlePieces = new ArrayList<>();
+
+        for (PuzzlePiece photo : mPuzzlePieces) {
+            if (photo.getBorder().contains(mHandlingLine)) {
+                puzzlePieces.add(photo);
+            }
+        }
+
+        return puzzlePieces;
     }
 
 
@@ -224,8 +248,8 @@ public class PhotoLayoutView extends View {
         return null;
     }
 
-    private LayoutPhoto findHandlingPhoto() {
-        for (LayoutPhoto photo : mLayoutPhotos) {
+    private PuzzlePiece findHandlingPhoto() {
+        for (PuzzlePiece photo : mPuzzlePieces) {
             if (photo.contains(mDownX, mDownY)) {
                 return photo;
             }
@@ -233,7 +257,7 @@ public class PhotoLayoutView extends View {
         return null;
     }
 
-    private boolean isInPhotoArea(LayoutPhoto handlingPhoto, float x, float y) {
+    private boolean isInPhotoArea(PuzzlePiece handlingPhoto, float x, float y) {
         return handlingPhoto.contains(x, y);
     }
 
@@ -273,26 +297,36 @@ public class PhotoLayoutView extends View {
         }
 
         //TODO delete
-        mPhotoLayout.cutBorderEqualPart(mPhotoLayout.getOuterBorder(), 3, Line.Direction.VERTICAL);
-//        mPhotoLayout.addLine(mPhotoLayout.getOuterBorder(), Line.Direction.VERTICAL, 1f / 3);
+//        mPhotoLayout.cutBorderEqualPart(mPhotoLayout.getOuterBorder(), 3, Line.Direction.VERTICAL);
+        mPhotoLayout.addLine(mPhotoLayout.getOuterBorder(), Line.Direction.HORIZONTAL, 1f / 2);
+        mPhotoLayout.addLine(mPhotoLayout.getBorder(1), Line.Direction.VERTICAL, 1f / 2);
 //        mPhotoLayout.addCross(mPhotoLayout.getBorders().get(1), 1f / 2);
 
     }
 
 
     public void addPhoto(final Bitmap bitmap) {
-        int index = mLayoutPhotos.size();
+        int index = mPuzzlePieces.size();
 
         Matrix matrix = BorderUtil.createMatrix(mPhotoLayout.getBorder(index), bitmap);
 
-        LayoutBitmap layoutPhoto = new LayoutBitmap(bitmap, mPhotoLayout.getBorder(index), matrix);
+        BitmapPiece layoutPhoto = new BitmapPiece(bitmap, mPhotoLayout.getBorder(index), matrix);
 
-        mLayoutPhotos.add(layoutPhoto);
+        mPuzzlePieces.add(layoutPhoto);
 
         invalidate();
     }
 
     private void drawLine(Canvas canvas, Line line) {
         canvas.drawLine(line.start.x, line.start.y, line.end.x, line.end.y, mBorderPaint);
+    }
+
+
+    public float getBorderWidth() {
+        return mBorderWidth;
+    }
+
+    public void setBorderWidth(float borderWidth) {
+        mBorderWidth = borderWidth;
     }
 }
