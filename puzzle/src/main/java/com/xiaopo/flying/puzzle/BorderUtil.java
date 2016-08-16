@@ -11,10 +11,10 @@ import java.util.List;
 /**
  * Created by snowbean on 16-8-13.
  */
-public class BorderUtil {
+class BorderUtil {
     private static final String TAG = "BorderUtil";
 
-    public static Line createLine(final Border border, final Line.Direction direction, final float ratio) {
+    static Line createLine(final Border border, final Line.Direction direction, final float ratio) {
         PointF one = new PointF();
         PointF two = new PointF();
         if (direction == Line.Direction.HORIZONTAL) {
@@ -49,7 +49,7 @@ public class BorderUtil {
         return line;
     }
 
-    public static List<Border> cutBorder(final Border border, final Line line) {
+    static List<Border> cutBorder(final Border border, final Line line) {
         List<Border> list = new ArrayList<>();
         if (line.getDirection() == Line.Direction.HORIZONTAL) {
             Border one = new Border(border);
@@ -73,7 +73,7 @@ public class BorderUtil {
     }
 
 
-    public static List<Border> cutBorderCross(final Border border, final Line horizontal, final Line vertical) {
+    static List<Border> cutBorderCross(final Border border, final Line horizontal, final Line vertical) {
         List<Border> list = new ArrayList<>();
 
         Border one = new Border(border);
@@ -102,7 +102,7 @@ public class BorderUtil {
     /**
      * create a matrix which let bitmap centerCrop in the border rect
      */
-    public static Matrix createMatrix(Border border, Bitmap bitmap) {
+    static Matrix createMatrix(Border border, Bitmap bitmap ,float extra) {
         final RectF rectF = border.getRect();
 
         Matrix matrix = new Matrix();
@@ -115,9 +115,9 @@ public class BorderUtil {
         float scale;
 
         if (bitmap.getWidth() * rectF.height() > rectF.width() * bitmap.getHeight()) {
-            scale = rectF.height() / bitmap.getHeight();
+            scale = (rectF.height() + extra) / bitmap.getHeight();
         } else {
-            scale = rectF.width() / bitmap.getWidth();
+            scale = (rectF.width() + extra) / bitmap.getWidth();
         }
 
         matrix.postScale(scale, scale, rectF.centerX(), rectF.centerY());

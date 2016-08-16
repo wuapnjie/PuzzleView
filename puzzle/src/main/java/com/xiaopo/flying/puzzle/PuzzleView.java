@@ -18,10 +18,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
+ * the puzzle view , the number of puzzle piece due to PuzzleLayout
+ *
+ * @see PuzzleLayout
  * Created by snowbean on 16-8-9.
  */
 public class PuzzleView extends View {
     private static final String TAG = "PhotoLayoutView";
+    private float mExtraBorderSize = 50f;
 
     private enum Mode {
         NONE,
@@ -44,7 +48,7 @@ public class PuzzleView extends View {
     private float mDownX;
     private float mDownY;
 
-    private float mOldDistance = 1f;
+    private float mOldDistance;
     private PointF mMidPoint;
 
     private List<PuzzlePiece> mPuzzlePieces = new ArrayList<>();
@@ -52,6 +56,8 @@ public class PuzzleView extends View {
     private Line mHandlingLine;
     private PuzzlePiece mHandlingPiece;
     private List<PuzzlePiece> mChangedPhotos = new ArrayList<>();
+
+    private boolean mNeedDrawBorder = false;
 
     public PuzzleView(Context context) {
         this(context, null, 0);
@@ -78,27 +84,35 @@ public class PuzzleView extends View {
 
     }
 
+
     @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
+
+        if (mPuzzleLayout == null) {
+            Log.e(TAG, "the puzzle layout can not be null");
+            return;
+        }
 
         for (int i = 0; i < mPuzzleLayout.getBorderSize(); i++) {
             Border border = mPuzzleLayout.getBorder(i);
             canvas.save();
             canvas.clipRect(border.getRect());
-            mPuzzlePieces.get(i).draw(canvas, mBitmapPaint);
+            if (mPuzzlePieces.size() > i)
+                mPuzzlePieces.get(i).draw(canvas, mBitmapPaint);
             canvas.restore();
-//            Log.d(TAG, "\n");
-//            Log.d(TAG, "onDraw: " + border.toString());
         }
 
-        for (Line line : mPuzzleLayout.getLines()) {
-            drawLine(canvas, line);
+        if (mNeedDrawBorder) {
+            for (Line line : mPuzzleLayout.getLines()) {
+                drawLine(canvas, line);
+            }
         }
 
-        for (Line line : mPuzzleLayout.getOuterLines()) {
-            drawLine(canvas, line);
-        }
+        //draw outer line
+//        for (Line line : mPuzzleLayout.getOuterLines()) {
+//            drawLine(canvas, line);
+//        }
 
     }
 
@@ -150,9 +164,6 @@ public class PuzzleView extends View {
                         if (mHandlingPiece != null) {
                             mHandlingPiece.getMatrix().set(mHandlingPiece.getDownMatrix());
                             mHandlingPiece.getMatrix().postTranslate(event.getX() - mDownX, event.getY() - mDownY);
-
-//                            mHandlingPiece.getMoveMatrix().reset();
-//                            mHandlingPiece.getMoveMatrix().postTranslate(event.getX() - mDownX, event.getY() - mDownY);
                         }
                         break;
                     case ZOOM:
@@ -165,9 +176,6 @@ public class PuzzleView extends View {
                                     newDistance / mOldDistance, newDistance / mOldDistance, mMidPoint.x, mMidPoint.y);
 
                             mHandlingPiece.setScaleFactor(mHandlingPiece.getMappedWidth() / mHandlingPiece.getWidth());
-//                            mHandlingPiece.getMoveMatrix().reset();
-//                            mHandlingPiece.getMoveMatrix().postScale(
-//                                    newDistance / mOldDistance, newDistance / mOldDistance, mMidPoint.x, mMidPoint.y);
                         }
 
                         break;
@@ -227,9 +235,9 @@ public class PuzzleView extends View {
         final RectF rectF = piece.getBorder().getRect();
         float scale;
         if (piece.getWidth() * rectF.height() > rectF.width() * piece.getHeight()) {
-            scale = rectF.height() / piece.getHeight();
+            scale = (rectF.height() + mExtraBorderSize) / piece.getHeight();
         } else {
-            scale = rectF.width() / piece.getWidth();
+            scale = (rectF.width() + mExtraBorderSize) / piece.getWidth();
         }
         return scale;
     }
@@ -259,7 +267,6 @@ public class PuzzleView extends View {
                 } else if (mHandlingLine.getDirection() == Line.Direction.VERTICAL) {
                     piece.getMatrix().postTranslate((event.getX() - mDownX) / 2, 0);
                 }
-
             } else {
                 fillBorder(piece);
             }
@@ -346,9 +353,9 @@ public class PuzzleView extends View {
         }
 
         //TODO delete
-//        mPuzzleLayout.cutBorderEqualPart(mPuzzleLayout.getOuterBorder(), 3, Line.Direction.VERTICAL);
-        mPuzzleLayout.addLine(mPuzzleLayout.getOuterBorder(), Line.Direction.HORIZONTAL, 1f / 2);
-        mPuzzleLayout.addLine(mPuzzleLayout.getBorder(1), Line.Direction.VERTICAL, 1f / 2);
+        mPuzzleLayout.cutBorderEqualPart(mPuzzleLayout.getOuterBorder(), 3, Line.Direction.VERTICAL);
+//        mPuzzleLayout.addLine(mPuzzleLayout.getOuterBorder(), Line.Direction.HORIZONTAL, 1f / 2);
+//        mPuzzleLayout.addLine(mPuzzleLayout.getBorder(1), Line.Direction.VERTICAL, 1f / 2);
 //        mPuzzleLayout.addCross(mPuzzleLayout.getBorders().get(1), 1f / 2);
 
     }
@@ -357,7 +364,7 @@ public class PuzzleView extends View {
     public void addPiece(final Bitmap bitmap) {
         int index = mPuzzlePieces.size();
 
-        Matrix matrix = BorderUtil.createMatrix(mPuzzleLayout.getBorder(index), bitmap);
+        Matrix matrix = BorderUtil.createMatrix(mPuzzleLayout.getBorder(index), bitmap, mExtraBorderSize);
 
         BitmapPiece layoutPhoto = new BitmapPiece(bitmap, mPuzzleLayout.getBorder(index), matrix);
 
@@ -377,5 +384,21 @@ public class PuzzleView extends View {
 
     public void setBorderWidth(float borderWidth) {
         mBorderWidth = borderWidth;
+    }
+
+    public boolean isNeedDrawBorder() {
+        return mNeedDrawBorder;
+    }
+
+    public void setNeedDrawBorder(boolean needDrawBorder) {
+        mNeedDrawBorder = needDrawBorder;
+    }
+
+    public float getExtraBorderSize() {
+        return mExtraBorderSize;
+    }
+
+    public void setExtraBorderSize(float extraBorder) {
+        mExtraBorderSize = extraBorder;
     }
 }

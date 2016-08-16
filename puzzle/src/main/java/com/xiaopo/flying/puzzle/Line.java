@@ -5,18 +5,19 @@ import android.graphics.RectF;
 import android.util.Log;
 
 /**
+ * the line to divide the rect border
  * Created by snowbean on 16-8-13.
  */
 public class Line {
 
-    public enum Direction {
+    enum Direction {
         HORIZONTAL,
         VERTICAL
     }
 
     /**
-     * 对于横线，start为left，end为right
-     * 对于直线，start为top，end为bottom
+     * for horizontal line, start means left, end means right
+     * for vertical line, start means top, end means bottom
      */
     final PointF start;
     final PointF end;

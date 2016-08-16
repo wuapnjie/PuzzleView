@@ -9,6 +9,14 @@ import java.util.Comparator;
 import java.util.List;
 
 /**
+ * contains all lines and borders.
+ * we can add line to divider a border to number of borders.
+ * <p>
+ * <p>
+ * to determine the which border to layout puzzle piece.
+ *
+ * @see Border
+ * <p>
  * Created by snowbean on 16-8-13.
  */
 public class PuzzleLayout {

@@ -4,6 +4,7 @@ import android.content.Context;
 import android.util.AttributeSet;
 
 /**
+ * the square puzzle view
  * Created by snowbean on 16-8-16.
  */
 public class SquarePuzzleView extends PuzzleView {

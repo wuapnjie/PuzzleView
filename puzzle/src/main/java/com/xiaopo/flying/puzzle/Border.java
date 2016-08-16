@@ -4,6 +4,12 @@ import android.graphics.PointF;
 import android.graphics.RectF;
 
 /**
+ * the border to layout puzzle piece
+ *
+ * @see PuzzlePiece
+ * each border consist of four lines : left,top,right,bottom
+ * @see Line
+ *
  * Created by snowbean on 16-8-13.
  */
 public class Border {

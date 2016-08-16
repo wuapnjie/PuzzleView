@@ -7,6 +7,10 @@ import android.graphics.PointF;
 import android.graphics.RectF;
 
 /**
+ * the puzzle piece , the content can be a bitmap or drawable
+ *
+ * @see BitmapPiece
+ * <p>
  * Created by snowbean on 16-8-9.
  */
 public abstract class PuzzlePiece {
@@ -129,6 +133,11 @@ public abstract class PuzzlePiece {
         if (mMatrix != null) {
             mMatrix.reset();
             mMatrix = null;
+        }
+
+        if (mDownMatrix != null) {
+            mDownMatrix.reset();
+            mDownMatrix = null;
         }
     }
 }
