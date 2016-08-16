@@ -7,10 +7,10 @@
     android:background="@android:color/black"
     tools:context="com.xiaopo.flying.photolayout.MainActivity">
 
-    <com.xiaopo.flying.puzzle.PuzzleView
+    <com.xiaopo.flying.puzzle.SquarePuzzleView
         android:id="@+id/photo_layout_view"
-        android:layout_width="300dp"
-        android:layout_height="300dp"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
         android:layout_gravity="center" />
 
 </FrameLayout>

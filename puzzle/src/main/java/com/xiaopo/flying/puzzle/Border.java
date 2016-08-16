@@ -63,6 +63,14 @@ public class Border {
         return lineBottom.start.y;
     }
 
+    public float centerX() {
+        return right() - left();
+    }
+
+    public float centerY() {
+        return bottom() - top();
+    }
+
     public RectF getRect() {
         return new RectF(
                 left(),

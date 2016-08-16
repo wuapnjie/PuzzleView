@@ -11,7 +11,7 @@ import java.util.List;
 /**
  * Created by snowbean on 16-8-13.
  */
-public class PhotoLayout {
+public class PuzzleLayout {
     private Border mOuterBorder;
 
     private List<Border> mBorders = new ArrayList<>();
@@ -35,7 +35,7 @@ public class PhotoLayout {
         }
     };
 
-    public PhotoLayout(RectF baseRect) {
+    public PuzzleLayout(RectF baseRect) {
         setOuterBorder(baseRect);
     }
 

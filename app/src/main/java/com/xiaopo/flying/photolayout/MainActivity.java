@@ -25,9 +25,9 @@ public class MainActivity extends AppCompatActivity {
         mPuzzleView.post(new Runnable() {
             @Override
             public void run() {
-                mPuzzleView.addPhoto(bitmap);
-                mPuzzleView.addPhoto(bitmap1);
-                mPuzzleView.addPhoto(bitmap2);
+                mPuzzleView.addPiece(bitmap);
+                mPuzzleView.addPiece(bitmap1);
+                mPuzzleView.addPiece(bitmap2);
             }
         });
     }

@@ -10,6 +10,7 @@ import android.graphics.PointF;
 import android.graphics.RectF;
 import android.support.v4.view.MotionEventCompat;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 
@@ -36,7 +37,7 @@ public class PuzzleView extends View {
 
     private RectF mBorderRect;
 
-    private PhotoLayout mPhotoLayout;
+    private PuzzleLayout mPuzzleLayout;
 
     private float mBorderWidth = 3;
 
@@ -44,14 +45,12 @@ public class PuzzleView extends View {
     private float mDownY;
 
     private float mOldDistance = 1f;
-    private float mOldRotation = 0;
-
     private PointF mMidPoint;
 
     private List<PuzzlePiece> mPuzzlePieces = new ArrayList<>();
 
     private Line mHandlingLine;
-    private PuzzlePiece mHandlingPhoto;
+    private PuzzlePiece mHandlingPiece;
     private List<PuzzlePiece> mChangedPhotos = new ArrayList<>();
 
     public PuzzleView(Context context) {
@@ -83,10 +82,8 @@ public class PuzzleView extends View {
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
 
-        mPhotoLayout.update();
-
-        for (int i = 0; i < mPhotoLayout.getBorderSize(); i++) {
-            Border border = mPhotoLayout.getBorder(i);
+        for (int i = 0; i < mPuzzleLayout.getBorderSize(); i++) {
+            Border border = mPuzzleLayout.getBorder(i);
             canvas.save();
             canvas.clipRect(border.getRect());
             mPuzzlePieces.get(i).draw(canvas, mBitmapPaint);
@@ -95,18 +92,13 @@ public class PuzzleView extends View {
 //            Log.d(TAG, "onDraw: " + border.toString());
         }
 
-        for (Line line : mPhotoLayout.getLines()) {
+        for (Line line : mPuzzleLayout.getLines()) {
             drawLine(canvas, line);
         }
 
-        for (Line line : mPhotoLayout.getOuterLines()) {
+        for (Line line : mPuzzleLayout.getOuterLines()) {
             drawLine(canvas, line);
         }
-
-
-//        for (PuzzlePiece photo : mPuzzlePieces) {
-//            photo.draw(canvas, mBitmapPaint);
-//        }
 
     }
 
@@ -129,10 +121,10 @@ public class PuzzleView extends View {
                     }
 
                 } else {
-                    mHandlingPhoto = findHandlingPhoto();
-                    if (mHandlingPhoto != null) {
+                    mHandlingPiece = findHandlingPhoto();
+                    if (mHandlingPiece != null) {
                         mCurrentMode = Mode.DRAG;
-                        mHandlingPhoto.getDownMatrix().set(mHandlingPhoto.getMatrix());
+                        mHandlingPiece.getDownMatrix().set(mHandlingPiece.getMatrix());
                     }
                 }
 
@@ -141,12 +133,10 @@ public class PuzzleView extends View {
             case MotionEvent.ACTION_POINTER_DOWN:
 
                 mOldDistance = calculateDistance(event);
-//                mOldRotation = calculateRotation(event);
-
                 mMidPoint = calculateMidPoint(event);
 
-                if (mHandlingPhoto != null &&
-                        isInPhotoArea(mHandlingPhoto, event.getX(1), event.getY(1))) {
+                if (mHandlingPiece != null &&
+                        isInPhotoArea(mHandlingPiece, event.getX(1), event.getY(1))) {
                     mCurrentMode = Mode.ZOOM;
                 }
                 break;
@@ -157,22 +147,27 @@ public class PuzzleView extends View {
                     case NONE:
                         break;
                     case DRAG:
-                        if (mHandlingPhoto != null) {
-                            mHandlingPhoto.getMoveMatrix().set(mHandlingPhoto.getDownMatrix());
-                            mHandlingPhoto.getMoveMatrix().postTranslate(event.getX() - mDownX, event.getY() - mDownY);
-                            mHandlingPhoto.getMatrix().set(mHandlingPhoto.getMoveMatrix());
+                        if (mHandlingPiece != null) {
+                            mHandlingPiece.getMatrix().set(mHandlingPiece.getDownMatrix());
+                            mHandlingPiece.getMatrix().postTranslate(event.getX() - mDownX, event.getY() - mDownY);
+
+//                            mHandlingPiece.getMoveMatrix().reset();
+//                            mHandlingPiece.getMoveMatrix().postTranslate(event.getX() - mDownX, event.getY() - mDownY);
                         }
                         break;
                     case ZOOM:
 
-                        if (mHandlingPhoto != null) {
+                        if (mHandlingPiece != null && event.getPointerCount() >= 2) {
                             float newDistance = calculateDistance(event);
 
-                            mHandlingPhoto.getMoveMatrix().set(mHandlingPhoto.getDownMatrix());
-                            mHandlingPhoto.getMoveMatrix().postScale(
+                            mHandlingPiece.getMatrix().set(mHandlingPiece.getDownMatrix());
+                            mHandlingPiece.getMatrix().postScale(
                                     newDistance / mOldDistance, newDistance / mOldDistance, mMidPoint.x, mMidPoint.y);
-//                            mHandlingSticker.getMatrix().reset();
-                            mHandlingPhoto.getMatrix().set(mHandlingPhoto.getMoveMatrix());
+
+                            mHandlingPiece.setScaleFactor(mHandlingPiece.getMappedWidth() / mHandlingPiece.getWidth());
+//                            mHandlingPiece.getMoveMatrix().reset();
+//                            mHandlingPiece.getMoveMatrix().postScale(
+//                                    newDistance / mOldDistance, newDistance / mOldDistance, mMidPoint.x, mMidPoint.y);
                         }
 
                         break;
@@ -187,27 +182,87 @@ public class PuzzleView extends View {
 
             case MotionEvent.ACTION_UP:
                 mHandlingLine = null;
-                mCurrentMode = Mode.NONE;
-                //TODO 回弹效果
 
+                if (mCurrentMode == Mode.DRAG || mCurrentMode == Mode.ZOOM) {
+                    if (!mHandlingPiece.isFilledBorder()) {
+                        fillBorder(mHandlingPiece);
+                        mHandlingPiece.setScaleFactor(0f);
+                    }
+                }
+
+                mCurrentMode = Mode.NONE;
                 invalidate();
                 break;
 
             case MotionEvent.ACTION_POINTER_UP:
-                mCurrentMode = Mode.NONE;
+
                 break;
         }
         return true;
 
     }
 
+
+    /**
+     * let piece fill with its border
+     *
+     * @param piece puzzle piece which can not be null
+     * @return the scale factor to fill with border
+     */
+    private void fillBorder(PuzzlePiece piece) {
+        piece.getMatrix().reset();
+
+        final RectF rectF = piece.getBorder().getRect();
+
+        float offsetX = rectF.centerX() - piece.getWidth() / 2;
+        float offsetY = rectF.centerY() - piece.getHeight() / 2;
+
+        piece.getMatrix().postTranslate(offsetX, offsetY);
+        float scale = calculateFillScaleFactor(piece);
+
+        piece.getMatrix().postScale(scale, scale, rectF.centerX(), rectF.centerY());
+    }
+
+    private float calculateFillScaleFactor(PuzzlePiece piece) {
+        final RectF rectF = piece.getBorder().getRect();
+        float scale;
+        if (piece.getWidth() * rectF.height() > rectF.width() * piece.getHeight()) {
+            scale = rectF.height() / piece.getHeight();
+        } else {
+            scale = rectF.width() / piece.getWidth();
+        }
+        return scale;
+    }
+
+    private float calculateFillScaleFactor(PuzzlePiece piece, Border border) {
+        final RectF rectF = border.getRect();
+        float scale;
+        if (piece.getWidth() * rectF.height() > rectF.width() * piece.getHeight()) {
+            scale = rectF.height() / piece.getHeight();
+        } else {
+            scale = rectF.width() / piece.getWidth();
+        }
+        return scale;
+    }
+
+
     //TODO
     private void updatePhotoInBorder(MotionEvent event) {
-        mPhotoLayout.update();
-        for (PuzzlePiece photo : mChangedPhotos) {
-//            photo.getMoveMatrix().set(photo.getDownMatrix());
-//            photo.getMoveMatrix().postTranslate(-(event.getX() - mDownX) / 2, 0);
-            photo.getMatrix().set(BorderUtil.createMatrix(photo.getBorder(), ((BitmapPiece) photo).getBitmap()));
+        for (PuzzlePiece piece : mChangedPhotos) {
+            float scale = calculateFillScaleFactor(piece, mPuzzleLayout.getOuterBorder());
+
+            if (piece.getScaleFactor() > scale && piece.getScaleFactor() > 1 && piece.isFilledBorder()) {
+                piece.getMatrix().set(piece.getDownMatrix());
+
+                if (mHandlingLine.getDirection() == Line.Direction.HORIZONTAL) {
+                    piece.getMatrix().postTranslate(0, (event.getY() - mDownY) / 2);
+                } else if (mHandlingLine.getDirection() == Line.Direction.VERTICAL) {
+                    piece.getMatrix().postTranslate((event.getX() - mDownX) / 2, 0);
+                }
+
+            } else {
+                fillBorder(piece);
+            }
         }
 
     }
@@ -232,6 +287,8 @@ public class PuzzleView extends View {
             return;
         }
 
+        mPuzzleLayout.update();
+
         if (mHandlingLine.getDirection() == Line.Direction.HORIZONTAL) {
             mHandlingLine.moveTo(event.getY(), 20);
         } else if (mHandlingLine.getDirection() == Line.Direction.VERTICAL) {
@@ -240,7 +297,7 @@ public class PuzzleView extends View {
     }
 
     private Line findHandlingLine() {
-        for (Line line : mPhotoLayout.getLines()) {
+        for (Line line : mPuzzleLayout.getLines()) {
             if (line.contains(mDownX, mDownY, 20)) {
                 return line;
             }
@@ -274,14 +331,6 @@ public class PuzzleView extends View {
         return new PointF(x, y);
     }
 
-    //计算两点形成的直线与x轴的旋转角度
-    private float calculateRotation(MotionEvent event) {
-        double x = event.getX(0) - event.getX(1);
-        double y = event.getY(0) - event.getY(1);
-        double radians = Math.atan2(y, x);
-        return (float) Math.toDegrees(radians);
-    }
-
     @Override
     protected void onSizeChanged(int w, int h, int oldw, int oldh) {
         super.onSizeChanged(w, h, oldw, oldh);
@@ -290,27 +339,27 @@ public class PuzzleView extends View {
         mBorderRect.right = w - getPaddingRight();
         mBorderRect.bottom = h - getPaddingBottom();
 
-        if (mPhotoLayout == null) {
-            mPhotoLayout = new PhotoLayout(mBorderRect);
+        if (mPuzzleLayout == null) {
+            mPuzzleLayout = new PuzzleLayout(mBorderRect);
         } else {
-            mPhotoLayout.setOuterBorder(mBorderRect);
+            mPuzzleLayout.setOuterBorder(mBorderRect);
         }
 
         //TODO delete
-//        mPhotoLayout.cutBorderEqualPart(mPhotoLayout.getOuterBorder(), 3, Line.Direction.VERTICAL);
-        mPhotoLayout.addLine(mPhotoLayout.getOuterBorder(), Line.Direction.HORIZONTAL, 1f / 2);
-        mPhotoLayout.addLine(mPhotoLayout.getBorder(1), Line.Direction.VERTICAL, 1f / 2);
-//        mPhotoLayout.addCross(mPhotoLayout.getBorders().get(1), 1f / 2);
+//        mPuzzleLayout.cutBorderEqualPart(mPuzzleLayout.getOuterBorder(), 3, Line.Direction.VERTICAL);
+        mPuzzleLayout.addLine(mPuzzleLayout.getOuterBorder(), Line.Direction.HORIZONTAL, 1f / 2);
+        mPuzzleLayout.addLine(mPuzzleLayout.getBorder(1), Line.Direction.VERTICAL, 1f / 2);
+//        mPuzzleLayout.addCross(mPuzzleLayout.getBorders().get(1), 1f / 2);
 
     }
 
 
-    public void addPhoto(final Bitmap bitmap) {
+    public void addPiece(final Bitmap bitmap) {
         int index = mPuzzlePieces.size();
 
-        Matrix matrix = BorderUtil.createMatrix(mPhotoLayout.getBorder(index), bitmap);
+        Matrix matrix = BorderUtil.createMatrix(mPuzzleLayout.getBorder(index), bitmap);
 
-        BitmapPiece layoutPhoto = new BitmapPiece(bitmap, mPhotoLayout.getBorder(index), matrix);
+        BitmapPiece layoutPhoto = new BitmapPiece(bitmap, mPuzzleLayout.getBorder(index), matrix);
 
         mPuzzlePieces.add(layoutPhoto);
 

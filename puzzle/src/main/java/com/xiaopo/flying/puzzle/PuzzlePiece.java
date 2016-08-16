@@ -10,18 +10,16 @@ import android.graphics.RectF;
  * Created by snowbean on 16-8-9.
  */
 public abstract class PuzzlePiece {
-    protected Matrix mMatrix;
-    protected Border mBorder;
-    protected Matrix mDownMatrix;
-    protected Matrix mMoveMatrix;
+    Matrix mMatrix;
+    private Border mBorder;
+    private Matrix mDownMatrix;
+    private float mScaleFactor = 0f;
 
 
     public PuzzlePiece(Matrix matrix, Border border) {
         mMatrix = matrix;
         mBorder = border;
-
         mDownMatrix = new Matrix();
-        mMoveMatrix = new Matrix();
     }
 
     public Matrix getMatrix() {
@@ -40,12 +38,12 @@ public abstract class PuzzlePiece {
         mDownMatrix = downMatrix;
     }
 
-    public Matrix getMoveMatrix() {
-        return mMoveMatrix;
+    public float getScaleFactor() {
+        return mScaleFactor;
     }
 
-    public void setMoveMatrix(Matrix moveMatrix) {
-        mMoveMatrix = moveMatrix;
+    public void setScaleFactor(float scaleFactor) {
+        mScaleFactor = scaleFactor;
     }
 
     public Border getBorder() {
@@ -107,8 +105,24 @@ public abstract class PuzzlePiece {
         return new PointF(dst[0], dst[1]);
     }
 
+    public float getMappedWidth() {
+        return getMappedBound().width();
+    }
+
+    public float getMappedHeight() {
+        return getMappedBound().height();
+    }
+
     public boolean contains(float x, float y) {
         return mBorder.getRect().contains(x, y);
+    }
+
+    public boolean isFilledBorder() {
+        RectF rectF = getMappedBound();
+        return !(rectF.left > mBorder.left()
+                || rectF.top > mBorder.top()
+                || rectF.right < mBorder.right()
+                || rectF.bottom < mBorder.bottom());
     }
 
     public void release() {
