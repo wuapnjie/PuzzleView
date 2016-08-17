@@ -9,27 +9,27 @@ import android.graphics.RectF;
  * @see PuzzlePiece
  * each border consist of four lines : left,top,right,bottom
  * @see Line
- *
+ * <p>
  * Created by snowbean on 16-8-13.
  */
-public class Border {
+class Border {
     Line lineLeft;
     Line lineTop;
     Line lineRight;
     Line lineBottom;
 
-    public Border(Border src) {
+    Border(Border src) {
         lineLeft = src.lineLeft;
         lineTop = src.lineTop;
         lineRight = src.lineRight;
         lineBottom = src.lineBottom;
     }
 
-    public Border(RectF baseRect) {
+    Border(RectF baseRect) {
         setBaseRect(baseRect);
     }
 
-    public void setBaseRect(RectF baseRect) {
+    private void setBaseRect(RectF baseRect) {
         float width = baseRect.width();
         float height = baseRect.height();
 
@@ -44,40 +44,40 @@ public class Border {
         lineBottom = new Line(three, four);
     }
 
-    public float width() {
+    float width() {
         return lineRight.start.x - lineLeft.start.x;
     }
 
 
-    public float height() {
+    float height() {
         return lineBottom.start.y - lineTop.start.y;
     }
 
-    public float left() {
+    float left() {
         return lineLeft.start.x;
     }
 
-    public float top() {
+    float top() {
         return lineTop.start.y;
     }
 
-    public float right() {
+    float right() {
         return lineRight.start.x;
     }
 
-    public float bottom() {
+    float bottom() {
         return lineBottom.start.y;
     }
 
-    public float centerX() {
+    float centerX() {
         return right() - left();
     }
 
-    public float centerY() {
+    float centerY() {
         return bottom() - top();
     }
 
-    public RectF getRect() {
+    RectF getRect() {
         return new RectF(
                 left(),
                 top(),
@@ -85,7 +85,7 @@ public class Border {
                 bottom());
     }
 
-    public boolean contains(Line line) {
+    boolean contains(Line line) {
         return lineLeft == line || lineTop == line || lineRight == line || lineBottom == line;
     }
 

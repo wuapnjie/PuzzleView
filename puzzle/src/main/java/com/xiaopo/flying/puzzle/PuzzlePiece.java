@@ -17,6 +17,8 @@ public abstract class PuzzlePiece {
     Matrix mMatrix;
     private Border mBorder;
     private Matrix mDownMatrix;
+    private float mTranslateX = 0f;
+    private float mTranslateY = 0f;
     private float mScaleFactor = 0f;
 
 
@@ -24,6 +26,22 @@ public abstract class PuzzlePiece {
         mMatrix = matrix;
         mBorder = border;
         mDownMatrix = new Matrix();
+    }
+
+    public float getTranslateX() {
+        return mTranslateX;
+    }
+
+    public void setTranslateX(float translateX) {
+        mTranslateX = translateX;
+    }
+
+    public float getTranslateY() {
+        return mTranslateY;
+    }
+
+    public void setTranslateY(float translateY) {
+        mTranslateY = translateY;
     }
 
     public Matrix getMatrix() {

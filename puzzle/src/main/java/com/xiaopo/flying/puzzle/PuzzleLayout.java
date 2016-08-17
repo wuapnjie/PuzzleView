@@ -19,7 +19,9 @@ import java.util.List;
  * <p>
  * Created by snowbean on 16-8-13.
  */
-public class PuzzleLayout {
+public abstract class PuzzleLayout {
+    protected static final String TAG = "PuzzleLayout";
+
     private Border mOuterBorder;
 
     private List<Border> mBorders = new ArrayList<>();
@@ -43,6 +45,10 @@ public class PuzzleLayout {
         }
     };
 
+    public PuzzleLayout() {
+
+    }
+
     public PuzzleLayout(RectF baseRect) {
         setOuterBorder(baseRect);
     }
@@ -61,14 +67,20 @@ public class PuzzleLayout {
         Line lineRight = new Line(two, four);
         Line lineBottom = new Line(three, four);
 
+        mOuterLines.clear();
+
         mOuterLines.add(lineLeft);
         mOuterLines.add(lineTop);
         mOuterLines.add(lineRight);
         mOuterLines.add(lineBottom);
 
         mOuterBorder = new Border(baseRect);
+
+        mBorders.clear();
         mBorders.add(mOuterBorder);
     }
+
+    public abstract void layout();
 
     public List<Border> addLine(Border border, Line.Direction direction, float ratio) {
         mBorders.remove(border);
@@ -92,9 +104,13 @@ public class PuzzleLayout {
     }
 
     public List<Border> addCross(Border border, float radio) {
+        return addCross(border, radio, radio);
+    }
+
+    public List<Border> addCross(Border border, float horizontalRadio, float verticalRadio) {
         mBorders.remove(border);
-        Line horizontal = BorderUtil.createLine(border, Line.Direction.HORIZONTAL, radio);
-        Line vertical = BorderUtil.createLine(border, Line.Direction.VERTICAL, radio);
+        Line horizontal = BorderUtil.createLine(border, Line.Direction.HORIZONTAL, horizontalRadio);
+        Line vertical = BorderUtil.createLine(border, Line.Direction.VERTICAL, verticalRadio);
         mLines.add(horizontal);
         mLines.add(vertical);
 

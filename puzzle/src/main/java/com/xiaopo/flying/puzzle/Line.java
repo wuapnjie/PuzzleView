@@ -10,7 +10,7 @@ import android.util.Log;
  */
 public class Line {
 
-    enum Direction {
+    public enum Direction {
         HORIZONTAL,
         VERTICAL
     }

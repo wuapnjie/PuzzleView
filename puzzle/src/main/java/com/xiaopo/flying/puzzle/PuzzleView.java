@@ -27,6 +27,14 @@ public class PuzzleView extends View {
     private static final String TAG = "PhotoLayoutView";
     private float mExtraBorderSize = 50f;
 
+    public boolean isMoveLineEnable() {
+        return mMoveLineEnable;
+    }
+
+    public void setMoveLineEnable(boolean moveLineEnable) {
+        mMoveLineEnable = moveLineEnable;
+    }
+
     private enum Mode {
         NONE,
         DRAG,
@@ -58,6 +66,7 @@ public class PuzzleView extends View {
     private List<PuzzlePiece> mChangedPhotos = new ArrayList<>();
 
     private boolean mNeedDrawBorder = false;
+    private boolean mMoveLineEnable = true;
 
     public PuzzleView(Context context) {
         this(context, null, 0);
@@ -89,8 +98,8 @@ public class PuzzleView extends View {
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
 
-        if (mPuzzleLayout == null) {
-            Log.e(TAG, "the puzzle layout can not be null");
+        if (mPuzzleLayout == null || mPuzzleLayout.getBorderSize() == 0) {
+            Log.e(TAG, "the puzzle layout or its border can not be null");
             return;
         }
 
@@ -110,14 +119,18 @@ public class PuzzleView extends View {
         }
 
         //draw outer line
-//        for (Line line : mPuzzleLayout.getOuterLines()) {
-//            drawLine(canvas, line);
-//        }
+        for (Line line : mPuzzleLayout.getOuterLines()) {
+            drawLine(canvas, line);
+        }
 
     }
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
+        if (!mMoveLineEnable) {
+            return super.onTouchEvent(event);
+        }
+
         switch (MotionEventCompat.getActionMasked(event)) {
             case MotionEvent.ACTION_DOWN:
                 mDownX = event.getX();
@@ -149,8 +162,9 @@ public class PuzzleView extends View {
                 mOldDistance = calculateDistance(event);
                 mMidPoint = calculateMidPoint(event);
 
-                if (mHandlingPiece != null &&
-                        isInPhotoArea(mHandlingPiece, event.getX(1), event.getY(1))) {
+                if (mHandlingPiece != null
+                        && isInPhotoArea(mHandlingPiece, event.getX(1), event.getY(1))
+                        && mCurrentMode != Mode.MOVE) {
                     mCurrentMode = Mode.ZOOM;
                 }
                 break;
@@ -164,6 +178,12 @@ public class PuzzleView extends View {
                         if (mHandlingPiece != null) {
                             mHandlingPiece.getMatrix().set(mHandlingPiece.getDownMatrix());
                             mHandlingPiece.getMatrix().postTranslate(event.getX() - mDownX, event.getY() - mDownY);
+
+                            mHandlingPiece.setTranslateX(mHandlingPiece.getMappedCenterPoint().x
+                                    - mHandlingPiece.getBorder().centerX());
+
+                            mHandlingPiece.setTranslateY(mHandlingPiece.getMappedCenterPoint().y
+                                    - mHandlingPiece.getBorder().centerY());
                         }
                         break;
                     case ZOOM:
@@ -181,6 +201,7 @@ public class PuzzleView extends View {
                         break;
                     case MOVE:
                         moveLine(event);
+                        mPuzzleLayout.update();
                         updatePhotoInBorder(event);
                         break;
                 }
@@ -229,6 +250,10 @@ public class PuzzleView extends View {
         float scale = calculateFillScaleFactor(piece);
 
         piece.getMatrix().postScale(scale, scale, rectF.centerX(), rectF.centerY());
+
+        piece.setTranslateX(0f);
+        piece.setTranslateY(0f);
+        piece.setScaleFactor(0f);
     }
 
     private float calculateFillScaleFactor(PuzzlePiece piece) {
@@ -259,7 +284,7 @@ public class PuzzleView extends View {
         for (PuzzlePiece piece : mChangedPhotos) {
             float scale = calculateFillScaleFactor(piece, mPuzzleLayout.getOuterBorder());
 
-            if (piece.getScaleFactor() > scale && piece.getScaleFactor() > 1 && piece.isFilledBorder()) {
+            if (piece.getScaleFactor() > scale && piece.isFilledBorder()) {
                 piece.getMatrix().set(piece.getDownMatrix());
 
                 if (mHandlingLine.getDirection() == Line.Direction.HORIZONTAL) {
@@ -267,6 +292,16 @@ public class PuzzleView extends View {
                 } else if (mHandlingLine.getDirection() == Line.Direction.VERTICAL) {
                     piece.getMatrix().postTranslate((event.getX() - mDownX) / 2, 0);
                 }
+
+            } else if (piece.isFilledBorder() && (piece.getTranslateX() != 0f || piece.getTranslateY() != 0f)) {
+                piece.getMatrix().set(piece.getDownMatrix());
+
+                if (mHandlingLine.getDirection() == Line.Direction.HORIZONTAL) {
+                    piece.getMatrix().postTranslate(0, (event.getY() - mDownY) / 2);
+                } else if (mHandlingLine.getDirection() == Line.Direction.VERTICAL) {
+                    piece.getMatrix().postTranslate((event.getX() - mDownX) / 2, 0);
+                }
+
             } else {
                 fillBorder(piece);
             }
@@ -294,13 +329,13 @@ public class PuzzleView extends View {
             return;
         }
 
-        mPuzzleLayout.update();
-
         if (mHandlingLine.getDirection() == Line.Direction.HORIZONTAL) {
             mHandlingLine.moveTo(event.getY(), 20);
         } else if (mHandlingLine.getDirection() == Line.Direction.VERTICAL) {
             mHandlingLine.moveTo(event.getX(), 20);
         }
+
+
     }
 
     private Line findHandlingLine() {
@@ -346,23 +381,22 @@ public class PuzzleView extends View {
         mBorderRect.right = w - getPaddingRight();
         mBorderRect.bottom = h - getPaddingBottom();
 
-        if (mPuzzleLayout == null) {
-            mPuzzleLayout = new PuzzleLayout(mBorderRect);
-        } else {
+        if (mPuzzleLayout != null) {
             mPuzzleLayout.setOuterBorder(mBorderRect);
+            mPuzzleLayout.layout();
         }
-
-        //TODO delete
-        mPuzzleLayout.cutBorderEqualPart(mPuzzleLayout.getOuterBorder(), 3, Line.Direction.VERTICAL);
-//        mPuzzleLayout.addLine(mPuzzleLayout.getOuterBorder(), Line.Direction.HORIZONTAL, 1f / 2);
-//        mPuzzleLayout.addLine(mPuzzleLayout.getBorder(1), Line.Direction.VERTICAL, 1f / 2);
-//        mPuzzleLayout.addCross(mPuzzleLayout.getBorders().get(1), 1f / 2);
 
     }
 
 
     public void addPiece(final Bitmap bitmap) {
         int index = mPuzzlePieces.size();
+
+        if (index >= mPuzzleLayout.getBorderSize()) {
+            Log.e(TAG, "addPiece: can not add more. the current puzzle layout can contains "
+                    + mPuzzleLayout.getBorderSize() + " puzzle piece.");
+            return;
+        }
 
         Matrix matrix = BorderUtil.createMatrix(mPuzzleLayout.getBorder(index), bitmap, mExtraBorderSize);
 
@@ -377,6 +411,31 @@ public class PuzzleView extends View {
         canvas.drawLine(line.start.x, line.start.y, line.end.x, line.end.y, mBorderPaint);
     }
 
+    public void reset() {
+        mHandlingLine = null;
+        mHandlingPiece = null;
+
+        if (mPuzzleLayout != null) {
+            mPuzzleLayout.reset();
+        }
+        mPuzzlePieces.clear();
+        mChangedPhotos.clear();
+
+        invalidate();
+    }
+
+    public PuzzleLayout getPuzzleLayout() {
+        return mPuzzleLayout;
+    }
+
+    public void setPuzzleLayout(PuzzleLayout puzzleLayout) {
+        reset();
+
+        mPuzzleLayout = puzzleLayout;
+        mPuzzleLayout.setOuterBorder(mBorderRect);
+        mPuzzleLayout.layout();
+        invalidate();
+    }
 
     public float getBorderWidth() {
         return mBorderWidth;
@@ -392,6 +451,7 @@ public class PuzzleView extends View {
 
     public void setNeedDrawBorder(boolean needDrawBorder) {
         mNeedDrawBorder = needDrawBorder;
+        invalidate();
     }
 
     public float getExtraBorderSize() {
