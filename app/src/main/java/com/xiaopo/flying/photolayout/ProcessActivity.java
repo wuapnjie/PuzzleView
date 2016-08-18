@@ -17,7 +17,7 @@ import com.xiaopo.flying.puzzle.PuzzleView;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ProcessActivity extends AppCompatActivity {
+public class ProcessActivity extends AppCompatActivity implements View.OnClickListener {
 
     private PuzzleLayout mPuzzleLayout;
     private List<String> mBitmapPaths;
@@ -113,12 +113,41 @@ public class ProcessActivity extends AppCompatActivity {
         });
 
         mPuzzleView = (PuzzleView) findViewById(R.id.puzzle_view);
+
+        //the method we can use
         mPuzzleView.setPuzzleLayout(mPuzzleLayout);
+        mPuzzleView.setMoveLineEnable(true);
+        mPuzzleView.setNeedDrawBorder(false);
+        mPuzzleView.setNeedDrawOuterBorder(false);
+        mPuzzleView.setExtraSize(100);
+        mPuzzleView.setBorderWidth(3);
+
+
+        ImageView btnReplace = (ImageView) findViewById(R.id.btn_replace);
+        ImageView btnFlipHorizontal = (ImageView) findViewById(R.id.btn_flip_horizontal);
+        ImageView btnFlipVertical = (ImageView) findViewById(R.id.btn_flip_vertical);
+        ImageView btnBorder = (ImageView) findViewById(R.id.btn_border);
+
+        btnReplace.setOnClickListener(this);
+        btnFlipHorizontal.setOnClickListener(this);
+        btnFlipVertical.setOnClickListener(this);
+        btnBorder.setOnClickListener(this);
+
 
     }
 
     @Override
-    protected void onDestroy() {
-        super.onDestroy();
+    public void onClick(View view) {
+        switch (view.getId()) {
+            case R.id.btn_replace:
+                break;
+            case R.id.btn_flip_horizontal:
+                break;
+            case R.id.btn_flip_vertical:
+                break;
+            case R.id.btn_border:
+                mPuzzleView.setNeedDrawBorder(!mPuzzleView.isNeedDrawBorder());
+                break;
+        }
     }
 }

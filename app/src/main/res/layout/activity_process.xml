@@ -53,6 +53,8 @@
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|end"
         android:layout_margin="@dimen/fab_margin"
+        app:elevation="8dp"
+        app:rippleColor="@android:color/black"
         app:srcCompat="@drawable/ic_share_black_24dp"
         app:useCompatPadding="true" />
 

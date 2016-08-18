@@ -21,7 +21,7 @@ import java.util.List;
  * the puzzle view , the number of puzzle piece due to PuzzleLayout
  *
  * @see PuzzleLayout
- * Created by snowbean on 16-8-9.
+ * Created by snowbean on 16-8-16.
  */
 public class PuzzleView extends View {
     private static final String TAG = "PhotoLayoutView";
@@ -470,6 +470,8 @@ public class PuzzleView extends View {
 
     public void setBorderWidth(float borderWidth) {
         mBorderWidth = borderWidth;
+        mBorderPaint.setStrokeWidth(borderWidth);
+        invalidate();
     }
 
     public boolean isNeedDrawBorder() {
