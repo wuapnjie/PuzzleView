@@ -1,5 +1,6 @@
 package com.xiaopo.flying.puzzle.layout;
 
+import android.os.Parcel;
 import android.util.Log;
 
 import com.xiaopo.flying.puzzle.Line;
@@ -44,4 +45,31 @@ public class TwoPieceLayout extends NumberPieceLayout {
 
     }
 
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        super.writeToParcel(dest, flags);
+        dest.writeFloat(this.mRadio);
+    }
+
+    protected TwoPieceLayout(Parcel in) {
+        super(in);
+        this.mRadio = in.readFloat();
+    }
+
+    public static final Creator<TwoPieceLayout> CREATOR = new Creator<TwoPieceLayout>() {
+        @Override
+        public TwoPieceLayout createFromParcel(Parcel source) {
+            return new TwoPieceLayout(source);
+        }
+
+        @Override
+        public TwoPieceLayout[] newArray(int size) {
+            return new TwoPieceLayout[size];
+        }
+    };
 }

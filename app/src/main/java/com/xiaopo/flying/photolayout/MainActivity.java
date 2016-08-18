@@ -17,6 +17,7 @@ import com.squareup.picasso.Target;
 import com.xiaopo.flying.poiphoto.PhotoPicker;
 import com.xiaopo.flying.poiphoto.datatype.Photo;
 import com.xiaopo.flying.poiphoto.ui.adapter.PhotoAdapter;
+import com.xiaopo.flying.puzzle.PuzzleLayout;
 import com.xiaopo.flying.puzzle.layout.PuzzleLayoutHelper;
 
 import java.util.ArrayList;
@@ -67,11 +68,6 @@ public class MainActivity extends AppCompatActivity {
                             @Override
                             public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from) {
                                 mBitmaps.add(bitmap);
-
-                                if (mBitmaps.size() == 1) {
-                                    return;
-                                }
-
                                 mPuzzleAdapter.refreshData(PuzzleLayoutHelper.getAllThemeLayout(mBitmaps.size()), mBitmaps);
                             }
 
@@ -103,6 +99,15 @@ public class MainActivity extends AppCompatActivity {
         mPuzzleAdapter = new PuzzleAdapter();
         mPuzzleList.setAdapter(mPuzzleAdapter);
         mPuzzleList.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
+        mPuzzleList.setHasFixedSize(true);
+
+
+        mPuzzleAdapter.setOnItemClickListener(new PuzzleAdapter.OnItemClickListener() {
+            @Override
+            public void onItemClick(PuzzleLayout puzzleLayout, int themeId) {
+
+            }
+        });
     }
 
     @Override

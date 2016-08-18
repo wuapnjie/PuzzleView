@@ -9,16 +9,21 @@ import java.util.List;
  * Created by snowbean on 16-8-17.
  */
 public class PuzzleLayoutHelper {
-    private PuzzleLayoutHelper(){
+    private PuzzleLayoutHelper() {
 
     }
 
     public static List<PuzzleLayout> getAllThemeLayout(int pieceCount) {
         List<PuzzleLayout> puzzleLayouts = new ArrayList<>();
         switch (pieceCount) {
+            case 1:
+                for (int i = 0; i < 3; i++) {
+                    puzzleLayouts.add(new OnePieceLayout(i));
+                }
+                break;
             case 2:
                 for (int i = 0; i < 2; i++) {
-                    puzzleLayouts.add(new TwoPieceLayout( i));
+                    puzzleLayouts.add(new TwoPieceLayout(i));
                 }
                 break;
             case 3:

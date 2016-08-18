@@ -27,14 +27,6 @@ public class PuzzleView extends View {
     private static final String TAG = "PhotoLayoutView";
     private float mExtraBorderSize = 50f;
 
-    public boolean isMoveLineEnable() {
-        return mMoveLineEnable;
-    }
-
-    public void setMoveLineEnable(boolean moveLineEnable) {
-        mMoveLineEnable = moveLineEnable;
-    }
-
     private enum Mode {
         NONE,
         DRAG,
@@ -386,6 +378,15 @@ public class PuzzleView extends View {
             mPuzzleLayout.layout();
         }
 
+        if (mPuzzlePieces.size() != 0) {
+            for (int i = 0; i < mPuzzlePieces.size(); i++) {
+                PuzzlePiece piece = mPuzzlePieces.get(i);
+                piece.setMatrix(BorderUtil.createMatrix(mPuzzleLayout.getBorder(i), piece.getWidth(), piece.getHeight(), mExtraBorderSize));
+            }
+        }
+
+        invalidate();
+
     }
 
 
@@ -434,6 +435,7 @@ public class PuzzleView extends View {
         mPuzzleLayout = puzzleLayout;
         mPuzzleLayout.setOuterBorder(mBorderRect);
         mPuzzleLayout.layout();
+
         invalidate();
     }
 
@@ -460,5 +462,13 @@ public class PuzzleView extends View {
 
     public void setExtraBorderSize(float extraBorder) {
         mExtraBorderSize = extraBorder;
+    }
+
+    public boolean isMoveLineEnable() {
+        return mMoveLineEnable;
+    }
+
+    public void setMoveLineEnable(boolean moveLineEnable) {
+        mMoveLineEnable = moveLineEnable;
     }
 }

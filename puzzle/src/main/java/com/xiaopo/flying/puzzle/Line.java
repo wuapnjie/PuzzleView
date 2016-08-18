@@ -2,13 +2,15 @@ package com.xiaopo.flying.puzzle;
 
 import android.graphics.PointF;
 import android.graphics.RectF;
+import android.os.Parcel;
+import android.os.Parcelable;
 import android.util.Log;
 
 /**
  * the line to divide the rect border
  * Created by snowbean on 16-8-13.
  */
-public class Line {
+public class Line implements Parcelable{
 
     public enum Direction {
         HORIZONTAL,
@@ -178,4 +180,45 @@ public class Line {
     public void setLowerLine(Line lowerLine) {
         mLowerLine = lowerLine;
     }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeParcelable(this.start, flags);
+        dest.writeParcelable(this.end, flags);
+        dest.writeInt(this.direction == null ? -1 : this.direction.ordinal());
+        dest.writeParcelable(this.attachLineStart, flags);
+        dest.writeParcelable(this.attachLineEnd, flags);
+        dest.writeParcelable(this.mUpperLine, flags);
+        dest.writeParcelable(this.mLowerLine, flags);
+        dest.writeParcelable(this.rectF, flags);
+    }
+
+    protected Line(Parcel in) {
+        this.start = in.readParcelable(PointF.class.getClassLoader());
+        this.end = in.readParcelable(PointF.class.getClassLoader());
+        int tmpDirection = in.readInt();
+        this.direction = tmpDirection == -1 ? null : Direction.values()[tmpDirection];
+        this.attachLineStart = in.readParcelable(Line.class.getClassLoader());
+        this.attachLineEnd = in.readParcelable(Line.class.getClassLoader());
+        this.mUpperLine = in.readParcelable(Line.class.getClassLoader());
+        this.mLowerLine = in.readParcelable(Line.class.getClassLoader());
+        this.rectF = in.readParcelable(RectF.class.getClassLoader());
+    }
+
+    public static final Creator<Line> CREATOR = new Creator<Line>() {
+        @Override
+        public Line createFromParcel(Parcel source) {
+            return new Line(source);
+        }
+
+        @Override
+        public Line[] newArray(int size) {
+            return new Line[size];
+        }
+    };
 }

@@ -2,6 +2,8 @@ package com.xiaopo.flying.puzzle;
 
 import android.graphics.PointF;
 import android.graphics.RectF;
+import android.os.Parcel;
+import android.os.Parcelable;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -19,7 +21,7 @@ import java.util.List;
  * <p>
  * Created by snowbean on 16-8-13.
  */
-public abstract class PuzzleLayout {
+public abstract class PuzzleLayout implements Parcelable {
     protected static final String TAG = "PuzzleLayout";
 
     private Border mOuterBorder;
@@ -28,22 +30,7 @@ public abstract class PuzzleLayout {
     private List<Line> mLines = new ArrayList<>();
     private List<Line> mOuterLines = new ArrayList<>(4);
 
-    private Comparator<Border> mBorderComparator = new Comparator<Border>() {
-        @Override
-        public int compare(Border lhs, Border rhs) {
-            if (lhs.getRect().top < rhs.getRect().top) {
-                return -1;
-            } else if (lhs.getRect().top == rhs.getRect().top) {
-                if (lhs.getRect().left < rhs.left()) {
-                    return -1;
-                } else {
-                    return 1;
-                }
-            } else {
-                return 1;
-            }
-        }
-    };
+    private Comparator<Border> mBorderComparator = new BorderComparator();
 
     public PuzzleLayout() {
 
@@ -118,6 +105,10 @@ public abstract class PuzzleLayout {
         mBorders.addAll(borders);
 
         updateLineLimit();
+
+        if (mBorderComparator == null) {
+            mBorderComparator = new BorderComparator();
+        }
         Collections.sort(mBorders, mBorderComparator);
 
         return borders;
@@ -185,4 +176,25 @@ public abstract class PuzzleLayout {
             line.update();
         }
     }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeParcelable(this.mOuterBorder, flags);
+        dest.writeTypedList(this.mBorders);
+        dest.writeTypedList(this.mLines);
+        dest.writeTypedList(this.mOuterLines);
+    }
+
+    protected PuzzleLayout(Parcel in) {
+        this.mOuterBorder = in.readParcelable(Border.class.getClassLoader());
+        this.mBorders = in.createTypedArrayList(Border.CREATOR);
+        this.mLines = in.createTypedArrayList(Line.CREATOR);
+        this.mOuterLines = in.createTypedArrayList(Line.CREATOR);
+    }
+
 }

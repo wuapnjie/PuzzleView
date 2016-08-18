@@ -8,7 +8,9 @@ import android.view.ViewGroup;
 
 import com.xiaopo.flying.puzzle.PuzzleLayout;
 import com.xiaopo.flying.puzzle.SquarePuzzleView;
+import com.xiaopo.flying.puzzle.layout.NumberPieceLayout;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -16,8 +18,9 @@ import java.util.List;
  */
 public class PuzzleAdapter extends RecyclerView.Adapter<PuzzleAdapter.PuzzleViewHolder> {
 
-    private List<PuzzleLayout> mLayoutData;
-    private List<Bitmap> mBitmapData;
+    private List<PuzzleLayout> mLayoutData = new ArrayList<>();
+    private List<Bitmap> mBitmapData = new ArrayList<>();
+    private OnItemClickListener mOnItemClickListener;
 
     @Override
     public PuzzleViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
@@ -27,14 +30,35 @@ public class PuzzleAdapter extends RecyclerView.Adapter<PuzzleAdapter.PuzzleView
 
     @Override
     public void onBindViewHolder(PuzzleViewHolder holder, int position) {
-        PuzzleLayout puzzleLayout = mLayoutData.get(position);
+        final PuzzleLayout puzzleLayout = mLayoutData.get(position);
         holder.mPuzzleView.setPuzzleLayout(puzzleLayout);
         holder.mPuzzleView.setNeedDrawBorder(true);
         holder.mPuzzleView.setMoveLineEnable(false);
 
-        for (Bitmap bitmap : mBitmapData) {
-            holder.mPuzzleView.addPiece(bitmap);
+        final int bitmapSize = mBitmapData.size();
+
+        if (puzzleLayout.getBorderSize() > bitmapSize) {
+            for (int i = 0; i < puzzleLayout.getBorderSize(); i++) {
+                holder.mPuzzleView.addPiece(mBitmapData.get(i % bitmapSize));
+            }
+        } else {
+            for (Bitmap bitmap : mBitmapData) {
+                holder.mPuzzleView.addPiece(bitmap);
+            }
         }
+
+        holder.itemView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (mOnItemClickListener != null) {
+                    if (puzzleLayout instanceof NumberPieceLayout) {
+                        mOnItemClickListener.onItemClick(puzzleLayout, ((NumberPieceLayout) puzzleLayout).getTheme());
+                    } else {
+                        mOnItemClickListener.onItemClick(puzzleLayout, 0);
+                    }
+                }
+            }
+        });
     }
 
     @Override
@@ -49,6 +73,10 @@ public class PuzzleAdapter extends RecyclerView.Adapter<PuzzleAdapter.PuzzleView
         notifyDataSetChanged();
     }
 
+    public void setOnItemClickListener(OnItemClickListener onItemClickListener) {
+        mOnItemClickListener = onItemClickListener;
+    }
+
     public static class PuzzleViewHolder extends RecyclerView.ViewHolder {
 
         SquarePuzzleView mPuzzleView;
@@ -57,5 +85,9 @@ public class PuzzleAdapter extends RecyclerView.Adapter<PuzzleAdapter.PuzzleView
             super(itemView);
             mPuzzleView = (SquarePuzzleView) itemView.findViewById(R.id.puzzle);
         }
+    }
+
+    public interface OnItemClickListener {
+        void onItemClick(PuzzleLayout puzzleLayout, int themeId);
     }
 }
