@@ -14,7 +14,7 @@ import android.os.Parcelable;
  * <p>
  * Created by snowbean on 16-8-13.
  */
-class Border implements Parcelable{
+class Border{
     Line lineLeft;
     Line lineTop;
     Line lineRight;
@@ -105,36 +105,4 @@ class Border implements Parcelable{
                 "\nthe rect is \n" +
                 getRect().toString();
     }
-
-    @Override
-    public int describeContents() {
-        return 0;
-    }
-
-    @Override
-    public void writeToParcel(Parcel dest, int flags) {
-        dest.writeParcelable(this.lineLeft, flags);
-        dest.writeParcelable(this.lineTop, flags);
-        dest.writeParcelable(this.lineRight, flags);
-        dest.writeParcelable(this.lineBottom, flags);
-    }
-
-    protected Border(Parcel in) {
-        this.lineLeft = in.readParcelable(Line.class.getClassLoader());
-        this.lineTop = in.readParcelable(Line.class.getClassLoader());
-        this.lineRight = in.readParcelable(Line.class.getClassLoader());
-        this.lineBottom = in.readParcelable(Line.class.getClassLoader());
-    }
-
-    public static final Creator<Border> CREATOR = new Creator<Border>() {
-        @Override
-        public Border createFromParcel(Parcel source) {
-            return new Border(source);
-        }
-
-        @Override
-        public Border[] newArray(int size) {
-            return new Border[size];
-        }
-    };
 }

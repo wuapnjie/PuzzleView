@@ -78,29 +78,4 @@ public class EightPieceLayout extends NumberPieceLayout {
         }
     }
 
-    @Override
-    public int describeContents() {
-        return 0;
-    }
-
-    @Override
-    public void writeToParcel(Parcel dest, int flags) {
-        super.writeToParcel(dest, flags);
-    }
-
-    protected EightPieceLayout(Parcel in) {
-        super(in);
-    }
-
-    public static final Creator<EightPieceLayout> CREATOR = new Creator<EightPieceLayout>() {
-        @Override
-        public EightPieceLayout createFromParcel(Parcel source) {
-            return new EightPieceLayout(source);
-        }
-
-        @Override
-        public EightPieceLayout[] newArray(int size) {
-            return new EightPieceLayout[size];
-        }
-    };
 }

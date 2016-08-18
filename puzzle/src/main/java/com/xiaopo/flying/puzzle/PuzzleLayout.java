@@ -21,8 +21,10 @@ import java.util.List;
  * <p>
  * Created by snowbean on 16-8-13.
  */
-public abstract class PuzzleLayout implements Parcelable {
+public abstract class PuzzleLayout{
     protected static final String TAG = "PuzzleLayout";
+
+    protected int mTheme;
 
     private Border mOuterBorder;
 
@@ -147,6 +149,12 @@ public abstract class PuzzleLayout implements Parcelable {
         mBorders.add(mOuterBorder);
     }
 
+    public void update() {
+        for (Line line : mLines) {
+            line.update();
+        }
+    }
+
     public int getBorderSize() {
         return mBorders.size();
     }
@@ -171,30 +179,8 @@ public abstract class PuzzleLayout implements Parcelable {
         return mOuterLines;
     }
 
-    public void update() {
-        for (Line line : mLines) {
-            line.update();
-        }
-    }
-
-    @Override
-    public int describeContents() {
-        return 0;
-    }
-
-    @Override
-    public void writeToParcel(Parcel dest, int flags) {
-        dest.writeParcelable(this.mOuterBorder, flags);
-        dest.writeTypedList(this.mBorders);
-        dest.writeTypedList(this.mLines);
-        dest.writeTypedList(this.mOuterLines);
-    }
-
-    protected PuzzleLayout(Parcel in) {
-        this.mOuterBorder = in.readParcelable(Border.class.getClassLoader());
-        this.mBorders = in.createTypedArrayList(Border.CREATOR);
-        this.mLines = in.createTypedArrayList(Line.CREATOR);
-        this.mOuterLines = in.createTypedArrayList(Line.CREATOR);
+    public int getTheme() {
+        return mTheme;
     }
 
 }

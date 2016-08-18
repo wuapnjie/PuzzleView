@@ -84,30 +84,4 @@ public class SixPieceLayout extends NumberPieceLayout {
                 break;
         }
     }
-
-    @Override
-    public int describeContents() {
-        return 0;
-    }
-
-    @Override
-    public void writeToParcel(Parcel dest, int flags) {
-        super.writeToParcel(dest, flags);
-    }
-
-    protected SixPieceLayout(Parcel in) {
-        super(in);
-    }
-
-    public static final Creator<SixPieceLayout> CREATOR = new Creator<SixPieceLayout>() {
-        @Override
-        public SixPieceLayout createFromParcel(Parcel source) {
-            return new SixPieceLayout(source);
-        }
-
-        @Override
-        public SixPieceLayout[] newArray(int size) {
-            return new SixPieceLayout[size];
-        }
-    };
 }

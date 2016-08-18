@@ -25,7 +25,6 @@ import java.util.List;
  */
 public class PuzzleView extends View {
     private static final String TAG = "PhotoLayoutView";
-    private float mExtraBorderSize = 50f;
 
     private enum Mode {
         NONE,
@@ -44,6 +43,7 @@ public class PuzzleView extends View {
     private PuzzleLayout mPuzzleLayout;
 
     private float mBorderWidth = 3;
+    private float mExtraSize = 60;
 
     private float mDownX;
     private float mDownY;
@@ -59,6 +59,7 @@ public class PuzzleView extends View {
 
     private boolean mNeedDrawBorder = false;
     private boolean mMoveLineEnable = true;
+    private boolean mNeedDrawOuterBorder = false;
 
     public PuzzleView(Context context) {
         this(context, null, 0);
@@ -111,8 +112,10 @@ public class PuzzleView extends View {
         }
 
         //draw outer line
-        for (Line line : mPuzzleLayout.getOuterLines()) {
-            drawLine(canvas, line);
+        if (mNeedDrawOuterBorder) {
+            for (Line line : mPuzzleLayout.getOuterLines()) {
+                drawLine(canvas, line);
+            }
         }
 
     }
@@ -252,9 +255,9 @@ public class PuzzleView extends View {
         final RectF rectF = piece.getBorder().getRect();
         float scale;
         if (piece.getWidth() * rectF.height() > rectF.width() * piece.getHeight()) {
-            scale = (rectF.height() + mExtraBorderSize) / piece.getHeight();
+            scale = (rectF.height() + mExtraSize) / piece.getHeight();
         } else {
-            scale = (rectF.width() + mExtraBorderSize) / piece.getWidth();
+            scale = (rectF.width() + mExtraSize) / piece.getWidth();
         }
         return scale;
     }
@@ -306,9 +309,9 @@ public class PuzzleView extends View {
 
         List<PuzzlePiece> puzzlePieces = new ArrayList<>();
 
-        for (PuzzlePiece photo : mPuzzlePieces) {
-            if (photo.getBorder().contains(mHandlingLine)) {
-                puzzlePieces.add(photo);
+        for (PuzzlePiece piece : mPuzzlePieces) {
+            if (piece.getBorder().contains(mHandlingLine)) {
+                puzzlePieces.add(piece);
             }
         }
 
@@ -381,7 +384,9 @@ public class PuzzleView extends View {
         if (mPuzzlePieces.size() != 0) {
             for (int i = 0; i < mPuzzlePieces.size(); i++) {
                 PuzzlePiece piece = mPuzzlePieces.get(i);
-                piece.setMatrix(BorderUtil.createMatrix(mPuzzleLayout.getBorder(i), piece.getWidth(), piece.getHeight(), mExtraBorderSize));
+                piece.setBorder(mPuzzleLayout.getBorder(i));
+                piece.getMatrix().set(
+                        BorderUtil.createMatrix(mPuzzleLayout.getBorder(i), piece.getWidth(), piece.getHeight(), mExtraSize));
             }
         }
 
@@ -399,11 +404,31 @@ public class PuzzleView extends View {
             return;
         }
 
-        Matrix matrix = BorderUtil.createMatrix(mPuzzleLayout.getBorder(index), bitmap, mExtraBorderSize);
+        Matrix matrix = BorderUtil.createMatrix(mPuzzleLayout.getBorder(index), bitmap, mExtraSize);
 
         BitmapPiece layoutPhoto = new BitmapPiece(bitmap, mPuzzleLayout.getBorder(index), matrix);
 
         mPuzzlePieces.add(layoutPhoto);
+
+        invalidate();
+    }
+
+    public void addPieces(final List<Bitmap> bitmaps) {
+        for (Bitmap bitmap : bitmaps) {
+            int index = mPuzzlePieces.size();
+
+            if (index >= mPuzzleLayout.getBorderSize()) {
+                Log.e(TAG, "addPiece: can not add more. the current puzzle layout can contains "
+                        + mPuzzleLayout.getBorderSize() + " puzzle piece.");
+                return;
+            }
+
+            Matrix matrix = BorderUtil.createMatrix(mPuzzleLayout.getBorder(index), bitmap, mExtraSize);
+
+            BitmapPiece layoutPhoto = new BitmapPiece(bitmap, mPuzzleLayout.getBorder(index), matrix);
+
+            mPuzzlePieces.add(layoutPhoto);
+        }
 
         invalidate();
     }
@@ -456,14 +481,6 @@ public class PuzzleView extends View {
         invalidate();
     }
 
-    public float getExtraBorderSize() {
-        return mExtraBorderSize;
-    }
-
-    public void setExtraBorderSize(float extraBorder) {
-        mExtraBorderSize = extraBorder;
-    }
-
     public boolean isMoveLineEnable() {
         return mMoveLineEnable;
     }
@@ -471,4 +488,26 @@ public class PuzzleView extends View {
     public void setMoveLineEnable(boolean moveLineEnable) {
         mMoveLineEnable = moveLineEnable;
     }
+
+    public float getExtraSize() {
+        return mExtraSize;
+    }
+
+    public void setExtraSize(float extraSize) {
+        if (extraSize < 0) {
+            Log.e(TAG, "setExtraSize: the extra size must be greater than 0");
+            mExtraSize = 0;
+        } else {
+            mExtraSize = extraSize;
+        }
+    }
+
+    public boolean isNeedDrawOuterBorder() {
+        return mNeedDrawOuterBorder;
+    }
+
+    public void setNeedDrawOuterBorder(boolean needDrawOuterBorder) {
+        mNeedDrawOuterBorder = needDrawOuterBorder;
+    }
+
 }

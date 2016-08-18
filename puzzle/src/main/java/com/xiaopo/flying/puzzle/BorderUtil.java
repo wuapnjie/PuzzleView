@@ -102,11 +102,11 @@ class BorderUtil {
     /**
      * create a matrix which let bitmap centerCrop in the border rect
      */
-    static Matrix createMatrix(Border border, Bitmap bitmap, float extra) {
-        return createMatrix(border,bitmap.getWidth(),bitmap.getHeight(),extra);
+    static Matrix createMatrix(Border border, Bitmap bitmap, float extraSize) {
+        return createMatrix(border, bitmap.getWidth(), bitmap.getHeight(), extraSize);
     }
 
-    static Matrix createMatrix(Border border, int width, int height, float extra) {
+    static Matrix createMatrix(Border border, int width, int height, float extraSize) {
         final RectF rectF = border.getRect();
 
         Matrix matrix = new Matrix();
@@ -119,9 +119,9 @@ class BorderUtil {
         float scale;
 
         if (width * rectF.height() > rectF.width() * height) {
-            scale = (rectF.height() + extra) / height;
+            scale = (rectF.height() + extraSize) / height;
         } else {
-            scale = (rectF.width() + extra) / width;
+            scale = (rectF.width() + extraSize) / width;
         }
 
         matrix.postScale(scale, scale, rectF.centerX(), rectF.centerY());

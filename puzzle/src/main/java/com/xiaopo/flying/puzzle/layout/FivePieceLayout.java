@@ -96,30 +96,4 @@ public class FivePieceLayout extends NumberPieceLayout {
                 break;
         }
     }
-
-    @Override
-    public int describeContents() {
-        return 0;
-    }
-
-    @Override
-    public void writeToParcel(Parcel dest, int flags) {
-        super.writeToParcel(dest, flags);
-    }
-
-    protected FivePieceLayout(Parcel in) {
-        super(in);
-    }
-
-    public static final Creator<FivePieceLayout> CREATOR = new Creator<FivePieceLayout>() {
-        @Override
-        public FivePieceLayout createFromParcel(Parcel source) {
-            return new FivePieceLayout(source);
-        }
-
-        @Override
-        public FivePieceLayout[] newArray(int size) {
-            return new FivePieceLayout[size];
-        }
-    };
 }

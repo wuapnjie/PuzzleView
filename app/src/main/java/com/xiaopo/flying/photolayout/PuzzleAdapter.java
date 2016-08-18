@@ -2,13 +2,13 @@ package com.xiaopo.flying.photolayout;
 
 import android.graphics.Bitmap;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
 import com.xiaopo.flying.puzzle.PuzzleLayout;
 import com.xiaopo.flying.puzzle.SquarePuzzleView;
-import com.xiaopo.flying.puzzle.layout.NumberPieceLayout;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -42,20 +42,14 @@ public class PuzzleAdapter extends RecyclerView.Adapter<PuzzleAdapter.PuzzleView
                 holder.mPuzzleView.addPiece(mBitmapData.get(i % bitmapSize));
             }
         } else {
-            for (Bitmap bitmap : mBitmapData) {
-                holder.mPuzzleView.addPiece(bitmap);
-            }
+            holder.mPuzzleView.addPieces(mBitmapData);
         }
 
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (mOnItemClickListener != null) {
-                    if (puzzleLayout instanceof NumberPieceLayout) {
-                        mOnItemClickListener.onItemClick(puzzleLayout, ((NumberPieceLayout) puzzleLayout).getTheme());
-                    } else {
-                        mOnItemClickListener.onItemClick(puzzleLayout, 0);
-                    }
+                    mOnItemClickListener.onItemClick(puzzleLayout, puzzleLayout.getTheme());
                 }
             }
         });
@@ -69,6 +63,8 @@ public class PuzzleAdapter extends RecyclerView.Adapter<PuzzleAdapter.PuzzleView
     public void refreshData(List<PuzzleLayout> layoutData, List<Bitmap> bitmapData) {
         mLayoutData = layoutData;
         mBitmapData = bitmapData;
+
+        Log.e("PuzzleAdapter", "refreshData: ---");
 
         notifyDataSetChanged();
     }

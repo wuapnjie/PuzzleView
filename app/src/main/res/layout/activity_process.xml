@@ -1,17 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/activity_main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@android:color/black"
-    android:orientation="vertical"
-    tools:context="com.xiaopo.flying.photolayout.MainActivity">
+    android:fitsSystemWindows="true"
+    tools:context="com.xiaopo.flying.photolayout.ProcessActivity">
 
-    <LinearLayout
+    <android.support.design.widget.AppBarLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical">
+        android:theme="@style/AppTheme.AppBarOverlay">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -19,12 +19,12 @@
             android:orientation="horizontal">
 
             <ImageView
-                android:id="@+id/btn_cancel"
+                android:id="@+id/btn_back"
                 android:layout_width="50dp"
                 android:layout_height="50dp"
                 android:background="?attr/selectableItemBackgroundBorderless"
                 android:scaleType="center"
-                android:src="@drawable/ic_close_white_24dp" />
+                android:src="@drawable/ic_arrow_back_white_24dp" />
 
             <View
                 android:layout_width="0.5dp"
@@ -37,32 +37,23 @@
                 android:layout_height="match_parent"
                 android:layout_marginLeft="8dp"
                 android:gravity="center_vertical"
-                android:text="选择布局"
+                android:text="编辑"
                 android:textColor="@android:color/white"
                 android:textSize="18sp" />
 
         </LinearLayout>
 
-        <android.support.v7.widget.RecyclerView
-            android:id="@+id/puzzle_list"
-            android:layout_width="match_parent"
-            android:layout_height="150dp">
+    </android.support.design.widget.AppBarLayout>
 
-        </android.support.v7.widget.RecyclerView>
+    <include layout="@layout/content_process" />
 
-        <ImageView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:paddingBottom="8dp"
-            android:src="@drawable/ic_name" />
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/fab"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|end"
+        android:layout_margin="@dimen/fab_margin"
+        app:srcCompat="@drawable/ic_share_black_24dp"
+        app:useCompatPadding="true" />
 
-    </LinearLayout>
-
-    <android.support.v7.widget.RecyclerView
-        android:id="@+id/photo_list"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
-
-    </android.support.v7.widget.RecyclerView>
-
-</LinearLayout>
+</android.support.design.widget.CoordinatorLayout>

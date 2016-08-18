@@ -69,29 +69,4 @@ public class NinePieceLayout extends NumberPieceLayout {
         }
     }
 
-    @Override
-    public int describeContents() {
-        return 0;
-    }
-
-    @Override
-    public void writeToParcel(Parcel dest, int flags) {
-        super.writeToParcel(dest, flags);
-    }
-
-    protected NinePieceLayout(Parcel in) {
-        super(in);
-    }
-
-    public static final Creator<NinePieceLayout> CREATOR = new Creator<NinePieceLayout>() {
-        @Override
-        public NinePieceLayout createFromParcel(Parcel source) {
-            return new NinePieceLayout(source);
-        }
-
-        @Override
-        public NinePieceLayout[] newArray(int size) {
-            return new NinePieceLayout[size];
-        }
-    };
 }

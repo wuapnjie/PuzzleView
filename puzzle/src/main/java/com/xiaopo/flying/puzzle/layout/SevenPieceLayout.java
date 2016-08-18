@@ -73,29 +73,4 @@ public class SevenPieceLayout extends NumberPieceLayout {
         }
     }
 
-    @Override
-    public int describeContents() {
-        return 0;
-    }
-
-    @Override
-    public void writeToParcel(Parcel dest, int flags) {
-        super.writeToParcel(dest, flags);
-    }
-
-    protected SevenPieceLayout(Parcel in) {
-        super(in);
-    }
-
-    public static final Creator<SevenPieceLayout> CREATOR = new Creator<SevenPieceLayout>() {
-        @Override
-        public SevenPieceLayout createFromParcel(Parcel source) {
-            return new SevenPieceLayout(source);
-        }
-
-        @Override
-        public SevenPieceLayout[] newArray(int size) {
-            return new SevenPieceLayout[size];
-        }
-    };
 }
