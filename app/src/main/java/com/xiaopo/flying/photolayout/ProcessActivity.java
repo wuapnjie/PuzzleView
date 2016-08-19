@@ -150,8 +150,6 @@ public class ProcessActivity extends AppCompatActivity implements View.OnClickLi
 
             Picasso.with(this)
                     .load(resIds[i])
-//                    .resize(mDeviceWidth, mDeviceWidth)
-//                    .centerInside()
                     .config(Bitmap.Config.RGB_565)
                     .into(target);
 

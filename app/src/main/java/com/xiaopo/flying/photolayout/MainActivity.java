@@ -133,6 +133,7 @@ public class MainActivity extends AppCompatActivity {
                 message.obj = photo.getPath();
                 mPuzzleHandler.sendMessage(message);
 
+                //prefetch the photo
                 Picasso.with(MainActivity.this)
                         .load("file:///" + photo.getPath())
                         .resize(mDeviceWidth, mDeviceWidth)
@@ -165,6 +166,11 @@ public class MainActivity extends AppCompatActivity {
         btnCancel.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                if (mBitmaps == null || mBitmaps.size() == 0) {
+                    onBackPressed();
+                    return;
+                }
+
                 mArrayBitmaps.clear();
                 mBitmaps.clear();
                 mSelectedPath.clear();

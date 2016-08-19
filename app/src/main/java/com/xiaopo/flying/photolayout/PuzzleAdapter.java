@@ -33,11 +33,12 @@ public class PuzzleAdapter extends RecyclerView.Adapter<PuzzleAdapter.PuzzleView
     @Override
     public void onBindViewHolder(PuzzleViewHolder holder, int position) {
         final PuzzleLayout puzzleLayout = mLayoutData.get(position);
-        holder.mPuzzleView.setPuzzleLayout(puzzleLayout);
 
         holder.mPuzzleView.setNeedDrawBorder(mNeedDrawBorder);
         holder.mPuzzleView.setNeedDrawOuterBorder(mNeedDrawOuterBorder);
         holder.mPuzzleView.setMoveLineEnable(false);
+
+        holder.mPuzzleView.setPuzzleLayout(puzzleLayout);
 
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
