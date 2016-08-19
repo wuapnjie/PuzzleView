@@ -117,16 +117,19 @@ public class PuzzleView extends View {
             return;
         }
 
-
         //draw piece
         for (int i = 0; i < mPuzzleLayout.getBorderSize(); i++) {
             Border border = mPuzzleLayout.getBorder(i);
+            PuzzlePiece piece = mPuzzlePieces.get(i);
             canvas.save();
             canvas.clipRect(border.getRect());
-            if (mPuzzlePieces.size() > i)
-                mPuzzlePieces.get(i).draw(canvas, mBitmapPaint);
+            if (mPuzzlePieces.size() > i) {
+                piece.draw(canvas, mBitmapPaint);
+            }
+
             canvas.restore();
         }
+
 
         //draw divide line
         if (mNeedDrawBorder) {
@@ -305,6 +308,18 @@ public class PuzzleView extends View {
     private void fillBorder(PuzzlePiece piece) {
         piece.getMatrix().reset();
 
+        if (piece.getRotation() != 0) {
+            rotate(piece, piece.getRotation(), false);
+        }
+
+        if (piece.isNeedHorizontalFlip()) {
+            flipHorizontally(piece, false);
+        }
+
+        if (piece.isNeedVerticalFlip()) {
+            flipVertically(piece, false);
+        }
+
         final RectF rectF = piece.getBorder().getRect();
 
         float offsetX = rectF.centerX() - piece.getWidth() / 2;
@@ -323,10 +338,18 @@ public class PuzzleView extends View {
     private float calculateFillScaleFactor(PuzzlePiece piece) {
         final RectF rectF = piece.getBorder().getRect();
         float scale;
-        if (piece.getWidth() * rectF.height() > rectF.width() * piece.getHeight()) {
-            scale = (rectF.height() + mExtraSize) / piece.getHeight();
+        if (piece.getRotation() != 90 || piece.getRotation() != 270) {
+            if (piece.getHeight() * rectF.height() > rectF.width() * piece.getWidth()) {
+                scale = (rectF.height() + mExtraSize) / piece.getWidth();
+            } else {
+                scale = (rectF.width() + mExtraSize) / piece.getHeight();
+            }
         } else {
-            scale = (rectF.width() + mExtraSize) / piece.getWidth();
+            if (piece.getWidth() * rectF.height() > rectF.width() * piece.getHeight()) {
+                scale = (rectF.height() + mExtraSize) / piece.getHeight();
+            } else {
+                scale = (rectF.width() + mExtraSize) / piece.getWidth();
+            }
         }
         return scale;
     }
@@ -463,6 +486,54 @@ public class PuzzleView extends View {
 
     }
 
+    public void flipHorizontally() {
+        flipHorizontally(mHandlingPiece, true);
+    }
+
+    public void flipVertically() {
+        flipVertically(mHandlingPiece, true);
+    }
+
+    private void flipHorizontally(PuzzlePiece piece, boolean needChangeStatus) {
+        if (piece == null) return;
+        if (needChangeStatus) {
+            piece.setNeedHorizontalFlip(!piece.isNeedHorizontalFlip());
+        }
+        piece.getMatrix().postScale(-1, 1, piece.getMappedCenterPoint().x, piece.getMappedCenterPoint().y);
+
+        invalidate();
+    }
+
+    private void flipVertically(PuzzlePiece piece, boolean needChangeStatus) {
+        if (piece == null) return;
+        if (needChangeStatus) {
+            piece.setNeedVerticalFlip(!piece.isNeedVerticalFlip());
+        }
+        piece.getMatrix().postScale(1, -1, piece.getMappedCenterPoint().x, piece.getMappedCenterPoint().y);
+
+        invalidate();
+    }
+
+    public void rotate(float rotate) {
+        rotate(mHandlingPiece, rotate, true);
+    }
+
+    private void rotate(PuzzlePiece piece, float rotate, boolean needChangeStatus) {
+        if (piece == null) return;
+        if (needChangeStatus) {
+            piece.setRotation((piece.getRotation() + rotate) % 360f);
+        }
+
+        if (needChangeStatus) {
+            piece.getMatrix().postRotate(rotate, piece.getMappedCenterPoint().x, piece.getMappedCenterPoint().y);
+            fillBorder(piece);
+        } else {
+            piece.getMatrix().postRotate(piece.getRotation(), piece.getMappedCenterPoint().x, piece.getMappedCenterPoint().y);
+        }
+
+        invalidate();
+    }
+
 
     public void addPiece(final Bitmap bitmap) {
         addPiece(new BitmapDrawable(getResources(), bitmap));
@@ -577,12 +648,12 @@ public class PuzzleView extends View {
         mNeedDrawOuterBorder = needDrawOuterBorder;
     }
 
-    public void setBorderColor(@ColorInt int color){
+    public void setBorderColor(@ColorInt int color) {
         mBorderPaint.setColor(color);
         invalidate();
     }
 
-    public void setSelectedBorderColor(@ColorInt int color){
+    public void setSelectedBorderColor(@ColorInt int color) {
         mSelectedBorderPaint.setColor(color);
         invalidate();
     }

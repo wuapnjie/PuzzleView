@@ -22,11 +22,39 @@ public abstract class PuzzlePiece {
     private float mTranslateY = 0f;
     private float mScaleFactor = 0f;
 
+    private boolean mNeedHorizontalFlip = false;
+    private boolean mNeedVerticalFlip = false;
+
+    private float mRotation = 0f;
 
     public PuzzlePiece(Matrix matrix, Border border) {
         mMatrix = matrix;
         mBorder = border;
         mDownMatrix = new Matrix();
+    }
+
+    public float getRotation() {
+        return mRotation;
+    }
+
+    public void setRotation(float rotation) {
+        mRotation = rotation;
+    }
+
+    public boolean isNeedHorizontalFlip() {
+        return mNeedHorizontalFlip;
+    }
+
+    public void setNeedHorizontalFlip(boolean needHorizontalFlip) {
+        mNeedHorizontalFlip = needHorizontalFlip;
+    }
+
+    public boolean isNeedVerticalFlip() {
+        return mNeedVerticalFlip;
+    }
+
+    public void setNeedVerticalFlip(boolean needVerticalFlip) {
+        mNeedVerticalFlip = needVerticalFlip;
     }
 
     public float getTranslateX() {
@@ -140,6 +168,7 @@ public abstract class PuzzlePiece {
         return mBorder.getRect().contains(x, y);
     }
 
+    //TODO after rotate it will invalid
     public boolean isFilledBorder() {
         RectF rectF = getMappedBound();
         return !(rectF.left > mBorder.left()

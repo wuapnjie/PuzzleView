@@ -27,6 +27,7 @@ public class FileUtil {
                 return "";
             }
         }
+
         return mediaStorageDir.getAbsolutePath();
     }
 

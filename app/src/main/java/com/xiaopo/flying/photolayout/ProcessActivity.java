@@ -148,10 +148,13 @@ public class ProcessActivity extends AppCompatActivity implements View.OnClickLi
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.btn_replace:
+                mPuzzleView.rotate(90f);
                 break;
             case R.id.btn_flip_horizontal:
+                mPuzzleView.flipHorizontally();
                 break;
             case R.id.btn_flip_vertical:
+                mPuzzleView.flipVertically();
                 break;
             case R.id.btn_border:
                 mPuzzleView.setNeedDrawBorder(!mPuzzleView.isNeedDrawBorder());

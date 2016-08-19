@@ -64,8 +64,6 @@ public class PuzzleAdapter extends RecyclerView.Adapter<PuzzleAdapter.PuzzleView
         mLayoutData = layoutData;
         mBitmapData = bitmapData;
 
-        Log.e("PuzzleAdapter", "refreshData: ---");
-
         notifyDataSetChanged();
     }
 
