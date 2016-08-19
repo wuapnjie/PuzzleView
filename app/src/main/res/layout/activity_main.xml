@@ -33,13 +33,21 @@
                 android:background="#BBFFFFFF" />
 
             <TextView
-                android:layout_width="match_parent"
+                android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_marginLeft="8dp"
+                android:layout_weight="1"
                 android:gravity="center_vertical"
-                android:text="选择布局"
+                android:text="@string/prompt.select.layout"
                 android:textColor="@android:color/white"
                 android:textSize="18sp" />
+
+            <ImageView
+                android:id="@+id/btn_more"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:scaleType="centerInside"
+                android:src="@drawable/ic_more_vert_white_24dp" />
 
         </LinearLayout>
 

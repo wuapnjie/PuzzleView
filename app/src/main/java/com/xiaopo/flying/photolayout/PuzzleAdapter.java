@@ -2,7 +2,6 @@ package com.xiaopo.flying.photolayout;
 
 import android.graphics.Bitmap;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -22,6 +21,9 @@ public class PuzzleAdapter extends RecyclerView.Adapter<PuzzleAdapter.PuzzleView
     private List<Bitmap> mBitmapData = new ArrayList<>();
     private OnItemClickListener mOnItemClickListener;
 
+    private boolean mNeedDrawBorder = false;
+    private boolean mNeedDrawOuterBorder = false;
+
     @Override
     public PuzzleViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View itemView = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_puzzle, parent, false);
@@ -32,8 +34,22 @@ public class PuzzleAdapter extends RecyclerView.Adapter<PuzzleAdapter.PuzzleView
     public void onBindViewHolder(PuzzleViewHolder holder, int position) {
         final PuzzleLayout puzzleLayout = mLayoutData.get(position);
         holder.mPuzzleView.setPuzzleLayout(puzzleLayout);
-//        holder.mPuzzleView.setNeedDrawBorder(true);
+
+        holder.mPuzzleView.setNeedDrawBorder(mNeedDrawBorder);
+        holder.mPuzzleView.setNeedDrawOuterBorder(mNeedDrawOuterBorder);
         holder.mPuzzleView.setMoveLineEnable(false);
+
+        holder.itemView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (mOnItemClickListener != null) {
+                    mOnItemClickListener.onItemClick(puzzleLayout, puzzleLayout.getTheme());
+                }
+            }
+        });
+        
+
+        if (mBitmapData == null) return;
 
         final int bitmapSize = mBitmapData.size();
 
@@ -45,14 +61,7 @@ public class PuzzleAdapter extends RecyclerView.Adapter<PuzzleAdapter.PuzzleView
             holder.mPuzzleView.addPieces(mBitmapData);
         }
 
-        holder.itemView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (mOnItemClickListener != null) {
-                    mOnItemClickListener.onItemClick(puzzleLayout, puzzleLayout.getTheme());
-                }
-            }
-        });
+
     }
 
     @Override
@@ -69,6 +78,22 @@ public class PuzzleAdapter extends RecyclerView.Adapter<PuzzleAdapter.PuzzleView
 
     public void setOnItemClickListener(OnItemClickListener onItemClickListener) {
         mOnItemClickListener = onItemClickListener;
+    }
+
+    public boolean isNeedDrawBorder() {
+        return mNeedDrawBorder;
+    }
+
+    public void setNeedDrawBorder(boolean needDrawBorder) {
+        mNeedDrawBorder = needDrawBorder;
+    }
+
+    public boolean isNeedDrawOuterBorder() {
+        return mNeedDrawOuterBorder;
+    }
+
+    public void setNeedDrawOuterBorder(boolean needDrawOuterBorder) {
+        mNeedDrawOuterBorder = needDrawOuterBorder;
     }
 
     public static class PuzzleViewHolder extends RecyclerView.ViewHolder {

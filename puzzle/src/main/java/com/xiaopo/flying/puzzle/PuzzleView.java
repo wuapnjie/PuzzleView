@@ -120,6 +120,11 @@ public class PuzzleView extends View {
         //draw piece
         for (int i = 0; i < mPuzzleLayout.getBorderSize(); i++) {
             Border border = mPuzzleLayout.getBorder(i);
+
+            if (i >= mPuzzlePieces.size()) {
+                break;
+            }
+
             PuzzlePiece piece = mPuzzlePieces.get(i);
             canvas.save();
             canvas.clipRect(border.getRect());
@@ -308,6 +313,16 @@ public class PuzzleView extends View {
     private void fillBorder(PuzzlePiece piece) {
         piece.getMatrix().reset();
 
+        final RectF rectF = piece.getBorder().getRect();
+
+        float offsetX = rectF.centerX() - piece.getWidth() / 2;
+        float offsetY = rectF.centerY() - piece.getHeight() / 2;
+
+        piece.getMatrix().postTranslate(offsetX, offsetY);
+        float scale = calculateFillScaleFactor(piece);
+
+        piece.getMatrix().postScale(scale, scale, rectF.centerX(), rectF.centerY());
+
         if (piece.getRotation() != 0) {
             rotate(piece, piece.getRotation(), false);
         }
@@ -320,15 +335,6 @@ public class PuzzleView extends View {
             flipVertically(piece, false);
         }
 
-        final RectF rectF = piece.getBorder().getRect();
-
-        float offsetX = rectF.centerX() - piece.getWidth() / 2;
-        float offsetY = rectF.centerY() - piece.getHeight() / 2;
-
-        piece.getMatrix().postTranslate(offsetX, offsetY);
-        float scale = calculateFillScaleFactor(piece);
-
-        piece.getMatrix().postScale(scale, scale, rectF.centerX(), rectF.centerY());
 
         piece.setTranslateX(0f);
         piece.setTranslateY(0f);
@@ -338,7 +344,7 @@ public class PuzzleView extends View {
     private float calculateFillScaleFactor(PuzzlePiece piece) {
         final RectF rectF = piece.getBorder().getRect();
         float scale;
-        if (piece.getRotation() != 90 || piece.getRotation() != 270) {
+        if (piece.getRotation() == 90 || piece.getRotation() == 270) {
             if (piece.getHeight() * rectF.height() > rectF.width() * piece.getWidth()) {
                 scale = (rectF.height() + mExtraSize) / piece.getWidth();
             } else {
@@ -509,6 +515,8 @@ public class PuzzleView extends View {
         if (needChangeStatus) {
             piece.setNeedVerticalFlip(!piece.isNeedVerticalFlip());
         }
+
+
         piece.getMatrix().postScale(1, -1, piece.getMappedCenterPoint().x, piece.getMappedCenterPoint().y);
 
         invalidate();
@@ -661,6 +669,9 @@ public class PuzzleView extends View {
 
     public Bitmap createBitmap() {
         mHandlingPiece = null;
+
+        invalidate();
+
         Bitmap bitmap = Bitmap.createBitmap(getWidth(), getHeight(), Bitmap.Config.ARGB_8888);
         Canvas canvas = new Canvas(bitmap);
         this.draw(canvas);
@@ -669,10 +680,14 @@ public class PuzzleView extends View {
     }
 
     public void save(File file) {
-        save(file, 90);
+        save(file, 100, null);
     }
 
-    public void save(File file, int quality) {
+    public void save(File file, Callback callback) {
+        save(file, 100, callback);
+    }
+
+    public void save(File file, int quality, Callback callback) {
         Bitmap bitmap = null;
         FileOutputStream outputStream = null;
 
@@ -695,8 +710,15 @@ public class PuzzleView extends View {
 
             getContext().sendBroadcast(new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE, Uri.fromFile(file)));
 
+            if (callback != null) {
+                callback.onSuccess();
+            }
+
         } catch (FileNotFoundException e) {
             e.printStackTrace();
+            if (callback != null) {
+                callback.onFailed();
+            }
         } finally {
             if (bitmap != null) {
                 bitmap.recycle();
@@ -709,9 +731,13 @@ public class PuzzleView extends View {
                     e.printStackTrace();
                 }
             }
-
         }
 
     }
 
+    public interface Callback {
+        void onSuccess();
+
+        void onFailed();
+    }
 }

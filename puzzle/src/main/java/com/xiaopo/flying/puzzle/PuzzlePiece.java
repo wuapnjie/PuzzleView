@@ -168,7 +168,6 @@ public abstract class PuzzlePiece {
         return mBorder.getRect().contains(x, y);
     }
 
-    //TODO after rotate it will invalid
     public boolean isFilledBorder() {
         RectF rectF = getMappedBound();
         return !(rectF.left > mBorder.left()

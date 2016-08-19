@@ -21,7 +21,8 @@
         <activity
             android:name=".ProcessActivity"
             android:label="@string/title_activity_process"
-            android:theme="@style/AppTheme"></activity>
+            android:theme="@style/AppTheme" />
+        <activity android:name=".PlaygroundActivity"></activity>
     </application>
 
 </manifest>

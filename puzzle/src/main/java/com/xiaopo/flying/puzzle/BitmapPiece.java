@@ -45,7 +45,6 @@ public class BitmapPiece extends PuzzlePiece {
         super.release();
 
         if (mBitmap != null) {
-            mBitmap.recycle();
             mBitmap = null;
         }
     }

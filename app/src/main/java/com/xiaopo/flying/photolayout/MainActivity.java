@@ -9,13 +9,17 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.support.annotation.NonNull;
+import android.support.design.widget.BottomSheetDialog;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.util.ArrayMap;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.PopupMenu;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+import android.view.Gravity;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.Toast;
@@ -170,6 +174,42 @@ public class MainActivity extends AppCompatActivity {
                 mPuzzleHandler.sendEmptyMessage(119);
             }
         });
+
+
+        ImageView btnMore = (ImageView) findViewById(R.id.btn_more);
+        btnMore.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                showMoreDialog(view);
+            }
+        });
+    }
+
+    private void showMoreDialog(View view) {
+        PopupMenu popupMenu = new PopupMenu(this, view, Gravity.BOTTOM);
+        popupMenu.inflate(R.menu.menu_main);
+        popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem item) {
+                switch (item.getItemId()) {
+                    case R.id.action_playground:
+                        Intent intent = new Intent(MainActivity.this, PlaygroundActivity.class);
+                        startActivity(intent);
+                        break;
+                    case R.id.action_about:
+                        showAboutInfo();
+                        break;
+                }
+                return false;
+            }
+        });
+        popupMenu.show();
+    }
+
+    private void showAboutInfo() {
+        BottomSheetDialog bottomSheetDialog = new BottomSheetDialog(this);
+        bottomSheetDialog.setContentView(R.layout.about_info);
+        bottomSheetDialog.show();
     }
 
     @Override

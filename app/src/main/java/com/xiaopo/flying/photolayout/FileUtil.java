@@ -31,9 +31,6 @@ public class FileUtil {
         return mediaStorageDir.getAbsolutePath();
     }
 
-    /**
-     * 判断sd卡是否可以用
-     */
     private static boolean isSDAvailable() {
         return Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED);
     }

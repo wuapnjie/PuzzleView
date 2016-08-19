@@ -30,7 +30,7 @@ public class Line {
     private Line mUpperLine;
     private Line mLowerLine;
 
-    private RectF mBound = new RectF();
+    private final RectF mBound = new RectF();
 
     @Override
     public String toString() {
