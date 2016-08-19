@@ -2,8 +2,9 @@ package com.xiaopo.flying.puzzle;
 
 import android.graphics.PointF;
 import android.graphics.RectF;
-import android.os.Parcel;
-import android.os.Parcelable;
+
+import java.util.Arrays;
+import java.util.List;
 
 /**
  * the border to layout puzzle piece
@@ -14,7 +15,7 @@ import android.os.Parcelable;
  * <p>
  * Created by snowbean on 16-8-13.
  */
-class Border{
+class Border {
     Line lineLeft;
     Line lineTop;
     Line lineRight;
@@ -77,6 +78,10 @@ class Border{
 
     float centerY() {
         return bottom() - top();
+    }
+
+    List<Line> getLines() {
+        return Arrays.asList(lineLeft, lineTop, lineRight, lineBottom);
     }
 
     RectF getRect() {

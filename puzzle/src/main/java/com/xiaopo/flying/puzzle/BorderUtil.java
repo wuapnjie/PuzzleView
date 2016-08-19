@@ -4,6 +4,7 @@ import android.graphics.Bitmap;
 import android.graphics.Matrix;
 import android.graphics.PointF;
 import android.graphics.RectF;
+import android.graphics.drawable.Drawable;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -105,6 +106,11 @@ class BorderUtil {
     static Matrix createMatrix(Border border, Bitmap bitmap, float extraSize) {
         return createMatrix(border, bitmap.getWidth(), bitmap.getHeight(), extraSize);
     }
+
+    static Matrix createMatrix(Border border, Drawable drawable, float extraSize) {
+        return createMatrix(border, drawable.getIntrinsicWidth(), drawable.getIntrinsicHeight(), extraSize);
+    }
+
 
     static Matrix createMatrix(Border border, int width, int height, float extraSize) {
         final RectF rectF = border.getRect();

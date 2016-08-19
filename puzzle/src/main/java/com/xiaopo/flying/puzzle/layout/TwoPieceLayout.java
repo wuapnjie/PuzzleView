@@ -1,6 +1,5 @@
 package com.xiaopo.flying.puzzle.layout;
 
-import android.os.Parcel;
 import android.util.Log;
 
 import com.xiaopo.flying.puzzle.Line;
@@ -26,7 +25,7 @@ public class TwoPieceLayout extends NumberPieceLayout {
 
     @Override
     public int getThemeCount() {
-        return 2;
+        return 7;
     }
 
     @Override
@@ -37,6 +36,21 @@ public class TwoPieceLayout extends NumberPieceLayout {
                 break;
             case 1:
                 addLine(getOuterBorder(), Line.Direction.VERTICAL, mRadio);
+                break;
+            case 2:
+                addLine(getOuterBorder(), Line.Direction.HORIZONTAL, 1f / 3);
+                break;
+            case 3:
+                addLine(getOuterBorder(), Line.Direction.HORIZONTAL, 2f / 3);
+                break;
+            case 4:
+                addLine(getOuterBorder(), Line.Direction.VERTICAL, 1f / 3);
+                break;
+            case 5:
+                addLine(getOuterBorder(), Line.Direction.VERTICAL, 2f / 3);
+                break;
+            case 6:
+                addCross(getOuterBorder(), 1f / 2);
                 break;
             default:
                 addLine(getOuterBorder(), Line.Direction.HORIZONTAL, mRadio);

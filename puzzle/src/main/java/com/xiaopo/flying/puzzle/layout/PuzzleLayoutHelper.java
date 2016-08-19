@@ -22,7 +22,7 @@ public class PuzzleLayoutHelper {
                 }
                 break;
             case 2:
-                for (int i = 0; i < 2; i++) {
+                for (int i = 0; i < 7 ; i++) {
                     puzzleLayouts.add(new TwoPieceLayout(i));
                 }
                 break;

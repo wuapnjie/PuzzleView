@@ -2,15 +2,13 @@ package com.xiaopo.flying.puzzle;
 
 import android.graphics.PointF;
 import android.graphics.RectF;
-import android.os.Parcel;
-import android.os.Parcelable;
 import android.util.Log;
 
 /**
  * the line to divide the rect border
  * Created by snowbean on 16-8-13.
  */
-public class Line{
+public class Line {
 
     public enum Direction {
         HORIZONTAL,
@@ -32,7 +30,7 @@ public class Line{
     private Line mUpperLine;
     private Line mLowerLine;
 
-    private RectF rectF = new RectF();
+    private RectF mBound = new RectF();
 
     @Override
     public String toString() {
@@ -83,6 +81,10 @@ public class Line{
         return (float) Math.sqrt(Math.pow(end.x - start.x, 2) + Math.pow(end.y - start.y, 2));
     }
 
+    public PointF centerPoint() {
+        return new PointF((end.x - start.x) / 2, (end.y - start.y) / 2);
+    }
+
     public float getPosition() {
         if (direction == Direction.HORIZONTAL) {
             return start.y;
@@ -93,18 +95,44 @@ public class Line{
 
     public boolean contains(float x, float y, float extra) {
         if (direction == Direction.HORIZONTAL) {
-            rectF.left = start.x;
-            rectF.right = end.x;
-            rectF.top = start.y - extra / 2;
-            rectF.bottom = start.y + extra / 2;
+            mBound.left = start.x;
+            mBound.right = end.x;
+            mBound.top = start.y - extra / 2;
+            mBound.bottom = start.y + extra / 2;
         } else if (direction == Direction.VERTICAL) {
-            rectF.top = start.y;
-            rectF.bottom = end.y;
-            rectF.left = start.x - extra / 2;
-            rectF.right = start.x + extra / 2;
+            mBound.top = start.y;
+            mBound.bottom = end.y;
+            mBound.left = start.x - extra / 2;
+            mBound.right = start.x + extra / 2;
         }
 
-        return rectF.contains(x, y);
+        return mBound.contains(x, y);
+    }
+
+    public RectF getCenterBound(float position, float length, float borderStrokeWidth, boolean isStartLine) {
+        if (direction == Direction.HORIZONTAL) {
+            mBound.left = position - length / 4;
+            mBound.right = position + length / 4;
+            if (isStartLine) {
+                mBound.top = start.y - borderStrokeWidth * 1.5f + borderStrokeWidth / 2;
+                mBound.bottom = start.y + borderStrokeWidth * 1.5f + borderStrokeWidth / 2;
+            } else {
+                mBound.top = start.y - borderStrokeWidth * 1.5f - borderStrokeWidth / 2;
+                mBound.bottom = start.y + borderStrokeWidth * 1.5f - borderStrokeWidth / 2;
+            }
+        } else if (direction == Direction.VERTICAL) {
+            mBound.top = position - length / 4;
+            mBound.bottom = position + length / 4;
+            if (isStartLine) {
+                mBound.left = start.x - borderStrokeWidth * 1.5f + borderStrokeWidth / 2;
+                mBound.right = start.x + borderStrokeWidth * 1.5f + borderStrokeWidth / 2;
+            } else {
+                mBound.left = start.x - borderStrokeWidth * 1.5f - borderStrokeWidth / 2;
+                mBound.right = start.x + borderStrokeWidth * 1.5f - borderStrokeWidth / 2;
+            }
+        }
+
+        return mBound;
     }
 
     public void update() {

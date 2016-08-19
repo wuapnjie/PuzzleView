@@ -32,7 +32,7 @@ public class PuzzleAdapter extends RecyclerView.Adapter<PuzzleAdapter.PuzzleView
     public void onBindViewHolder(PuzzleViewHolder holder, int position) {
         final PuzzleLayout puzzleLayout = mLayoutData.get(position);
         holder.mPuzzleView.setPuzzleLayout(puzzleLayout);
-        holder.mPuzzleView.setNeedDrawBorder(true);
+//        holder.mPuzzleView.setNeedDrawBorder(true);
         holder.mPuzzleView.setMoveLineEnable(false);
 
         final int bitmapSize = mBitmapData.size();

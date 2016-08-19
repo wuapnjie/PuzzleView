@@ -1,6 +1,7 @@
 package com.xiaopo.flying.puzzle;
 
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
@@ -8,12 +9,21 @@ import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.PointF;
 import android.graphics.RectF;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
+import android.net.Uri;
+import android.provider.MediaStore;
+import android.support.annotation.ColorInt;
 import android.support.v4.view.MotionEventCompat;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -37,12 +47,14 @@ public class PuzzleView extends View {
 
     private Paint mBitmapPaint;
     private Paint mBorderPaint;
+    private Paint mSelectedBorderPaint;
 
     private RectF mBorderRect;
+    private RectF mSelectedRect;
 
     private PuzzleLayout mPuzzleLayout;
 
-    private float mBorderWidth = 3;
+    private float mBorderWidth = 4;
     private float mExtraSize = 60;
 
     private float mDownX;
@@ -55,6 +67,7 @@ public class PuzzleView extends View {
 
     private Line mHandlingLine;
     private PuzzlePiece mHandlingPiece;
+    private PuzzlePiece mPreviewHandlingPiece;
     private List<PuzzlePiece> mChangedPhotos = new ArrayList<>();
 
     private boolean mNeedDrawBorder = false;
@@ -73,6 +86,7 @@ public class PuzzleView extends View {
         super(context, attrs, defStyleAttr);
 
         mBorderRect = new RectF();
+        mSelectedRect = new RectF();
 
         mBitmapPaint = new Paint();
         mBitmapPaint.setAntiAlias(true);
@@ -83,6 +97,13 @@ public class PuzzleView extends View {
         mBorderPaint.setAntiAlias(true);
         mBorderPaint.setColor(Color.WHITE);
         mBorderPaint.setStrokeWidth(mBorderWidth);
+
+        mSelectedBorderPaint = new Paint();
+
+        mSelectedBorderPaint.setAntiAlias(true);
+        mSelectedBorderPaint.setStyle(Paint.Style.STROKE);
+        mSelectedBorderPaint.setColor(Color.parseColor("#99BBFB"));
+        mSelectedBorderPaint.setStrokeWidth(mBorderWidth);
 
     }
 
@@ -96,6 +117,8 @@ public class PuzzleView extends View {
             return;
         }
 
+
+        //draw piece
         for (int i = 0; i < mPuzzleLayout.getBorderSize(); i++) {
             Border border = mPuzzleLayout.getBorder(i);
             canvas.save();
@@ -105,6 +128,7 @@ public class PuzzleView extends View {
             canvas.restore();
         }
 
+        //draw divide line
         if (mNeedDrawBorder) {
             for (Line line : mPuzzleLayout.getLines()) {
                 drawLine(canvas, line);
@@ -116,6 +140,39 @@ public class PuzzleView extends View {
             for (Line line : mPuzzleLayout.getOuterLines()) {
                 drawLine(canvas, line);
             }
+        }
+
+        //draw selected border
+        if (mHandlingPiece != null) {
+            mSelectedRect.set(mHandlingPiece.getBorder().getRect());
+
+            mSelectedRect.left += mBorderWidth / 2f;
+            mSelectedRect.top += mBorderWidth / 2f;
+            mSelectedRect.right -= mBorderWidth / 2f;
+            mSelectedRect.bottom -= mBorderWidth / 2f;
+
+
+            canvas.drawRect(mSelectedRect, mSelectedBorderPaint);
+
+            mSelectedBorderPaint.setStyle(Paint.Style.FILL);
+            for (Line line : mHandlingPiece.getBorder().getLines()) {
+                if (mPuzzleLayout.getLines().contains(line)) {
+                    if (line.getDirection() == Line.Direction.HORIZONTAL) {
+                        canvas.drawRoundRect(
+                                line.getCenterBound(mSelectedRect.centerX(), mSelectedRect.width(), mBorderWidth, line == mHandlingPiece.getBorder().lineTop),
+                                mBorderWidth * 2,
+                                mBorderWidth * 2,
+                                mSelectedBorderPaint);
+                    } else if (line.getDirection() == Line.Direction.VERTICAL) {
+                        canvas.drawRoundRect(
+                                line.getCenterBound(mSelectedRect.centerY(), mSelectedRect.height(), mBorderWidth, line == mHandlingPiece.getBorder().lineLeft),
+                                mBorderWidth * 2,
+                                mBorderWidth * 2,
+                                mSelectedBorderPaint);
+                    }
+                }
+            }
+            mSelectedBorderPaint.setStyle(Paint.Style.STROKE);
         }
 
     }
@@ -214,7 +271,19 @@ public class PuzzleView extends View {
                     }
                 }
 
+                if (mCurrentMode == Mode.DRAG) {
+                    if (mPreviewHandlingPiece == mHandlingPiece
+                            && Math.abs(mDownX - event.getX()) < 3
+                            && Math.abs(mDownY - event.getY()) < 3) {
+
+                        mHandlingPiece = null;
+                    }
+
+                    mPreviewHandlingPiece = mHandlingPiece;
+                }
+
                 mCurrentMode = Mode.NONE;
+
                 invalidate();
                 break;
 
@@ -325,9 +394,9 @@ public class PuzzleView extends View {
         }
 
         if (mHandlingLine.getDirection() == Line.Direction.HORIZONTAL) {
-            mHandlingLine.moveTo(event.getY(), 20);
+            mHandlingLine.moveTo(event.getY(), 40);
         } else if (mHandlingLine.getDirection() == Line.Direction.VERTICAL) {
-            mHandlingLine.moveTo(event.getX(), 20);
+            mHandlingLine.moveTo(event.getX(), 40);
         }
 
 
@@ -396,6 +465,19 @@ public class PuzzleView extends View {
 
 
     public void addPiece(final Bitmap bitmap) {
+        addPiece(new BitmapDrawable(getResources(), bitmap));
+    }
+
+    public void addPieces(final List<Bitmap> bitmaps) {
+        for (Bitmap bitmap : bitmaps) {
+            addPiece(bitmap);
+        }
+
+        invalidate();
+    }
+
+
+    public void addPiece(final Drawable drawable) {
         int index = mPuzzlePieces.size();
 
         if (index >= mPuzzleLayout.getBorderSize()) {
@@ -404,34 +486,15 @@ public class PuzzleView extends View {
             return;
         }
 
-        Matrix matrix = BorderUtil.createMatrix(mPuzzleLayout.getBorder(index), bitmap, mExtraSize);
+        Matrix matrix = BorderUtil.createMatrix(mPuzzleLayout.getBorder(index), drawable, mExtraSize);
 
-        BitmapPiece layoutPhoto = new BitmapPiece(bitmap, mPuzzleLayout.getBorder(index), matrix);
+        PuzzlePiece layoutPhoto = new DrawablePiece(drawable, mPuzzleLayout.getBorder(index), matrix);
 
         mPuzzlePieces.add(layoutPhoto);
 
         invalidate();
     }
 
-    public void addPieces(final List<Bitmap> bitmaps) {
-        for (Bitmap bitmap : bitmaps) {
-            int index = mPuzzlePieces.size();
-
-            if (index >= mPuzzleLayout.getBorderSize()) {
-                Log.e(TAG, "addPiece: can not add more. the current puzzle layout can contains "
-                        + mPuzzleLayout.getBorderSize() + " puzzle piece.");
-                return;
-            }
-
-            Matrix matrix = BorderUtil.createMatrix(mPuzzleLayout.getBorder(index), bitmap, mExtraSize);
-
-            BitmapPiece layoutPhoto = new BitmapPiece(bitmap, mPuzzleLayout.getBorder(index), matrix);
-
-            mPuzzlePieces.add(layoutPhoto);
-        }
-
-        invalidate();
-    }
 
     private void drawLine(Canvas canvas, Line line) {
         canvas.drawLine(line.start.x, line.start.y, line.end.x, line.end.y, mBorderPaint);
@@ -480,6 +543,8 @@ public class PuzzleView extends View {
 
     public void setNeedDrawBorder(boolean needDrawBorder) {
         mNeedDrawBorder = needDrawBorder;
+        mHandlingPiece = null;
+        mPreviewHandlingPiece = null;
         invalidate();
     }
 
@@ -510,6 +575,72 @@ public class PuzzleView extends View {
 
     public void setNeedDrawOuterBorder(boolean needDrawOuterBorder) {
         mNeedDrawOuterBorder = needDrawOuterBorder;
+    }
+
+    public void setBorderColor(@ColorInt int color){
+        mBorderPaint.setColor(color);
+        invalidate();
+    }
+
+    public void setSelectedBorderColor(@ColorInt int color){
+        mSelectedBorderPaint.setColor(color);
+        invalidate();
+    }
+
+
+    public Bitmap createBitmap() {
+        mHandlingPiece = null;
+        Bitmap bitmap = Bitmap.createBitmap(getWidth(), getHeight(), Bitmap.Config.ARGB_8888);
+        Canvas canvas = new Canvas(bitmap);
+        this.draw(canvas);
+
+        return bitmap;
+    }
+
+    public void save(File file) {
+        save(file, 90);
+    }
+
+    public void save(File file, int quality) {
+        Bitmap bitmap = null;
+        FileOutputStream outputStream = null;
+
+        try {
+            bitmap = createBitmap();
+            outputStream = new FileOutputStream(file);
+            bitmap.compress(Bitmap.CompressFormat.JPEG, quality, outputStream);
+
+            if (!file.exists()) {
+                Log.e(TAG, "notifySystemGallery: the file do not exist.");
+                return;
+            }
+
+            try {
+                MediaStore.Images.Media.insertImage(getContext().getContentResolver(),
+                        file.getAbsolutePath(), file.getName(), null);
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
+            }
+
+            getContext().sendBroadcast(new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE, Uri.fromFile(file)));
+
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } finally {
+            if (bitmap != null) {
+                bitmap.recycle();
+            }
+
+            if (outputStream != null) {
+                try {
+                    outputStream.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+
+        }
+
     }
 
 }

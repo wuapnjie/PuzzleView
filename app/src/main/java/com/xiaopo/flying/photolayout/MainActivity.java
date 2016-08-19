@@ -97,6 +97,8 @@ public class MainActivity extends AppCompatActivity {
 
         mPhotoAdapter = new PhotoAdapter();
         mPhotoAdapter.setMaxCount(9);
+        mPhotoAdapter.setSelectedResId(R.drawable.photo_selected_shadow);
+
         mPhotoList.setAdapter(mPhotoAdapter);
         mPhotoList.setLayoutManager(new GridLayoutManager(this, 4));
 

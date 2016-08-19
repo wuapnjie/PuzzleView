@@ -10,6 +10,7 @@ import android.graphics.RectF;
  * the puzzle piece , the content can be a bitmap or drawable
  *
  * @see BitmapPiece
+ * @see DrawablePiece
  * <p>
  * Created by snowbean on 16-8-16.
  */

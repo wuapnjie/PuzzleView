@@ -1,6 +1,7 @@
 package com.xiaopo.flying.photolayout;
 
 import android.graphics.Bitmap;
+import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
@@ -59,9 +60,9 @@ public class ProcessActivity extends AppCompatActivity implements View.OnClickLi
                 public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from) {
                     pieces.add(bitmap);
                     if (pieces.size() == count) {
-                        if (mBitmapPaths.size() == 1) {
+                        if (mBitmapPaths.size() < mPuzzleLayout.getBorderSize()) {
                             for (int i = 0; i < mPuzzleLayout.getBorderSize(); i++) {
-                                mPuzzleView.addPiece(bitmap);
+                                mPuzzleView.addPiece(pieces.get(i % count));
                             }
                         } else {
                             mPuzzleView.addPieces(pieces);
@@ -108,19 +109,26 @@ public class ProcessActivity extends AppCompatActivity implements View.OnClickLi
             @Override
             public void onClick(View view) {
                 Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
+                        .setAction("Action", new View.OnClickListener() {
+                            @Override
+                            public void onClick(View view) {
+                                mPuzzleView.save(FileUtil.getNewFile(ProcessActivity.this, "Puzzle"));
+                            }
+                        }).show();
             }
         });
 
         mPuzzleView = (PuzzleView) findViewById(R.id.puzzle_view);
 
-        //the method we can use
+        //TODO the method we can use to change the puzzle view
         mPuzzleView.setPuzzleLayout(mPuzzleLayout);
         mPuzzleView.setMoveLineEnable(true);
         mPuzzleView.setNeedDrawBorder(false);
         mPuzzleView.setNeedDrawOuterBorder(false);
         mPuzzleView.setExtraSize(100);
-        mPuzzleView.setBorderWidth(3);
+        mPuzzleView.setBorderWidth(4);
+        mPuzzleView.setBorderColor(Color.WHITE);
+        mPuzzleView.setSelectedBorderColor(Color.parseColor("#99BBFB"));
 
 
         ImageView btnReplace = (ImageView) findViewById(R.id.btn_replace);
