@@ -15,6 +15,8 @@ import android.widget.TextView;
 
 import com.squareup.picasso.Picasso;
 import com.squareup.picasso.Target;
+import com.xiaopo.flying.poiphoto.Define;
+import com.xiaopo.flying.poiphoto.PhotoPicker;
 import com.xiaopo.flying.puzzle.PuzzleLayout;
 import com.xiaopo.flying.puzzle.PuzzleView;
 
@@ -45,12 +47,12 @@ public class ProcessActivity extends AppCompatActivity implements View.OnClickLi
 
         initView();
 
+        loadPhoto();
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        loadPhoto();
     }
 
     private void loadPhoto() {
@@ -234,8 +236,6 @@ public class ProcessActivity extends AppCompatActivity implements View.OnClickLi
                 if (uri != null) {
                     shareIntent.putExtra(Intent.EXTRA_STREAM, uri);
                     shareIntent.setType("image/*");
-                    //当用户选择短信时使用sms_body取得文字
-                    //自定义选择框的标题
                     startActivity(Intent.createChooser(shareIntent,
                             getString(R.string.prompt_share)));
                 }
@@ -254,6 +254,7 @@ public class ProcessActivity extends AppCompatActivity implements View.OnClickLi
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.btn_replace:
+                showSelectedPhotoDialog();
                 break;
             case R.id.btn_rotate:
                 mPuzzleView.rotate(90f);
@@ -267,6 +268,45 @@ public class ProcessActivity extends AppCompatActivity implements View.OnClickLi
             case R.id.btn_border:
                 mPuzzleView.setNeedDrawBorder(!mPuzzleView.isNeedDrawBorder());
                 break;
+        }
+    }
+
+    private void showSelectedPhotoDialog() {
+        PhotoPicker.newInstance()
+                .setMaxCount(1)
+                .pick(this);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == Define.DEFAULT_REQUEST_CODE && resultCode == RESULT_OK) {
+            List<String> paths = data.getStringArrayListExtra(Define.PATHS);
+            String path = paths.get(0);
+
+            final Target target = new Target() {
+                @Override
+                public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from) {
+                    mPuzzleView.replace(bitmap);
+                }
+
+                @Override
+                public void onBitmapFailed(Drawable errorDrawable) {
+                    Snackbar.make(mPuzzleView,"Replace Failed!",Snackbar.LENGTH_SHORT).show();
+                }
+
+                @Override
+                public void onPrepareLoad(Drawable placeHolderDrawable) {
+
+                }
+            };
+
+            Picasso.with(this)
+                    .load("file:///" + path)
+                    .resize(mDeviceWidth, mDeviceWidth)
+                    .centerInside()
+                    .config(Bitmap.Config.RGB_565)
+                    .into(target);
         }
     }
 }

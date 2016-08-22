@@ -35,14 +35,14 @@ import java.util.List;
  * Created by snowbean on 16-8-16.
  */
 public class PuzzleView extends View {
-    private static final String TAG = "PhotoLayoutView";
+    private static final String TAG = "PuzzleView";
 
     private enum Mode {
         NONE,
         DRAG,
         ZOOM,
         MOVE,
-        REPLACE
+        SWAP
     }
 
     private Mode mCurrentMode = Mode.NONE;
@@ -158,12 +158,12 @@ public class PuzzleView extends View {
         }
 
         //draw selected border
-        if (mHandlingPiece != null && mCurrentMode != Mode.REPLACE) {
+        if (mHandlingPiece != null && mCurrentMode != Mode.SWAP) {
             drawSelectedBorder(canvas, mHandlingPiece);
         }
 
         //TODO
-        if (mHandlingPiece != null && mCurrentMode == Mode.REPLACE) {
+        if (mHandlingPiece != null && mCurrentMode == Mode.SWAP) {
             mHandlingPiece.draw(canvas, mBitmapPaint, 128);
 
             if (mReplacePiece != null) {
@@ -243,7 +243,7 @@ public class PuzzleView extends View {
                         mHandler.postDelayed(new Runnable() {
                             @Override
                             public void run() {
-                                mCurrentMode = Mode.REPLACE;
+                                mCurrentMode = Mode.SWAP;
                                 invalidate();
                                 Log.d(TAG, "run: long pressed");
                             }
@@ -282,7 +282,7 @@ public class PuzzleView extends View {
                         updatePieceInBorder(event);
                         break;
 
-                    case REPLACE:
+                    case SWAP:
                         mReplacePiece = findReplacePiece(event);
                         dragPiece(mHandlingPiece, event);
 
@@ -291,7 +291,7 @@ public class PuzzleView extends View {
                 }
 
                 if ((Math.abs(event.getX() - mDownX) > 10 || Math.abs(event.getY() - mDownY) > 10)
-                        && mCurrentMode != Mode.REPLACE) {
+                        && mCurrentMode != Mode.SWAP) {
                     mHandler.removeCallbacksAndMessages(null);
                 }
 
@@ -322,7 +322,7 @@ public class PuzzleView extends View {
                         }
                         break;
 
-                    case REPLACE:
+                    case SWAP:
                         if (mHandlingPiece != null && mReplacePiece != null) {
                             Drawable temp = mHandlingPiece.getDrawable();
 
@@ -607,6 +607,22 @@ public class PuzzleView extends View {
         invalidate();
 
     }
+
+    public void replace(Bitmap bitmap) {
+        replace(new BitmapDrawable(getResources(), bitmap));
+    }
+
+    public void replace(Drawable bitmapDrawable) {
+        if (mHandlingPiece == null) {
+            return;
+        }
+
+        mHandlingPiece.setDrawable(bitmapDrawable);
+        fillBorder(mHandlingPiece);
+
+        invalidate();
+    }
+
 
     public void flipHorizontally() {
         flipHorizontally(mHandlingPiece, true);
