@@ -12,6 +12,7 @@ import android.graphics.RectF;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
+import android.os.Handler;
 import android.provider.MediaStore;
 import android.support.annotation.ColorInt;
 import android.support.v4.view.MotionEventCompat;
@@ -40,7 +41,8 @@ public class PuzzleView extends View {
         NONE,
         DRAG,
         ZOOM,
-        MOVE
+        MOVE,
+        REPLACE
     }
 
     private Mode mCurrentMode = Mode.NONE;
@@ -68,11 +70,15 @@ public class PuzzleView extends View {
     private Line mHandlingLine;
     private PuzzlePiece mHandlingPiece;
     private PuzzlePiece mPreviewHandlingPiece;
-    private List<PuzzlePiece> mChangedPhotos = new ArrayList<>();
+    private PuzzlePiece mReplacePiece;
+
+    private List<PuzzlePiece> mChangedPieces = new ArrayList<>();
 
     private boolean mNeedDrawBorder = false;
     private boolean mMoveLineEnable = true;
     private boolean mNeedDrawOuterBorder = false;
+
+    private Handler mHandler;
 
     public PuzzleView(Context context) {
         this(context, null, 0);
@@ -105,6 +111,7 @@ public class PuzzleView extends View {
         mSelectedBorderPaint.setColor(Color.parseColor("#99BBFB"));
         mSelectedBorderPaint.setStrokeWidth(mBorderWidth);
 
+        mHandler = new Handler();
     }
 
 
@@ -151,38 +158,58 @@ public class PuzzleView extends View {
         }
 
         //draw selected border
-        if (mHandlingPiece != null) {
-            mSelectedRect.set(mHandlingPiece.getBorder().getRect());
-
-            mSelectedRect.left += mBorderWidth / 2f;
-            mSelectedRect.top += mBorderWidth / 2f;
-            mSelectedRect.right -= mBorderWidth / 2f;
-            mSelectedRect.bottom -= mBorderWidth / 2f;
-
-
-            canvas.drawRect(mSelectedRect, mSelectedBorderPaint);
-
-            mSelectedBorderPaint.setStyle(Paint.Style.FILL);
-            for (Line line : mHandlingPiece.getBorder().getLines()) {
-                if (mPuzzleLayout.getLines().contains(line)) {
-                    if (line.getDirection() == Line.Direction.HORIZONTAL) {
-                        canvas.drawRoundRect(
-                                line.getCenterBound(mSelectedRect.centerX(), mSelectedRect.width(), mBorderWidth, line == mHandlingPiece.getBorder().lineTop),
-                                mBorderWidth * 2,
-                                mBorderWidth * 2,
-                                mSelectedBorderPaint);
-                    } else if (line.getDirection() == Line.Direction.VERTICAL) {
-                        canvas.drawRoundRect(
-                                line.getCenterBound(mSelectedRect.centerY(), mSelectedRect.height(), mBorderWidth, line == mHandlingPiece.getBorder().lineLeft),
-                                mBorderWidth * 2,
-                                mBorderWidth * 2,
-                                mSelectedBorderPaint);
-                    }
-                }
-            }
-            mSelectedBorderPaint.setStyle(Paint.Style.STROKE);
+        if (mHandlingPiece != null && mCurrentMode != Mode.REPLACE) {
+            drawSelectedBorder(canvas, mHandlingPiece);
         }
 
+        //TODO
+        if (mHandlingPiece != null && mCurrentMode == Mode.REPLACE) {
+            mHandlingPiece.draw(canvas, mBitmapPaint, 128);
+
+            if (mReplacePiece != null) {
+                drawSelectedBorder(canvas, mReplacePiece);
+            }
+        }
+    }
+
+    private void drawSelectedBorder(Canvas canvas, PuzzlePiece piece) {
+        mSelectedRect.set(piece.getBorder().getRect());
+
+        mSelectedRect.left += mBorderWidth / 2f;
+        mSelectedRect.top += mBorderWidth / 2f;
+        mSelectedRect.right -= mBorderWidth / 2f;
+        mSelectedRect.bottom -= mBorderWidth / 2f;
+
+
+        canvas.drawRect(mSelectedRect, mSelectedBorderPaint);
+
+        mSelectedBorderPaint.setStyle(Paint.Style.FILL);
+        for (Line line : piece.getBorder().getLines()) {
+            if (mPuzzleLayout.getLines().contains(line)) {
+                if (line.getDirection() == Line.Direction.HORIZONTAL) {
+                    canvas.drawRoundRect(
+                            line.getCenterBound(mSelectedRect.centerX(),
+                                    mSelectedRect.width(),
+                                    mBorderWidth,
+                                    line == piece.getBorder().lineTop),
+
+                            mBorderWidth * 2,
+                            mBorderWidth * 2,
+                            mSelectedBorderPaint);
+                } else if (line.getDirection() == Line.Direction.VERTICAL) {
+                    canvas.drawRoundRect(
+                            line.getCenterBound(mSelectedRect.centerY(),
+                                    mSelectedRect.height(),
+                                    mBorderWidth,
+                                    line == piece.getBorder().lineLeft),
+
+                            mBorderWidth * 2,
+                            mBorderWidth * 2,
+                            mSelectedBorderPaint);
+                }
+            }
+        }
+        mSelectedBorderPaint.setStyle(Paint.Style.STROKE);
     }
 
     @Override
@@ -200,18 +227,27 @@ public class PuzzleView extends View {
 
                 if (mHandlingLine != null) {
                     mCurrentMode = Mode.MOVE;
-                    mChangedPhotos.clear();
-                    mChangedPhotos.addAll(findChangedPhoto());
+                    mChangedPieces.clear();
+                    mChangedPieces.addAll(findChangedPiece());
 
-                    for (int i = 0; i < mChangedPhotos.size(); i++) {
-                        mChangedPhotos.get(i).getDownMatrix().set(mChangedPhotos.get(i).getMatrix());
+                    for (int i = 0; i < mChangedPieces.size(); i++) {
+                        mChangedPieces.get(i).getDownMatrix().set(mChangedPieces.get(i).getMatrix());
                     }
 
                 } else {
-                    mHandlingPiece = findHandlingPhoto();
+                    mHandlingPiece = findHandlingPiece();
                     if (mHandlingPiece != null) {
                         mCurrentMode = Mode.DRAG;
                         mHandlingPiece.getDownMatrix().set(mHandlingPiece.getMatrix());
+
+                        mHandler.postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                mCurrentMode = Mode.REPLACE;
+                                invalidate();
+                                Log.d(TAG, "run: long pressed");
+                            }
+                        }, 1000);
                     }
                 }
 
@@ -235,35 +271,28 @@ public class PuzzleView extends View {
                     case NONE:
                         break;
                     case DRAG:
-                        if (mHandlingPiece != null) {
-                            mHandlingPiece.getMatrix().set(mHandlingPiece.getDownMatrix());
-                            mHandlingPiece.getMatrix().postTranslate(event.getX() - mDownX, event.getY() - mDownY);
-
-                            mHandlingPiece.setTranslateX(mHandlingPiece.getMappedCenterPoint().x
-                                    - mHandlingPiece.getBorder().centerX());
-
-                            mHandlingPiece.setTranslateY(mHandlingPiece.getMappedCenterPoint().y
-                                    - mHandlingPiece.getBorder().centerY());
-                        }
+                        dragPiece(mHandlingPiece, event);
                         break;
                     case ZOOM:
-
-                        if (mHandlingPiece != null && event.getPointerCount() >= 2) {
-                            float newDistance = calculateDistance(event);
-
-                            mHandlingPiece.getMatrix().set(mHandlingPiece.getDownMatrix());
-                            mHandlingPiece.getMatrix().postScale(
-                                    newDistance / mOldDistance, newDistance / mOldDistance, mMidPoint.x, mMidPoint.y);
-
-                            mHandlingPiece.setScaleFactor(mHandlingPiece.getMappedWidth() / mHandlingPiece.getWidth());
-                        }
-
+                        zoomPiece(mHandlingPiece, event);
                         break;
                     case MOVE:
                         moveLine(event);
                         mPuzzleLayout.update();
                         updatePieceInBorder(event);
                         break;
+
+                    case REPLACE:
+                        mReplacePiece = findReplacePiece(event);
+                        dragPiece(mHandlingPiece, event);
+
+                        Log.d(TAG, "onTouchEvent: replace");
+                        break;
+                }
+
+                if ((Math.abs(event.getX() - mDownX) > 10 || Math.abs(event.getY() - mDownY) > 10)
+                        && mCurrentMode != Mode.REPLACE) {
+                    mHandler.removeCallbacksAndMessages(null);
                 }
 
                 invalidate();
@@ -271,7 +300,6 @@ public class PuzzleView extends View {
 
             case MotionEvent.ACTION_UP:
                 mHandlingLine = null;
-
                 switch (mCurrentMode) {
                     case DRAG:
                         if (!mHandlingPiece.isFilledBorder()) {
@@ -293,9 +321,27 @@ public class PuzzleView extends View {
                             mHandlingPiece.setScaleFactor(0f);
                         }
                         break;
+
+                    case REPLACE:
+                        if (mHandlingPiece != null && mReplacePiece != null) {
+                            Drawable temp = mHandlingPiece.getDrawable();
+
+                            mHandlingPiece.setDrawable(mReplacePiece.getDrawable());
+                            mReplacePiece.setDrawable(temp);
+
+                            fillBorder(mHandlingPiece);
+                            fillBorder(mReplacePiece);
+
+                        }
+
+                        mHandlingPiece = null;
+                        mReplacePiece = null;
+                        break;
                 }
 
                 mCurrentMode = Mode.NONE;
+
+                mHandler.removeCallbacksAndMessages(null);
 
                 invalidate();
                 break;
@@ -306,6 +352,31 @@ public class PuzzleView extends View {
         }
         return true;
 
+    }
+
+    private void zoomPiece(PuzzlePiece piece, MotionEvent event) {
+        if (piece != null && event.getPointerCount() >= 2) {
+            float newDistance = calculateDistance(event);
+
+            piece.getMatrix().set(piece.getDownMatrix());
+            piece.getMatrix().postScale(
+                    newDistance / mOldDistance, newDistance / mOldDistance, mMidPoint.x, mMidPoint.y);
+
+            piece.setScaleFactor(piece.getMappedWidth() / piece.getWidth());
+        }
+    }
+
+    private void dragPiece(PuzzlePiece piece, MotionEvent event) {
+        if (piece != null) {
+            piece.getMatrix().set(piece.getDownMatrix());
+            piece.getMatrix().postTranslate(event.getX() - mDownX, event.getY() - mDownY);
+
+            piece.setTranslateX(piece.getMappedCenterPoint().x
+                    - piece.getBorder().centerX());
+
+            piece.setTranslateY(piece.getMappedCenterPoint().y
+                    - piece.getBorder().centerY());
+        }
     }
 
     private void moveToFillBorder(PuzzlePiece piece) {
@@ -411,7 +482,7 @@ public class PuzzleView extends View {
 
     //TODO
     private void updatePieceInBorder(MotionEvent event) {
-        for (PuzzlePiece piece : mChangedPhotos) {
+        for (PuzzlePiece piece : mChangedPieces) {
             float scale = calculateFillScaleFactor(piece, mPuzzleLayout.getOuterBorder());
 
             if (piece.getScaleFactor() > scale && piece.isFilledBorder()) {
@@ -437,20 +508,6 @@ public class PuzzleView extends View {
         }
     }
 
-    private List<PuzzlePiece> findChangedPhoto() {
-        if (mHandlingLine == null) return new ArrayList<>();
-
-        List<PuzzlePiece> puzzlePieces = new ArrayList<>();
-
-        for (PuzzlePiece piece : mPuzzlePieces) {
-            if (piece.getBorder().contains(mHandlingLine)) {
-                puzzlePieces.add(piece);
-            }
-        }
-
-        return puzzlePieces;
-    }
-
 
     private void moveLine(MotionEvent event) {
         if (mHandlingLine == null) {
@@ -466,6 +523,20 @@ public class PuzzleView extends View {
 
     }
 
+    private List<PuzzlePiece> findChangedPiece() {
+        if (mHandlingLine == null) return new ArrayList<>();
+
+        List<PuzzlePiece> puzzlePieces = new ArrayList<>();
+
+        for (PuzzlePiece piece : mPuzzlePieces) {
+            if (piece.getBorder().contains(mHandlingLine)) {
+                puzzlePieces.add(piece);
+            }
+        }
+
+        return puzzlePieces;
+    }
+
     private Line findHandlingLine() {
         for (Line line : mPuzzleLayout.getLines()) {
             if (line.contains(mDownX, mDownY, 20)) {
@@ -475,10 +546,20 @@ public class PuzzleView extends View {
         return null;
     }
 
-    private PuzzlePiece findHandlingPhoto() {
-        for (PuzzlePiece photo : mPuzzlePieces) {
-            if (photo.contains(mDownX, mDownY)) {
-                return photo;
+    private PuzzlePiece findHandlingPiece() {
+        for (PuzzlePiece piece : mPuzzlePieces) {
+            if (piece.contains(mDownX, mDownY)) {
+                return piece;
+            }
+        }
+        return null;
+    }
+
+    private PuzzlePiece findReplacePiece(MotionEvent event) {
+        for (PuzzlePiece piece : mPuzzlePieces) {
+            if (piece.contains(event.getX(), event.getY())
+                    && piece != mHandlingPiece) {
+                return piece;
             }
         }
         return null;
@@ -602,7 +683,7 @@ public class PuzzleView extends View {
 
         Matrix matrix = BorderUtil.createMatrix(mPuzzleLayout.getBorder(index), drawable, mExtraSize);
 
-        PuzzlePiece layoutPhoto = new DrawablePiece(drawable, mPuzzleLayout.getBorder(index), matrix);
+        PuzzlePiece layoutPhoto = new PuzzlePiece(drawable, mPuzzleLayout.getBorder(index), matrix);
 
         mPuzzlePieces.add(layoutPhoto);
 
@@ -622,7 +703,7 @@ public class PuzzleView extends View {
             mPuzzleLayout.reset();
         }
         mPuzzlePieces.clear();
-        mChangedPhotos.clear();
+        mChangedPieces.clear();
 
         invalidate();
     }
