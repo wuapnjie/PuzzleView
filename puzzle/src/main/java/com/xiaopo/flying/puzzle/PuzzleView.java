@@ -55,7 +55,7 @@ public class PuzzleView extends View {
     private PuzzleLayout mPuzzleLayout;
 
     private float mBorderWidth = 4;
-    private float mExtraSize = 60;
+    private float mExtraSize = 100;
 
     private float mDownX;
     private float mDownY;
@@ -262,7 +262,7 @@ public class PuzzleView extends View {
                     case MOVE:
                         moveLine(event);
                         mPuzzleLayout.update();
-                        updatePhotoInBorder(event);
+                        updatePieceInBorder(event);
                         break;
                 }
 
@@ -272,22 +272,27 @@ public class PuzzleView extends View {
             case MotionEvent.ACTION_UP:
                 mHandlingLine = null;
 
-                if (mCurrentMode == Mode.DRAG || mCurrentMode == Mode.ZOOM) {
-                    if (!mHandlingPiece.isFilledBorder()) {
-                        fillBorder(mHandlingPiece);
-                        mHandlingPiece.setScaleFactor(0f);
-                    }
-                }
+                switch (mCurrentMode) {
+                    case DRAG:
+                        if (!mHandlingPiece.isFilledBorder()) {
+                            moveToFillBorder(mHandlingPiece);
+                        }
 
-                if (mCurrentMode == Mode.DRAG) {
-                    if (mPreviewHandlingPiece == mHandlingPiece
-                            && Math.abs(mDownX - event.getX()) < 3
-                            && Math.abs(mDownY - event.getY()) < 3) {
 
-                        mHandlingPiece = null;
-                    }
+                        if (mPreviewHandlingPiece == mHandlingPiece
+                                && Math.abs(mDownX - event.getX()) < 3
+                                && Math.abs(mDownY - event.getY()) < 3) {
+                            mHandlingPiece = null;
+                        }
 
-                    mPreviewHandlingPiece = mHandlingPiece;
+                        mPreviewHandlingPiece = mHandlingPiece;
+                        break;
+                    case ZOOM:
+                        if (!mHandlingPiece.isFilledBorder()) {
+                            fillBorder(mHandlingPiece);
+                            mHandlingPiece.setScaleFactor(0f);
+                        }
+                        break;
                 }
 
                 mCurrentMode = Mode.NONE;
@@ -301,6 +306,38 @@ public class PuzzleView extends View {
         }
         return true;
 
+    }
+
+    private void moveToFillBorder(PuzzlePiece piece) {
+        Border border = piece.getBorder();
+        RectF rectF = piece.getMappedBound();
+        float offsetX = 0f;
+        float offsetY = 0f;
+
+        if (rectF.left > border.left()) {
+            offsetX = border.left() - rectF.left;
+        }
+
+        if (rectF.top > border.top()) {
+            offsetY = border.top() - rectF.top;
+        }
+
+        if (rectF.right < border.right()) {
+            offsetX = border.right() - rectF.right;
+        }
+
+        if (rectF.bottom < border.bottom()) {
+            offsetY = border.bottom() - rectF.bottom;
+        }
+
+        piece.getMatrix().postTranslate(offsetX, offsetY);
+
+        piece.setTranslateX(border.centerX() - piece.getMappedCenterPoint().x);
+        piece.setTranslateY(border.centerY() - piece.getMappedCenterPoint().y);
+
+        if (!piece.isFilledBorder()) {
+            fillBorder(piece);
+        }
     }
 
 
@@ -373,7 +410,7 @@ public class PuzzleView extends View {
 
 
     //TODO
-    private void updatePhotoInBorder(MotionEvent event) {
+    private void updatePieceInBorder(MotionEvent event) {
         for (PuzzlePiece piece : mChangedPhotos) {
             float scale = calculateFillScaleFactor(piece, mPuzzleLayout.getOuterBorder());
 
@@ -395,11 +432,9 @@ public class PuzzleView extends View {
                     piece.getMatrix().postTranslate((event.getX() - mDownX) / 2, 0);
                 }
 
-            } else {
+            } else
                 fillBorder(piece);
-            }
         }
-
     }
 
     private List<PuzzlePiece> findChangedPhoto() {
@@ -739,5 +774,9 @@ public class PuzzleView extends View {
         void onSuccess();
 
         void onFailed();
+    }
+
+    public interface OnPieceSelectedListener {
+        void onPieceSelected(PuzzlePiece piece);
     }
 }

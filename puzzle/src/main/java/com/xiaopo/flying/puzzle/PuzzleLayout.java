@@ -2,8 +2,6 @@ package com.xiaopo.flying.puzzle;
 
 import android.graphics.PointF;
 import android.graphics.RectF;
-import android.os.Parcel;
-import android.os.Parcelable;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -21,7 +19,7 @@ import java.util.List;
  * <p>
  * Created by snowbean on 16-8-13.
  */
-public abstract class PuzzleLayout{
+public abstract class PuzzleLayout {
     protected static final String TAG = "PuzzleLayout";
 
     protected int mTheme;
@@ -128,6 +126,17 @@ public abstract class PuzzleLayout{
             if (l.getPosition() > line.getLowerLine().getPosition()
                     && l.getPosition() < line.getPosition()
                     && l.getDirection() == line.getDirection()) {
+
+                if (l.getDirection() == Line.Direction.HORIZONTAL
+                        && (l.end.x <= line.start.x || l.start.x >= line.end.x)) {
+                    continue;
+                }
+
+                if (l.getDirection() == Line.Direction.VERTICAL
+                        && (l.end.y <= line.start.y || l.start.y >= line.end.y)) {
+                    continue;
+                }
+
                 line.setLowerLine(l);
             }
         }
@@ -138,6 +147,17 @@ public abstract class PuzzleLayout{
             if (l.getPosition() < line.getUpperLine().getPosition()
                     && l.getPosition() > line.getPosition()
                     && l.getDirection() == line.getDirection()) {
+
+                if (l.getDirection() == Line.Direction.HORIZONTAL
+                        && (l.end.x <= line.start.x || l.start.x >= line.end.x)) {
+                    continue;
+                }
+
+                if (l.getDirection() == Line.Direction.VERTICAL
+                        && (l.end.y <= line.start.y || l.start.y >= line.end.y)) {
+                    continue;
+                }
+
                 line.setUpperLine(l);
             }
         }
