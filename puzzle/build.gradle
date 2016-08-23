@@ -35,7 +35,7 @@ apply plugin: 'com.android.library'
 apply plugin: 'com.github.dcendents.android-maven'
 apply plugin: 'com.jfrog.bintray'
 
-version = "0.1.0"   // #修改# // 这里是aar的版本号
+version = "1.0.0"   // #修改# // 这里是aar的版本号
 
 android {
     compileSdkVersion 24
@@ -71,9 +71,9 @@ dependencies {
     testCompile 'junit:junit:4.12'
 }
 
-def siteUrl = 'https://github.com/wuapnjie/PuzzleView'                        // #修改# // 项目的主页地址，我这里是我的PickerView项目在github的链接地址
-def gitUrl = 'https://github.com/wuapnjie/PuzzleView.git'                     // #修改# // 项目 git 地址，我这里同样是用Github上的git地址
-group = "com.flying.xiaopo"             // #修改# // 组名称，这个相当于依赖的时候 compile 'com.bigkoo:pickerview:1.0.1' “:”号前面的前缀
+def siteUrl = 'https://github.com/wuapnjie/PuzzleView'
+def gitUrl = 'https://github.com/wuapnjie/PuzzleView.git'
+group = "com.flying.xiaopo"
 
 install {
     repositories.mavenInstaller {
@@ -81,7 +81,7 @@ install {
         pom {
             project {
                 packaging 'aar'
-                name 'Jigsaw Puzzle support For Android'                                   // #修改# // 标题
+                name 'Jigsaw Puzzle support For Android, just like layout for instagram'
                 url siteUrl
                 // Set your license
                 licenses {
@@ -93,9 +93,8 @@ install {
                 developers {
                     developer {
                         id 'wuapnjie'
-                        // #修改# // 你的userid，昵称
-                        name 'wupanjie'                                       // #修改# // 用户名
-                        email 'wupanjie0611@gmail.com'                               // #修改# // 邮箱
+                        name 'wupanjie'
+                        email 'wupanjie0611@gmail.com'
                     }
                 }
                 scm {
@@ -133,12 +132,10 @@ properties.load(project.rootProject.file('local.properties').newDataInputStream(
 bintray {
     user = properties.getProperty("bintray.user")
     key = properties.getProperty("bintray.apikey")
-    // 上面两个 user和key 需要留意一下，在local.properites 里面配置的
     configurations = ['archives']
     pkg {
         repo = "maven"
         name = "puzzleview"
-        // #修改# //  在 jcenter 上面的项目名字
         websiteUrl = siteUrl
         vcsUrl = gitUrl
         licenses = ["Apache-2.0"]

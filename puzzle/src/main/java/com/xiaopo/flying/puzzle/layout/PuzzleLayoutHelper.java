@@ -17,12 +17,12 @@ public class PuzzleLayoutHelper {
         List<PuzzleLayout> puzzleLayouts = new ArrayList<>();
         switch (pieceCount) {
             case 1:
-                for (int i = 0; i < 3; i++) {
+                for (int i = 0; i < 6; i++) {
                     puzzleLayouts.add(new OnePieceLayout(i));
                 }
                 break;
             case 2:
-                for (int i = 0; i < 7 ; i++) {
+                for (int i = 0; i < 7; i++) {
                     puzzleLayouts.add(new TwoPieceLayout(i));
                 }
                 break;
@@ -37,27 +37,27 @@ public class PuzzleLayoutHelper {
                 }
                 break;
             case 5:
-                for (int i = 0; i < 16; i++) {
+                for (int i = 0; i < 17; i++) {
                     puzzleLayouts.add(new FivePieceLayout(i));
                 }
                 break;
             case 6:
-                for (int i = 0; i < 11; i++) {
+                for (int i = 0; i < 12; i++) {
                     puzzleLayouts.add(new SixPieceLayout(i));
                 }
                 break;
             case 7:
-                for (int i = 0; i < 8; i++) {
+                for (int i = 0; i < 9; i++) {
                     puzzleLayouts.add(new SevenPieceLayout(i));
                 }
                 break;
             case 8:
-                for (int i = 0; i < 8; i++) {
+                for (int i = 0; i < 11; i++) {
                     puzzleLayouts.add(new EightPieceLayout(i));
                 }
                 break;
             case 9:
-                for (int i = 0; i < 6; i++) {
+                for (int i = 0; i < 8; i++) {
                     puzzleLayouts.add(new NinePieceLayout(i));
                 }
                 break;

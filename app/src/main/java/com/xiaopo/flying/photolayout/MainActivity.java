@@ -117,7 +117,7 @@ public class MainActivity extends AppCompatActivity {
             public void onItemClick(PuzzleLayout puzzleLayout, int themeId) {
                 Intent intent = new Intent(MainActivity.this, ProcessActivity.class);
                 intent.putStringArrayListExtra("photo_path", mSelectedPath);
-                intent.putExtra("border_size", puzzleLayout.getBorderSize());
+                intent.putExtra("piece_size", mSelectedPath.size());
                 intent.putExtra("theme_id", themeId);
 
                 startActivity(intent);

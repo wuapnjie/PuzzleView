@@ -15,7 +15,7 @@ public class FivePieceLayout extends NumberPieceLayout {
 
     @Override
     public int getThemeCount() {
-        return 16;
+        return 17;
     }
 
     @Override
@@ -90,6 +90,9 @@ public class FivePieceLayout extends NumberPieceLayout {
             case 15:
                 addCross(getOuterBorder(), 2f / 3, 1f / 3);
                 addLine(getBorder(0), Line.Direction.HORIZONTAL, 1f / 2);
+                break;
+            case 16:
+                cutSpiral(getOuterBorder());
                 break;
             default:
                 cutBorderEqualPart(getOuterBorder(), 5, Line.Direction.HORIZONTAL);
