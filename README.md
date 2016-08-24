@@ -1,5 +1,9 @@
 # PuzzleView
-Android Jigsaw puzzle support
+Android Jigsaw puzzle support，idea from layout for instagram
+
+[中文README](https://github.com/wuapnjie/PuzzleView/blob/master/README_CN.md)
+
+the apk file is here--->[http://fir.im/puzzle0607](http://fir.im/puzzle0607)
 
 ### Screenshots
 Due to the gif is too big, if it can not load well, you can see the demo in youtube.
@@ -63,7 +67,7 @@ in this demo's PlaygroundActivity, it shows all the build-in layouts. You can cl
 ### Custom Layout
 The custom layout also is easy. Just extends PuzzleLayout and write layout() method.
 </br>
-In the PuzlleLayout.class, it provides some methods to help you custom.Also you can see the source code in build-in layout.
+In the PuzlleLayout.class, it provides some methods to help you custom.Also you can see the source code in build-in layout to study.
 ```java
 public class CustomLayout extends PuzzleLayout {
 
@@ -74,6 +78,12 @@ public class CustomLayout extends PuzzleLayout {
     }
 }
 ```
+
+![](https://github.com/wuapnjie/PuzzleView/blob/master/screenshots/puzzle.png)
+
+### Finally
+see some photo by puzzle
+[Click here](http://weibo.com/5350471787/E54jjxzlI)
 
 ### License
 
