@@ -1,6 +1,6 @@
 # PuzzleView
 Android Jigsaw puzzle support
-# License
+### License
 
     Copyright 2016 wuapnjie
 

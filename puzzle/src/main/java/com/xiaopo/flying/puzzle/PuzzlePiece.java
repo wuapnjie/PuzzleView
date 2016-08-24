@@ -45,7 +45,7 @@ public class PuzzlePiece {
         return mRotation;
     }
 
-    public void setRotation(float rotation) {
+    void setRotation(float rotation) {
         mRotation = rotation;
     }
 
@@ -53,7 +53,7 @@ public class PuzzlePiece {
         return mNeedHorizontalFlip;
     }
 
-    public void setNeedHorizontalFlip(boolean needHorizontalFlip) {
+    void setNeedHorizontalFlip(boolean needHorizontalFlip) {
         mNeedHorizontalFlip = needHorizontalFlip;
     }
 
@@ -61,7 +61,7 @@ public class PuzzlePiece {
         return mNeedVerticalFlip;
     }
 
-    public void setNeedVerticalFlip(boolean needVerticalFlip) {
+    void setNeedVerticalFlip(boolean needVerticalFlip) {
         mNeedVerticalFlip = needVerticalFlip;
     }
 
@@ -69,7 +69,7 @@ public class PuzzlePiece {
         return mTranslateX;
     }
 
-    public void setTranslateX(float translateX) {
+    void setTranslateX(float translateX) {
         mTranslateX = translateX;
     }
 
@@ -77,7 +77,7 @@ public class PuzzlePiece {
         return mTranslateY;
     }
 
-    public void setTranslateY(float translateY) {
+    void setTranslateY(float translateY) {
         mTranslateY = translateY;
     }
 
@@ -101,7 +101,7 @@ public class PuzzlePiece {
         return mScaleFactor;
     }
 
-    public void setScaleFactor(float scaleFactor) {
+    void setScaleFactor(float scaleFactor) {
         mScaleFactor = scaleFactor;
     }
 

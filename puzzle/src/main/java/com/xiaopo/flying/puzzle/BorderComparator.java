@@ -5,7 +5,7 @@ import java.util.Comparator;
 /**
  * Created by snowbean on 16-8-18.
  */
-public class BorderComparator implements Comparator<Border> {
+class BorderComparator implements Comparator<Border> {
     private static final String TAG = "BorderComparator";
 
     @Override

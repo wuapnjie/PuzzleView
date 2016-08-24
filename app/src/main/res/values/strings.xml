@@ -8,7 +8,7 @@
         \n\n
     Keep Calm and Carry on!</string>
     <string name="about_project">关于本项目</string>
-    <string name="project_info">这个项目是看到Layout for instagram 后，觉得这个应用很神奇，于是就很想把他实现，就算不能100%实现，也想实现它的图片效果，想了很久应该怎么实现，后来看到一篇介绍View与Matrix的文章后，有了一点点想法，当时先利用Matrix自定义View实现了Android的贴纸效果的库，写完后发现实现方式有一些相似，又反复把玩了Layout，发现里面的线很关键，后来在纸上写下了最初的model，经过几天探索实践后制作了本项目，当然没有Layout做的好，但可以给大家提供一种思路，如果不需要太强大的要求，本项目应该也可以满足。具体使用方法在这个demo的源码中都可以找到。</string>
+    <string name="project_info">这个项目是看到Layout for instagram 后，觉得这个应用很神奇，于是就很想把它实现，就算不能100%实现，也想实现它的图片效果，想了很久应该怎么实现，后来看到一篇介绍View与Matrix的文章后，有了一点点想法，当时先利用Matrix自定义View实现了Android的贴纸效果的库，写完后发现实现方式有一些相似，又反复把玩了Layout，发现里面的线很关键，后来在纸上写下了最初的model，经过几天探索实践后制作了本项目，当然没有Layout做的好，但可以给大家提供一种思路，如果不需要太强大的要求，本项目应该也可以满足。具体使用方法在这个demo的源码中都可以找到。</string>
     <string name="about_link">相关链接</string>
 
     <string name="link_one">此项目的地址\n
@@ -36,5 +36,7 @@
     <string name="prompt_share">分享</string>
     <string name="prompt_save_success">保存成功</string>
     <string name="prompt_save_failed">保存失败</string>
+    <string name="licence">LICENCE</string>
+    <string name="licence_info">Apache-2.0</string>
 
 </resources>

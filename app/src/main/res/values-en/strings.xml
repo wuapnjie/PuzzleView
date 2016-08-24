@@ -26,4 +26,6 @@
     <string name="thank_info">Blog of junyizhou \n http://junyizhou.github.io/</string>
     <string name="title_activity_process">ProcessActivity</string>
     <string name="project_info">The idea from Layout for instagram. Hope it will help you!</string>
+    <string name="licence">LICENCE</string>
+    <string name="licence_info">Apache-2.0</string>
 </resources>
