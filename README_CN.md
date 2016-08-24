@@ -3,10 +3,13 @@ Android拼图支持库，想法来自Layout for Instagram。
 
 英文[README](https://github.com/wuapnjie/PuzzleView/blob/master/README.md)
 
-### Screenshots
+### Demo
 因为gif图文件过大，可能加载会很慢或者加载失败，可以在Youtube上观看demo，恩，Youtube上的效果比gif图好多了。
 
-[点击观看](https://www.youtube.com/watch?v=jfOJCh-uDIo)
+[点击观看Youtube](https://www.youtube.com/watch?v=jfOJCh-uDIo)
+</br>
+[点击观看Youku](http://v.youku.com/v_show/id_XMTY5Nzk3NTYyMA==.html?beta&)
+
 </br>
 </br>
 ![](https://github.com/wuapnjie/PuzzleView/blob/master/screenshots/gif-demo1.gif)
@@ -78,7 +81,15 @@ public class CustomLayout extends PuzzleLayout {
 ```
 
 这个布局就是，先添加了一条横线在最外面的Border的1/2处，之后Border会被这条线分为两个Border，
-然后又在第一个Border的1/2处添加了一条竖线，于是这个布局就被分割为3个Border，可以放三张图片
+然后又在第一个Border的1/2处添加了一条竖线，于是这个布局就被分割为3个Border，可以放三张图片。
+
+当然可以看内置的Layout怎么编写从而学习
+
+![](https://github.com/wuapnjie/PuzzleView/blob/master/screenshots/puzzle.png)
+
+### 最后
+看几张效果图
+[Click here](http://weibo.com/5350471787/E54jjxzlI)
 
 ### License
 
