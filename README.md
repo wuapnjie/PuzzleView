@@ -13,7 +13,7 @@ Due to the gif is too big, if it can not load well, you can see the demo in yout
 </br>
 ![](https://github.com/wuapnjie/PuzzleView/blob/master/screenshots/gif-demo1.gif)
 ![](https://github.com/wuapnjie/PuzzleView/blob/master/screenshots/gif-demo2.gif)
-![](https://github.com/wuapnjie/PuzzleView/blob/master/screenshots/demo1.png)
+![](https://github.com/wuapnjie/PuzzleView/blob/master/screenshots/screen1.png)
 
 ### Usage
 in build.gradle
@@ -62,7 +62,7 @@ The PuzzleView depends on the PuzzleLayout. Of course you can custom it.
 if you don't like to custom its layout, you can use the build-in layout.
 </br>
 in this demo's PlaygroundActivity, it shows all the build-in layouts. You can click to see the effect.
-![](https://github.com/wuapnjie/PuzzleView/blob/master/screenshots/demo3.png)
+![](https://github.com/wuapnjie/PuzzleView/blob/master/screenshots/screen2.png)
 
 ### Custom Layout
 The custom layout also is easy. Just extends PuzzleLayout and write layout() method.
