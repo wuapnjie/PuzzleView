@@ -1,5 +1,11 @@
 # PuzzleView
 Android Jigsaw puzzle support
+
+### Screenshots
+![](https://github.com/wuapnjie/PuzzleView/blob/master/screenshots/gif-demo1.gif)
+![](https://github.com/wuapnjie/PuzzleView/blob/master/screenshots/gif-demo2.gif)
+![](https://github.com/wuapnjie/PuzzleView/blob/master/screenshots/demo1.png)
+
 ### License
 
     Copyright 2016 wuapnjie
