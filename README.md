@@ -1,12 +1,12 @@
 # PuzzleView
-Android Jigsaw puzzle support，idea from layout for instagram
+Android Jigsaw puzzle support，inspired by Instagram's layout.
 
 [中文README](https://github.com/wuapnjie/PuzzleView/blob/master/README_CN.md)
 
 the apk file is here--->[http://fir.im/puzzle0607](http://fir.im/puzzle0607)
 
 ### Screenshots
-Due to the gif is too big, if it can not load well, you can see the demo in youtube.
+Due the size of the gif file, the example below may not render well, in that case you can view the demo video on youtube.
 
 [Click here to see video demo](https://www.youtube.com/watch?v=jfOJCh-uDIo)
 </br>
@@ -27,14 +27,14 @@ in xml layout
         android:id="@+id/puzzle"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
-        
+
  <com.xiaopo.flying.puzzle.SquarePuzzleView
         android:id="@+id/square_puzzle"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 ```
 
-in the java code, you can change some attributes of puzzle view
+in the java code, you can change some attributes of the puzzle view
 ```java
 mPuzzleView.setPuzzleLayout(mPuzzleLayout);
 mPuzzleView.setMoveLineEnable(true);
@@ -54,20 +54,21 @@ mPuzzleView.setNeedDrawBorder(!mPuzzleView.isNeedDrawBorder());
 mPuzzleView.replace(bitmap);
 ```
 
-Also you can see the source code of demo, it will tell you how to do.
+Also you can check the source code of the demo for examples of how to use these attributes.
 
 ### Layout
-The PuzzleView depends on the PuzzleLayout. Of course you can custom it.
+The `PuzzleView` depends on the `PuzzleLayout`. Of course you can customize it.
 </br>
-if you don't like to custom its layout, you can use the build-in layout.
+If you don't want to customize it's layout, you can just use the default layout.
 </br>
-in this demo's PlaygroundActivity, it shows all the build-in layouts. You can click to see the effect.
+In the demo's `PlaygroundActivity`, it shows all the built-in layouts. You can click to see the effect.
 ![](https://github.com/wuapnjie/PuzzleView/blob/master/screenshots/screen2.png)
 
 ### Custom Layout
-The custom layout also is easy. Just extends PuzzleLayout and write layout() method.
+To create a custom layout is also easy. Just extend `PuzzleLayout` and override the `layout` method.
 </br>
-In the PuzlleLayout.class, it provides some methods to help you custom.Also you can see the source code in build-in layout to study.
+The `PuzzleLayout` class provides some methods for customization.
+Also you can check the source code of the in-built layouts for guidance / examples.
 ```java
 public class CustomLayout extends PuzzleLayout {
 
@@ -82,7 +83,7 @@ public class CustomLayout extends PuzzleLayout {
 ![](https://github.com/wuapnjie/PuzzleView/blob/master/screenshots/puzzle.png)
 
 ### Finally
-see some photo by puzzle
+to see some photos by puzzle
 [Click here](http://weibo.com/5350471787/E54jjxzlI)
 
 ### License
