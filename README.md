@@ -61,7 +61,7 @@ The `PuzzleView` depends on the `PuzzleLayout`. Of course you can customize it.
 </br>
 If you don't want to customize it's layout, you can just use the default layout.
 </br>
-In the demo's `PlaygroundActivity`, it shows all the built-in layouts. You can click to see the effect.
+All the built-in layouts can be found in the the demo's `PlaygroundActivity`. You can click to see the effect.
 ![](https://github.com/wuapnjie/PuzzleView/blob/master/screenshots/screen2.png)
 
 ### Custom Layout
