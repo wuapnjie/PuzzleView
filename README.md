@@ -12,7 +12,6 @@ Due the size of the gif file, the example below may not render well, in that cas
 </br>
 </br>
 ![](https://github.com/wuapnjie/PuzzleView/blob/master/screenshots/gif-demo1.gif)
-![](https://github.com/wuapnjie/PuzzleView/blob/master/screenshots/gif-demo2.gif)
 ![](https://github.com/wuapnjie/PuzzleView/blob/master/screenshots/screen1.png)
 
 ### Usage
