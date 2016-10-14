@@ -36,10 +36,10 @@ class Border {
         float width = baseRect.width();
         float height = baseRect.height();
 
-        PointF one = new PointF(0, 0);
-        PointF two = new PointF(width, 0);
-        PointF three = new PointF(0, height);
-        PointF four = new PointF(width, height);
+        PointF one = new PointF(baseRect.left, baseRect.top);
+        PointF two = new PointF(baseRect.right, baseRect.top);
+        PointF three = new PointF(baseRect.left, baseRect.bottom);
+        PointF four = new PointF(baseRect.right, baseRect.bottom);
 
         lineLeft = new Line(one, three);
         lineTop = new Line(one, two);
