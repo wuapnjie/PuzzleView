@@ -14,8 +14,6 @@ import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Handler;
 import android.provider.MediaStore;
-import android.support.annotation.ColorInt;
-import android.support.v4.view.MotionEventCompat;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.MotionEvent;
@@ -218,7 +216,7 @@ public class PuzzleView extends View {
             return super.onTouchEvent(event);
         }
 
-        switch (MotionEventCompat.getActionMasked(event)) {
+        switch (event.getAction() & MotionEvent.ACTION_MASK) {
             case MotionEvent.ACTION_DOWN:
                 mDownX = event.getX();
                 mDownY = event.getY();
@@ -788,12 +786,12 @@ public class PuzzleView extends View {
         mNeedDrawOuterBorder = needDrawOuterBorder;
     }
 
-    public void setBorderColor(@ColorInt int color) {
+    public void setBorderColor(int color) {
         mBorderPaint.setColor(color);
         invalidate();
     }
 
-    public void setSelectedBorderColor(@ColorInt int color) {
+    public void setSelectedBorderColor(int color) {
         mSelectedBorderPaint.setColor(color);
         invalidate();
     }

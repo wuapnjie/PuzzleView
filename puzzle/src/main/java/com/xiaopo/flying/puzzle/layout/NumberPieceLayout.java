@@ -1,6 +1,5 @@
 package com.xiaopo.flying.puzzle.layout;
 
-import android.os.Parcel;
 import android.util.Log;
 
 import com.xiaopo.flying.puzzle.PuzzleLayout;

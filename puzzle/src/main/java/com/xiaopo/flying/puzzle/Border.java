@@ -73,11 +73,11 @@ class Border {
     }
 
     float centerX() {
-        return right() - left();
+        return (right() + left()) * 0.5f;
     }
 
     float centerY() {
-        return bottom() - top();
+        return (bottom() + top()) * 0.5f;
     }
 
     List<Line> getLines() {
