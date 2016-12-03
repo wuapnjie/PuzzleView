@@ -4,7 +4,7 @@ Android拼图支持库，想法来自Layout for Instagram。
 英文[README](https://github.com/wuapnjie/PuzzleView/blob/master/README.md)
 
 ### Demo
-因为gif图文件过大，可能加载会很慢或者加载失败，可以在Youtube上观看demo，恩，Youtube上的效果比gif图好多了。
+效果看视频
 
 [点击观看Youtube](https://www.youtube.com/watch?v=jfOJCh-uDIo)
 </br>
@@ -12,14 +12,13 @@ Android拼图支持库，想法来自Layout for Instagram。
 
 </br>
 </br>
-![](https://github.com/wuapnjie/PuzzleView/blob/master/screenshots/gif-demo1.gif)
-![](https://github.com/wuapnjie/PuzzleView/blob/master/screenshots/gif-demo2.gif)
-![](https://github.com/wuapnjie/PuzzleView/blob/master/screenshots/screen1.png)
+![](https://github.com/wuapnjie/PuzzleView/blob/master/screenshots/screenshot1.gif)
+![](https://github.com/wuapnjie/PuzzleView/blob/master/screenshots/screenshot2.gif)
 
 ### 使用
 在build.gradle添加，当然你也可以直接导入library module，方便修改。
 ```gradle
-compile 'com.flying.xiaopo:puzzle:1.0.0'
+compile 'com.flying.xiaopo:puzzle:1.0.2'
 ```
 
 在xml布局中
@@ -63,7 +62,7 @@ PuzzleView取决于PuzzleLayout，当然我们可以自定义PuzzleLayout
 如果你不想自定义PuzzleLayout，该库中也内置了许多Layout样式，理论上Instagram Layout中的样式都有，没有你也可以自己写。
 </br>
 在这个demo中有个Playground页面，上面展示了所有的内置Layout样式，你可以点击查看效果，demo中自带了几张图。
-![](https://github.com/wuapnjie/PuzzleView/blob/master/screenshots/screen2.png)
+![](https://github.com/wuapnjie/PuzzleView/blob/master/screenshots/screenshot3.png)
 
 ### 自定义布局
 自定义PuzzleLayout也非常简单. 只要继承PuzzleLayout并重写layout()方法就好了。

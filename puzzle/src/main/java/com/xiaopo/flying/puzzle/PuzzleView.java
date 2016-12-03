@@ -160,7 +160,6 @@ public class PuzzleView extends View {
             drawSelectedBorder(canvas, mHandlingPiece);
         }
 
-        //TODO
         if (mHandlingPiece != null && mCurrentMode == Mode.SWAP) {
             mHandlingPiece.draw(canvas, mBitmapPaint, 128);
 
@@ -478,7 +477,6 @@ public class PuzzleView extends View {
     }
 
 
-    //TODO
     private void updatePieceInBorder(MotionEvent event) {
         for (PuzzlePiece piece : mChangedPieces) {
             float scale = calculateFillScaleFactor(piece, mPuzzleLayout.getOuterBorder());

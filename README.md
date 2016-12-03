@@ -11,13 +11,13 @@ Due the size of the gif file, the example below may not render well, in that cas
 [Click here to see video demo](https://www.youtube.com/watch?v=jfOJCh-uDIo)
 </br>
 </br>
-![](https://github.com/wuapnjie/PuzzleView/blob/master/screenshots/gif-demo1.gif)
-![](https://github.com/wuapnjie/PuzzleView/blob/master/screenshots/screen1.png)
+![](https://github.com/wuapnjie/PuzzleView/blob/master/screenshots/screenshot1.png)
+![](https://github.com/wuapnjie/PuzzleView/blob/master/screenshots/screenshot2.png)
 
 ### Usage
 in build.gradle
 ```gradle
-compile 'com.flying.xiaopo:puzzle:1.0.0'
+compile 'com.flying.xiaopo:puzzle:1.0.2'
 ```
 
 in xml layout
@@ -61,7 +61,7 @@ The `PuzzleView` depends on the `PuzzleLayout`. Of course you can customize it.
 If you don't want to customize it's layout, you can just use the default layout.
 </br>
 All the built-in layouts can be found in the the demo's `PlaygroundActivity`. You can click to see the effect.
-![](https://github.com/wuapnjie/PuzzleView/blob/master/screenshots/screen2.png)
+![](https://github.com/wuapnjie/PuzzleView/blob/master/screenshots/screenshot3.png)
 
 ### Custom Layout
 To create a custom layout is also easy. Just extend `PuzzleLayout` and override the `layout` method.

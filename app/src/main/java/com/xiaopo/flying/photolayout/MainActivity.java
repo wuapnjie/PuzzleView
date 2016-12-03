@@ -90,8 +90,6 @@ public class MainActivity extends AppCompatActivity {
             }
         }.execute(new PhotoManager(this));
 
-        mPhotoList.setAdapter(mPhotoAdapter);
-
     }
 
     private void initView() {
