@@ -17,7 +17,7 @@ Due the size of the gif file, the example below may not render well, in that cas
 ### Usage
 in build.gradle
 ```gradle
-compile 'com.flying.xiaopo:puzzle:1.0.2'
+compile 'com.flying.xiaopo:puzzle:1.1.0'
 ```
 
 in xml layout
@@ -85,6 +85,9 @@ public class CustomLayout extends PuzzleLayout {
 to see some photos by puzzle
 [Click here](http://weibo.com/5350471787/E54jjxzlI)
 
+### Update
+* **2017/02/15**  1.1.0 add piece padding function 
+
 ### License
 
     Copyright 2016 wuapnjie
@@ -100,3 +103,5 @@ to see some photos by puzzle
     WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
     See the License for the specific language governing permissions and
     limitations under the License.
+
+

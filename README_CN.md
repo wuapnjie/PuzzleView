@@ -18,7 +18,7 @@ Android拼图支持库，想法来自Layout for Instagram。
 ### 使用
 在build.gradle添加，当然你也可以直接导入library module，方便修改。
 ```gradle
-compile 'com.flying.xiaopo:puzzle:1.0.2'
+compile 'com.flying.xiaopo:puzzle:1.1.0'
 ```
 
 在xml布局中
@@ -90,6 +90,8 @@ public class CustomLayout extends PuzzleLayout {
 看几张效果图
 [Click here](http://weibo.com/5350471787/E54jjxzlI)
 
+### 更新
+* **2017/02/15**  1.1.0 add piece padding function 
 ### License
 
     Copyright 2016 wuapnjie
@@ -105,3 +107,5 @@ public class CustomLayout extends PuzzleLayout {
     WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
     See the License for the specific language governing permissions and
     limitations under the License.
+
+
