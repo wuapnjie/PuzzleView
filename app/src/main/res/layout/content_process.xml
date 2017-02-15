@@ -8,145 +8,165 @@
     android:orientation="vertical"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
     tools:context="com.xiaopo.flying.photolayout.ProcessActivity"
-    tools:showIn="@layout/activity_process">
+    tools:showIn="@layout/activity_process"
+    >
 
-    <com.xiaopo.flying.puzzle.SquarePuzzleView
-        android:id="@+id/puzzle_view"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+  <com.xiaopo.flying.puzzle.SquarePuzzleView
+      android:id="@+id/puzzle_view"
+      android:layout_width="match_parent"
+      android:layout_height="match_parent"
+      android:background="@android:color/white"
+      />
 
-    <HorizontalScrollView
-        android:layout_width="match_parent"
+  <HorizontalScrollView
+      android:layout_width="match_parent"
+      android:layout_height="match_parent"
+      android:scrollbars="none"
+      >
+
+    <LinearLayout
+        android:layout_width="wrap_content"
         android:layout_height="match_parent"
-        android:scrollbars="none">
+        android:orientation="horizontal"
+        >
 
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:orientation="horizontal">
+      <LinearLayout
+          android:layout_width="wrap_content"
+          android:layout_height="match_parent"
+          android:gravity="center"
+          android:orientation="vertical"
+          android:padding="4dp"
+          >
 
-            <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:gravity="center"
-                android:orientation="vertical"
-                android:padding="4dp">
+        <ImageView
+            android:id="@+id/btn_replace"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:scaleType="centerInside"
+            android:src="@drawable/ic_content_white_24dp"
+            />
 
-                <ImageView
-                    android:id="@+id/btn_replace"
-                    android:layout_width="50dp"
-                    android:layout_height="50dp"
-                    android:background="?attr/selectableItemBackgroundBorderless"
-                    android:scaleType="centerInside"
-                    android:src="@drawable/ic_content_white_24dp" />
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:text="@string/prompt.replace"
+            android:textColor="@android:color/white"
+            />
 
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:gravity="center"
-                    android:text="@string/prompt.replace"
-                    android:textColor="@android:color/white" />
+      </LinearLayout>
 
-            </LinearLayout>
+      <LinearLayout
+          android:layout_width="wrap_content"
+          android:layout_height="match_parent"
+          android:gravity="center"
+          android:orientation="vertical"
+          android:padding="4dp"
+          >
 
-            <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:gravity="center"
-                android:orientation="vertical"
-                android:padding="4dp">
+        <ImageView
+            android:id="@+id/btn_rotate"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
 
-                <ImageView
-                    android:id="@+id/btn_rotate"
-                    android:layout_width="50dp"
-                    android:layout_height="50dp"
-                    android:background="?attr/selectableItemBackgroundBorderless"
+            android:scaleType="centerInside"
+            android:src="@drawable/ic_rotate_right_white_24dp"
+            />
 
-                    android:scaleType="centerInside"
-                    android:src="@drawable/ic_rotate_right_white_24dp" />
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:text="@string/prompt.rotate"
+            android:textColor="@android:color/white"
+            />
 
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:gravity="center"
-                    android:text="@string/prompt.rotate"
-                    android:textColor="@android:color/white" />
+      </LinearLayout>
 
-            </LinearLayout>
+      <LinearLayout
+          android:layout_width="wrap_content"
+          android:layout_height="match_parent"
+          android:gravity="center"
+          android:orientation="vertical"
+          android:padding="4dp"
+          >
 
-            <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:gravity="center"
-                android:orientation="vertical"
-                android:padding="4dp">
+        <ImageView
+            android:id="@+id/btn_flip_horizontal"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:scaleType="centerInside"
+            android:src="@drawable/ic_flip_horizontal_white_24dp"
+            />
 
-                <ImageView
-                    android:id="@+id/btn_flip_horizontal"
-                    android:layout_width="50dp"
-                    android:layout_height="50dp"
-                    android:background="?attr/selectableItemBackgroundBorderless"
-                    android:scaleType="centerInside"
-                    android:src="@drawable/ic_flip_horizontal_white_24dp" />
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:text="@string/prompt.flip.horizontal"
+            android:textColor="@android:color/white"
+            />
 
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:gravity="center"
-                    android:text="@string/prompt.flip.horizontal"
-                    android:textColor="@android:color/white" />
+      </LinearLayout>
 
-            </LinearLayout>
+      <LinearLayout
+          android:layout_width="wrap_content"
+          android:layout_height="match_parent"
+          android:gravity="center"
+          android:orientation="vertical"
+          android:padding="4dp"
+          >
 
-            <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:gravity="center"
-                android:orientation="vertical"
-                android:padding="4dp">
+        <ImageView
+            android:id="@+id/btn_flip_vertical"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:scaleType="centerInside"
+            android:src="@drawable/ic_flip_vertical_white_24dp"
+            />
 
-                <ImageView
-                    android:id="@+id/btn_flip_vertical"
-                    android:layout_width="50dp"
-                    android:layout_height="50dp"
-                    android:background="?attr/selectableItemBackgroundBorderless"
-                    android:scaleType="centerInside"
-                    android:src="@drawable/ic_flip_vertical_white_24dp" />
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:text="@string/prompt.flip.vertical"
+            android:textColor="@android:color/white"
+            />
 
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:gravity="center"
-                    android:text="@string/prompt.flip.vertical"
-                    android:textColor="@android:color/white" />
+      </LinearLayout>
 
-            </LinearLayout>
+      <LinearLayout
+          android:layout_width="wrap_content"
+          android:layout_height="match_parent"
+          android:gravity="center"
+          android:orientation="vertical"
+          android:padding="4dp"
+          >
 
-            <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:gravity="center"
-                android:orientation="vertical"
-                android:padding="4dp">
+        <ImageView
+            android:id="@+id/btn_border"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
 
-                <ImageView
-                    android:id="@+id/btn_border"
-                    android:layout_width="50dp"
-                    android:layout_height="50dp"
-                    android:background="?attr/selectableItemBackgroundBorderless"
+            android:scaleType="centerInside"
+            android:src="@drawable/ic_border_all_white_24dp"
+            />
 
-                    android:scaleType="centerInside"
-                    android:src="@drawable/ic_border_all_white_24dp" />
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:text="@string/prompt.border"
+            android:textColor="@android:color/white"
+            />
+      </LinearLayout>
+    </LinearLayout>
 
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:gravity="center"
-                    android:text="@string/prompt.border"
-                    android:textColor="@android:color/white" />
-            </LinearLayout>
-        </LinearLayout>
-
-    </HorizontalScrollView>
+  </HorizontalScrollView>
 
 </LinearLayout>
