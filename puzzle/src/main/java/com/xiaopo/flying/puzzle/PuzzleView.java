@@ -553,6 +553,7 @@ public class PuzzleView extends View {
     mBorderRect.bottom = h - getPaddingBottom();
 
     if (mPuzzleLayout != null) {
+      mPuzzleLayout.reset();
       mPuzzleLayout.setOuterBorder(mBorderRect);
       mPuzzleLayout.layout();
     }
