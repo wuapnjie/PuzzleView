@@ -421,7 +421,7 @@ public class PuzzleView extends View {
   private float calculateFillScaleFactor(PuzzlePiece piece) {
     final RectF rectF = piece.getBorder().getRect();
     float scale;
-    if (piece.getRotation() == 90 || piece.getRotation() == 270) {
+    if (Math.abs(piece.getRotation()) == 90 || Math.abs(piece.getRotation()) == 270) {
       if (piece.getHeight() * rectF.height() > rectF.width() * piece.getWidth()) {
         scale = (rectF.height() + mExtraSize) / piece.getWidth();
       } else {
