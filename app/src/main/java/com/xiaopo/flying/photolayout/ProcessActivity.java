@@ -9,15 +9,18 @@ import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import android.widget.Toast;
 import com.squareup.picasso.Picasso;
 import com.squareup.picasso.Target;
 import com.xiaopo.flying.poiphoto.Define;
 import com.xiaopo.flying.poiphoto.PhotoPicker;
 import com.xiaopo.flying.puzzle.PuzzleLayout;
+import com.xiaopo.flying.puzzle.PuzzlePiece;
 import com.xiaopo.flying.puzzle.PuzzleView;
 
 import java.io.File;
@@ -169,8 +172,13 @@ public class ProcessActivity extends AppCompatActivity implements View.OnClickLi
     mPuzzleView.setBorderWidth(4);
     mPuzzleView.setBorderColor(Color.WHITE);
     mPuzzleView.setSelectedBorderColor(Color.parseColor("#99BBFB"));
-    mPuzzleView.setDefaultPiecePadding(30);
-    mPuzzleView.setPadding(30, 30, 30, 30);
+    mPuzzleView.setOnPieceSelectedListener(new PuzzleView.OnPieceSelectedListener() {
+      @Override public void onPieceSelected(PuzzlePiece piece) {
+        Toast.makeText(ProcessActivity.this, "Piece selected", Toast.LENGTH_SHORT).show();
+      }
+    });
+    //mPuzzleView.setDefaultPiecePadding(30);
+    //mPuzzleView.setPadding(30, 30, 30, 30);
 
     ImageView btnReplace = (ImageView) findViewById(R.id.btn_replace);
     ImageView btnRotate = (ImageView) findViewById(R.id.btn_rotate);

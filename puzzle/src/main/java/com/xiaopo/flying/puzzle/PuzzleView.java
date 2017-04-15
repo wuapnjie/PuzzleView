@@ -74,6 +74,7 @@ public class PuzzleView extends View {
   private boolean mNeedDrawOuterBorder = false;
 
   private Handler mHandler;
+  private OnPieceSelectedListener mOnPieceSelectedListener;
 
   public PuzzleView(Context context) {
     this(context, null, 0);
@@ -288,6 +289,11 @@ public class PuzzleView extends View {
             }
 
             mPreviewHandlingPiece = mHandlingPiece;
+
+            // trigger listener
+            if (mPreviewHandlingPiece != null && mOnPieceSelectedListener != null) {
+              mOnPieceSelectedListener.onPieceSelected(mPreviewHandlingPiece);
+            }
             break;
           case ZOOM:
             if (!mHandlingPiece.isFilledBorder()) {
@@ -308,6 +314,7 @@ public class PuzzleView extends View {
             }
 
             mHandlingPiece = null;
+            mPreviewHandlingPiece = null;
             mReplacePiece = null;
             break;
         }
@@ -854,6 +861,10 @@ public class PuzzleView extends View {
         }
       }
     }
+  }
+
+  public void setOnPieceSelectedListener(OnPieceSelectedListener onPieceSelectedListener) {
+    this.mOnPieceSelectedListener = onPieceSelectedListener;
   }
 
   public interface Callback {
