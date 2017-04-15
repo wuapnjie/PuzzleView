@@ -18,7 +18,7 @@ Android拼图支持库，想法来自Layout for Instagram。
 ### 使用
 在build.gradle添加，当然你也可以直接导入library module，方便修改。
 ```gradle
-compile 'com.flying.xiaopo:puzzle:1.1.1'
+compile 'com.flying.xiaopo:puzzle:1.1.2'
 ```
 
 在xml布局中

@@ -17,7 +17,7 @@ Due the size of the gif file, the example below may not render well, in that cas
 ### Usage
 in build.gradle
 ```gradle
-compile 'com.flying.xiaopo:puzzle:1.1.1'
+compile 'com.flying.xiaopo:puzzle:1.1.2'
 ```
 
 in xml layout
