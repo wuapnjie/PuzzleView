@@ -10,9 +10,9 @@ Android拼图支持库，想法来自Layout for Instagram。
 </br>
 [点击观看Youku](http://v.youku.com/v_show/id_XMTY5Nzk3NTYyMA==.html?beta&)
 
-</br>
-</br>
+
 ![](https://github.com/wuapnjie/PuzzleView/blob/master/screenshots/screenshot1.png)
+
 ![](https://github.com/wuapnjie/PuzzleView/blob/master/screenshots/screenshot2.png)
 
 ### 使用
