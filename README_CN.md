@@ -12,7 +12,6 @@ Android拼图支持库，想法来自Layout for Instagram。
 
 
 ![](https://github.com/wuapnjie/PuzzleView/blob/master/screenshots/screenshot1.png)
-
 ![](https://github.com/wuapnjie/PuzzleView/blob/master/screenshots/screenshot2.png)
 
 ### 使用
