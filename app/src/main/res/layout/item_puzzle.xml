@@ -3,11 +3,13 @@
     android:layout_width="150dp"
     android:layout_height="150dp"
     android:orientation="vertical"
-    android:padding="8dp">
+    android:padding="8dp"
+    >
 
-    <com.xiaopo.flying.puzzle.SquarePuzzleView
-        android:id="@+id/puzzle"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+  <com.xiaopo.flying.puzzle.SquarePuzzleView
+      android:id="@+id/puzzle"
+      android:layout_width="match_parent"
+      android:layout_height="match_parent"
+      />
 
 </FrameLayout>
