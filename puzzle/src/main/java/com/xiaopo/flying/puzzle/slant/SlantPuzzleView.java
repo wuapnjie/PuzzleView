@@ -113,6 +113,8 @@ public class SlantPuzzleView extends View {
         downX = event.getX();
         downY = event.getY();
 
+        handlingLine = findHandlingLine();
+
         for (int i = 0; i < slantLayout.getAreas().size(); i++) {
           SlantArea slantArea = slantLayout.getArea(i);
           if (slantArea.contains(downX, downY)) {
@@ -131,12 +133,13 @@ public class SlantPuzzleView extends View {
     return true;
   }
 
-  //private SlantLine findHandlingLine() {
-  //  for (SlantLine line : slantLayout.getLines()) {
-  //    if (line.contains(downX, downY, 20)) {
-  //      return line;
-  //    }
-  //  }
-  //  return null;
-  //}
+  private SlantLine findHandlingLine() {
+    for (SlantLine line : slantLayout.getLines()) {
+      if (line.contains(downX, downY, 20)) {
+        Log.d(TAG, "findHandlingLine: --> " + line.toString());
+        return line;
+      }
+    }
+    return null;
+  }
 }
