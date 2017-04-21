@@ -30,8 +30,7 @@ public abstract class SlantLayout {
   }
 
   public void setOuterBorder(RectF baseRect) {
-    float width = baseRect.width();
-    float height = baseRect.height();
+    reset();
 
     PointF leftTop = new PointF(baseRect.left, baseRect.top);
     PointF rightTop = new PointF(baseRect.right, baseRect.top);
@@ -105,5 +104,11 @@ public abstract class SlantLayout {
     outerLines.clear();
     areas.clear();
     lines.clear();
+  }
+
+  public void update(){
+    for (SlantLine line : lines){
+      line.update();
+    }
   }
 }

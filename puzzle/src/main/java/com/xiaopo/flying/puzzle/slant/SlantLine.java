@@ -4,6 +4,7 @@ import android.graphics.PointF;
 import com.xiaopo.flying.puzzle.Line;
 
 import static com.xiaopo.flying.puzzle.slant.SlantUtil.crossProduct;
+import static com.xiaopo.flying.puzzle.slant.SlantUtil.intersectionOfLines;
 import static java.lang.Math.pow;
 import static java.lang.Math.sqrt;
 
@@ -15,8 +16,14 @@ import static java.lang.Math.sqrt;
  */
 
 public class SlantLine {
+  private static final String TAG = "SlantLine";
+
   public PointF start;
   public PointF end;
+
+  // 移动前的点
+  public PointF previousStart = new PointF();
+  public PointF previousEnd = new PointF();
 
   public final Line.Direction direction;
 
@@ -70,6 +77,28 @@ public class SlantLine {
         && crossProduct(BC, BM) > 0
         && crossProduct(CD, CM) > 0
         && crossProduct(DA, DM) > 0;
+  }
+
+  // TODO 移动范围限制
+  public void moveBy(float offset, float extra) {
+    if (direction == Line.Direction.HORIZONTAL) {
+      start.y = previousStart.y + offset;
+      end.y = previousEnd.y + offset;
+    } else {
+      start.x = previousStart.x + offset;
+      end.x = previousEnd.x + offset;
+    }
+  }
+
+  public void prepareMove() {
+    previousStart.set(start);
+    previousEnd.set(end);
+  }
+
+  // TODO 需要判断点是否超出总范围
+  public void update(){
+    this.start.set(intersectionOfLines(this, attachLineStart));
+    this.end.set(intersectionOfLines(this, attachLineEnd));
   }
 
   @Override public String toString() {

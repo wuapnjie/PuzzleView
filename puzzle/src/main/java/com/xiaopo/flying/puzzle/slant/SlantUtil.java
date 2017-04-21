@@ -98,7 +98,133 @@ public class SlantUtil {
   }
 
   // 叉乘
-  public static float crossProduct(PointF a,PointF b){
+  public static float crossProduct(final PointF a, final PointF b) {
     return a.x * b.y - b.x * a.y;
+  }
+
+  /**
+   * 计算两线的交点
+   *
+   * @param lineOne 线一
+   * @param lineTwo 线二
+   * @return 两条线的交点, 如果两线平行，则返回（0，0）
+   */
+  public static PointF intersectionOfLines(final SlantLine lineOne, final SlantLine lineTwo) {
+    if (isParallel(lineOne, lineTwo)) {
+      return new PointF(0, 0);
+    }
+
+    if (isHorizontalLine(lineOne) && isVerticalLine(lineTwo)) {
+      return new PointF(lineTwo.start.x, lineOne.start.y);
+    }
+
+    if (isVerticalLine(lineOne) && isHorizontalLine(lineTwo)) {
+      return new PointF(lineOne.start.x, lineTwo.start.y);
+    }
+
+    PointF intersection = new PointF();
+
+    if (isHorizontalLine(lineOne) && !isVerticalLine(lineTwo)) {
+      float k = calculateSlope(lineTwo);
+      float b = calculateVerticalIntercept(lineTwo);
+
+      intersection.y = lineOne.start.y;
+      intersection.x = (intersection.y - b) / k;
+
+      return intersection;
+    }
+
+    if (isVerticalLine(lineOne) && !isHorizontalLine(lineTwo)) {
+      float k = calculateSlope(lineTwo);
+      float b = calculateVerticalIntercept(lineTwo);
+
+      intersection.x = lineOne.start.x;
+      intersection.y = k * intersection.x + b;
+
+      return intersection;
+    }
+
+    if (isHorizontalLine(lineTwo) && !isVerticalLine(lineOne)) {
+      float k = calculateSlope(lineOne);
+      float b = calculateVerticalIntercept(lineOne);
+
+      intersection.y = lineTwo.start.y;
+      intersection.x = (intersection.y - b) / k;
+
+      return intersection;
+    }
+
+    if (isVerticalLine(lineTwo) && !isHorizontalLine(lineOne)) {
+      float k = calculateSlope(lineOne);
+      float b = calculateVerticalIntercept(lineOne);
+
+      intersection.x = lineTwo.start.x;
+      intersection.y = k * intersection.x + b;
+
+      return intersection;
+    }
+
+    final float k1 = calculateSlope(lineOne);
+    final float b1 = calculateVerticalIntercept(lineOne);
+
+    final float k2 = calculateSlope(lineTwo);
+    final float b2 = calculateVerticalIntercept(lineTwo);
+
+    intersection.x = (b2 - b1) / (k1 - k2);
+    intersection.y = intersection.x * k1 + b1;
+
+    return intersection;
+  }
+
+  public static boolean isHorizontalLine(SlantLine line) {
+    return line.start.y == line.end.y;
+  }
+
+  public static boolean isVerticalLine(SlantLine line) {
+    return line.start.x == line.end.x;
+  }
+
+  /**
+   * 判断两条线是否平行
+   *
+   * @param lineOne 第一条
+   * @param lineTwo 第二条
+   * @return 是否平行
+   */
+  public static boolean isParallel(final SlantLine lineOne, final SlantLine lineTwo) {
+    return calculateSlope(lineOne) == calculateSlope(lineTwo);
+  }
+
+  /**
+   * 计算线的斜率
+   *
+   * @param line 线
+   * @return 线的斜率
+   */
+  public static float calculateSlope(final SlantLine line) {
+    if (isHorizontalLine(line)) {
+      return 0f;
+    } else if (isVerticalLine(line)) {
+      return Float.POSITIVE_INFINITY;
+    } else {
+      return (line.start.y - line.end.y) / (line.start.x - line.end.x);
+    }
+  }
+
+  /**
+   * 计算纵截距
+   *
+   * @param line 线
+   * @return 纵截距
+   */
+  public static float calculateVerticalIntercept(final SlantLine line) {
+    if (isHorizontalLine(line)) {
+      return line.start.y;
+    } else if (isVerticalLine(line)) {
+      return Float.POSITIVE_INFINITY;
+    } else {
+      float k = calculateSlope(line);
+      return line.start.y - k * line.start.x;
+    }
   }
 }

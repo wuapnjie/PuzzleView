@@ -9,6 +9,7 @@ import android.util.AttributeSet;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
+import com.xiaopo.flying.puzzle.Line;
 import java.util.Random;
 
 /**
@@ -114,6 +115,9 @@ public class SlantPuzzleView extends View {
         downY = event.getY();
 
         handlingLine = findHandlingLine();
+        if (handlingLine != null) {
+          handlingLine.prepareMove();
+        }
 
         for (int i = 0; i < slantLayout.getAreas().size(); i++) {
           SlantArea slantArea = slantLayout.getArea(i);
@@ -125,8 +129,16 @@ public class SlantPuzzleView extends View {
 
       case MotionEvent.ACTION_MOVE:
         if (handlingLine != null) {
+          if (handlingLine.direction == Line.Direction.HORIZONTAL) {
+            handlingLine.moveBy(event.getY() - downY, 40f);
+          } else {
+            handlingLine.moveBy(event.getX() - downX, 40f);
+          }
 
+          slantLayout.update();
         }
+
+        invalidate();
         break;
     }
 
