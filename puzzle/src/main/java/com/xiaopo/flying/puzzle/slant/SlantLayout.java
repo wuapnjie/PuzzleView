@@ -4,6 +4,8 @@ import android.graphics.PointF;
 import android.graphics.RectF;
 import com.xiaopo.flying.puzzle.Line;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import static com.xiaopo.flying.puzzle.slant.SlantUtil.*;
@@ -20,6 +22,8 @@ public abstract class SlantLayout {
   private List<SlantLine> outerLines = new ArrayList<>();
   private List<SlantArea> areas = new ArrayList<>();
   private List<SlantLine> lines = new ArrayList<>();
+
+  private Comparator<SlantArea> slantAreaComparator = new SlantAreaComparator();
 
   public SlantLayout() {
 
@@ -77,6 +81,8 @@ public abstract class SlantLayout {
     areas.addAll(increasedArea);
 
     // TODO 增加一些边界判断
+
+    sortArea();
   }
 
   public List<SlantLine> getOuterLines() {
@@ -110,5 +116,9 @@ public abstract class SlantLayout {
     for (SlantLine line : lines){
       line.update();
     }
+  }
+
+  private void sortArea(){
+    Collections.sort(areas, slantAreaComparator);
   }
 }

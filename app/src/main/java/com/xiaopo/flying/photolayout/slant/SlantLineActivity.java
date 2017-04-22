@@ -23,6 +23,6 @@ public class SlantLineActivity extends AppCompatActivity {
     Bitmap bitmap2 = BitmapFactory.decodeResource(getResources(), R.drawable.demo2);
 
     puzzleView = (SquareSlantPuzzleView) findViewById(R.id.puzzle_view);
-    puzzleView.setSlantLayout(new SlantTwoLayout());
+    puzzleView.setSlantLayout(new SlantSampleLayout());
   }
 }
