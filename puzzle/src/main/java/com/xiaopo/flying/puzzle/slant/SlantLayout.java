@@ -2,7 +2,6 @@ package com.xiaopo.flying.puzzle.slant;
 
 import android.graphics.PointF;
 import android.graphics.RectF;
-import com.xiaopo.flying.puzzle.Line;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -112,13 +111,13 @@ public abstract class SlantLayout {
     lines.clear();
   }
 
-  public void update(){
-    for (SlantLine line : lines){
+  public void update() {
+    for (SlantLine line : lines) {
       line.update();
     }
   }
 
-  private void sortArea(){
+  private void sortArea() {
     Collections.sort(areas, slantAreaComparator);
   }
 }

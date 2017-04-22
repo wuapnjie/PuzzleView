@@ -1,7 +1,6 @@
 package com.xiaopo.flying.puzzle.slant;
 
 import android.graphics.PointF;
-import com.xiaopo.flying.puzzle.Line;
 import java.util.ArrayList;
 import java.util.List;
 

@@ -18,7 +18,7 @@ import android.util.AttributeSet;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
-
+import com.xiaopo.flying.puzzle.slant.Line;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -62,7 +62,7 @@ public class PuzzleView extends View {
 
   private List<PuzzlePiece> mPuzzlePieces = new ArrayList<>();
 
-  private Line mHandlingLine;
+  private StraightLine mHandlingLine;
   private PuzzlePiece mHandlingPiece;
   private PuzzlePiece mPreviewHandlingPiece;
   private PuzzlePiece mReplacePiece;
@@ -137,14 +137,14 @@ public class PuzzleView extends View {
 
     //draw divide line
     if (mNeedDrawBorder) {
-      for (Line line : mPuzzleLayout.getLines()) {
+      for (StraightLine line : mPuzzleLayout.getLines()) {
         drawLine(canvas, line);
       }
     }
 
     //draw outer line
     if (mNeedDrawOuterBorder) {
-      for (Line line : mPuzzleLayout.getOuterLines()) {
+      for (StraightLine line : mPuzzleLayout.getOuterLines()) {
         drawLine(canvas, line);
       }
     }
@@ -174,7 +174,7 @@ public class PuzzleView extends View {
     canvas.drawRect(mSelectedRect, mSelectedBorderPaint);
 
     mSelectedBorderPaint.setStyle(Paint.Style.FILL);
-    for (Line line : piece.getBorder().getLines()) {
+    for (StraightLine line : piece.getBorder().getLines()) {
       if (mPuzzleLayout.getLines().contains(line)) {
         if (line.getDirection() == Line.Direction.HORIZONTAL) {
           canvas.drawRoundRect(
@@ -508,8 +508,8 @@ public class PuzzleView extends View {
     return puzzlePieces;
   }
 
-  private Line findHandlingLine() {
-    for (Line line : mPuzzleLayout.getLines()) {
+  private StraightLine findHandlingLine() {
+    for (StraightLine line : mPuzzleLayout.getLines()) {
       if (line.contains(mDownX, mDownY, 20)) {
         return line;
       }
@@ -697,7 +697,7 @@ public class PuzzleView extends View {
     invalidate();
   }
 
-  private void drawLine(Canvas canvas, Line line) {
+  private void drawLine(Canvas canvas, StraightLine line) {
     canvas.drawLine(line.start.x, line.start.y, line.end.x, line.end.y, mBorderPaint);
   }
 

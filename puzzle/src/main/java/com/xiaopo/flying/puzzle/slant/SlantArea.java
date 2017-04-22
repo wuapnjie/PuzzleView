@@ -9,7 +9,7 @@ import static com.xiaopo.flying.puzzle.slant.SlantUtil.crossProduct;
  * @author wupanjie
  */
 
-public class SlantArea {
+public class SlantArea implements Area {
   SlantLine lineLeft;
   SlantLine lineTop;
   SlantLine lineRight;
@@ -66,5 +66,9 @@ public class SlantArea {
         && crossProduct(BC, BM) > 0
         && crossProduct(CD, CM) > 0
         && crossProduct(DA, DM) > 0;
+  }
+
+  @Override public boolean contains(PointF point) {
+    return contains(point.x, point.y);
   }
 }

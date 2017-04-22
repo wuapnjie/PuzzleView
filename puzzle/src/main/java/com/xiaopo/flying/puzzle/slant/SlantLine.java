@@ -1,7 +1,6 @@
 package com.xiaopo.flying.puzzle.slant;
 
 import android.graphics.PointF;
-import com.xiaopo.flying.puzzle.Line;
 
 import static com.xiaopo.flying.puzzle.slant.SlantUtil.crossProduct;
 import static com.xiaopo.flying.puzzle.slant.SlantUtil.intersectionOfLines;
@@ -12,10 +11,11 @@ import static java.lang.Math.sqrt;
  * 分为两种斜线，横谢线和竖线线
  * 横斜线-->start为左边的点，end为右边的点
  * 竖斜线-->start为上面的点，end为下面的点
+ *
  * @author wupanjie
  */
 
-public class SlantLine {
+public class SlantLine implements Line{
   private static final String TAG = "SlantLine";
 
   public PointF start;
@@ -33,7 +33,7 @@ public class SlantLine {
   public SlantLine upperLine;
   public SlantLine lowerLine;
 
-  public SlantLine(Line.Direction direction){
+  public SlantLine(Line.Direction direction) {
     this.direction = direction;
   }
 
@@ -45,6 +45,22 @@ public class SlantLine {
 
   public float length() {
     return (float) sqrt(pow(end.x - start.x, 2) + pow(end.y - start.y, 2));
+  }
+
+  @Override public PointF startPoint() {
+    return start;
+  }
+
+  @Override public PointF endPoint() {
+    return end;
+  }
+
+  @Override public Direction direction() {
+    return direction;
+  }
+
+  @Override public float slope() {
+    return SlantUtil.calculateSlope(this);
   }
 
   public boolean contains(float x, float y, float extra) {
@@ -80,7 +96,7 @@ public class SlantLine {
   }
 
   // TODO 移动范围限制
-  public void moveBy(float offset, float extra) {
+  public void move(float offset, float extra) {
     if (direction == Line.Direction.HORIZONTAL) {
       start.y = previousStart.y + offset;
       end.y = previousEnd.y + offset;
@@ -96,7 +112,7 @@ public class SlantLine {
   }
 
   // TODO 需要判断点是否超出总范围
-  public void update(){
+  public void update() {
     this.start.set(intersectionOfLines(this, attachLineStart));
     this.end.set(intersectionOfLines(this, attachLineEnd));
   }

@@ -1,6 +1,6 @@
 package com.xiaopo.flying.photolayout.slant;
 
-import com.xiaopo.flying.puzzle.Line;
+import com.xiaopo.flying.puzzle.slant.Line;
 import com.xiaopo.flying.puzzle.slant.SlantLayout;
 
 /**

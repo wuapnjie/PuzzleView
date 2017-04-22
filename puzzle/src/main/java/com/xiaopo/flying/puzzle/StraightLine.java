@@ -3,16 +3,13 @@ package com.xiaopo.flying.puzzle;
 import android.graphics.PointF;
 import android.graphics.RectF;
 import android.util.Log;
+import com.xiaopo.flying.puzzle.slant.Line;
 
 /**
  * the line to divide the rect border
  * Created by snowbean on 16-8-13.
  */
-public class Line {
-
-  public enum Direction {
-    HORIZONTAL, VERTICAL
-  }
+public class StraightLine {
 
   /**
    * for horizontal line, start means left, end means right
@@ -21,13 +18,13 @@ public class Line {
   final PointF start;
   final PointF end;
 
-  private Direction direction = Direction.HORIZONTAL;
+  private Line.Direction direction = Line.Direction.HORIZONTAL;
 
-  private Line attachLineStart;
-  private Line attachLineEnd;
+  private StraightLine attachLineStart;
+  private StraightLine attachLineEnd;
 
-  private Line mUpperLine;
-  private Line mLowerLine;
+  private StraightLine mUpperLine;
+  private StraightLine mLowerLine;
 
   private final RectF mBound = new RectF();
 
@@ -55,16 +52,16 @@ public class Line {
     return stringBuilder.append("\n").toString();
   }
 
-  public Line(PointF start, PointF end) {
+  public StraightLine(PointF start, PointF end) {
     this.start = start;
     this.end = end;
 
     if (start.x == end.x) {
-      direction = Direction.VERTICAL;
+      direction = Line.Direction.VERTICAL;
     } else if (start.y == end.y) {
-      direction = Direction.HORIZONTAL;
+      direction = Line.Direction.HORIZONTAL;
     } else {
-      Log.d("Line", "Line: current only support two direction");
+      Log.d("StraightLine", "StraightLine: current only support two direction");
     }
   }
 
@@ -77,7 +74,7 @@ public class Line {
   }
 
   public float getPosition() {
-    if (direction == Direction.HORIZONTAL) {
+    if (direction == Line.Direction.HORIZONTAL) {
       return start.y;
     } else {
       return start.x;
@@ -85,12 +82,12 @@ public class Line {
   }
 
   public boolean contains(float x, float y, float extra) {
-    if (direction == Direction.HORIZONTAL) {
+    if (direction == Line.Direction.HORIZONTAL) {
       mBound.left = start.x;
       mBound.right = end.x;
       mBound.top = start.y - extra / 2;
       mBound.bottom = start.y + extra / 2;
-    } else if (direction == Direction.VERTICAL) {
+    } else if (direction == Line.Direction.VERTICAL) {
       mBound.top = start.y;
       mBound.bottom = end.y;
       mBound.left = start.x - extra / 2;
@@ -102,7 +99,7 @@ public class Line {
 
   public RectF getCenterBound(float position, float length, float borderStrokeWidth,
       boolean isStartLine) {
-    if (direction == Direction.HORIZONTAL) {
+    if (direction == Line.Direction.HORIZONTAL) {
       mBound.left = position - length / 4;
       mBound.right = position + length / 4;
       if (isStartLine) {
@@ -112,7 +109,7 @@ public class Line {
         mBound.top = start.y - borderStrokeWidth * 1.5f - borderStrokeWidth / 2;
         mBound.bottom = start.y + borderStrokeWidth * 1.5f - borderStrokeWidth / 2;
       }
-    } else if (direction == Direction.VERTICAL) {
+    } else if (direction == Line.Direction.VERTICAL) {
       mBound.top = position - length / 4;
       mBound.bottom = position + length / 4;
       if (isStartLine) {
@@ -128,14 +125,14 @@ public class Line {
   }
 
   public void update() {
-    if (direction == Direction.HORIZONTAL) {
+    if (direction == Line.Direction.HORIZONTAL) {
       if (attachLineStart != null) {
         start.x = attachLineStart.getPosition();
       }
       if (attachLineEnd != null) {
         end.x = attachLineEnd.getPosition();
       }
-    } else if (direction == Direction.VERTICAL) {
+    } else if (direction == Line.Direction.VERTICAL) {
       if (attachLineStart != null) {
         start.y = attachLineStart.getPosition();
       }
@@ -146,13 +143,13 @@ public class Line {
   }
 
   public void moveTo(float position, float extra) {
-    if (direction == Direction.HORIZONTAL) {
+    if (direction == Line.Direction.HORIZONTAL) {
 
       if (position < mLowerLine.start.y + extra || position > mUpperLine.start.y - extra) return;
 
       start.y = position;
       end.y = position;
-    } else if (direction == Direction.VERTICAL) {
+    } else if (direction == Line.Direction.VERTICAL) {
 
       if (position < mLowerLine.start.x + extra || position > mUpperLine.start.x - extra) return;
 
@@ -161,39 +158,39 @@ public class Line {
     }
   }
 
-  public Line getAttachLineStart() {
+  public StraightLine getAttachLineStart() {
     return attachLineStart;
   }
 
-  public void setAttachLineStart(Line attachLineStart) {
+  public void setAttachLineStart(StraightLine attachLineStart) {
     this.attachLineStart = attachLineStart;
   }
 
-  public Line getAttachLineEnd() {
+  public StraightLine getAttachLineEnd() {
     return attachLineEnd;
   }
 
-  public void setAttachLineEnd(Line attachLineEnd) {
+  public void setAttachLineEnd(StraightLine attachLineEnd) {
     this.attachLineEnd = attachLineEnd;
   }
 
-  public Direction getDirection() {
+  public Line.Direction getDirection() {
     return direction;
   }
 
-  public Line getUpperLine() {
+  public StraightLine getUpperLine() {
     return mUpperLine;
   }
 
-  public void setUpperLine(Line upperLine) {
+  public void setUpperLine(StraightLine upperLine) {
     mUpperLine = upperLine;
   }
 
-  public Line getLowerLine() {
+  public StraightLine getLowerLine() {
     return mLowerLine;
   }
 
-  public void setLowerLine(Line lowerLine) {
+  public void setLowerLine(StraightLine lowerLine) {
     mLowerLine = lowerLine;
   }
 }
