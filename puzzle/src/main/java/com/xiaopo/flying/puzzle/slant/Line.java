@@ -23,6 +23,8 @@ public interface Line {
 
   boolean contains(float x, float y, float extra);
 
+  void prepareMove();
+
   void move(float offset, float extra);
 
   void update();

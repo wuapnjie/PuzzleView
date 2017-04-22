@@ -9,7 +9,6 @@ import android.util.AttributeSet;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
-import java.util.Random;
 
 /**
  * @author wupanjie
@@ -23,14 +22,10 @@ public class SlantPuzzleView extends View {
   private Paint linePaint;
   private int lineSize = 4;
 
-  private SlantLine handlingLine;
+  private Line handlingLine;
 
   private float downX;
   private float downY;
-
-  // TODO 待删
-  private Random random = new Random(123L);
-  private int[] colors = new int[] { Color.WHITE, Color.BLUE, Color.RED, Color.GRAY, Color.GREEN };
 
   public SlantPuzzleView(Context context) {
     this(context, null);
@@ -128,7 +123,7 @@ public class SlantPuzzleView extends View {
 
       case MotionEvent.ACTION_MOVE:
         if (handlingLine != null) {
-          if (handlingLine.direction == Line.Direction.HORIZONTAL) {
+          if (handlingLine.direction() == Line.Direction.HORIZONTAL) {
             handlingLine.move(event.getY() - downY, 40f);
           } else {
             handlingLine.move(event.getX() - downX, 40f);

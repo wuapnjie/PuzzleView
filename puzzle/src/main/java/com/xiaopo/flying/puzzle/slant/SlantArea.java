@@ -2,6 +2,9 @@ package com.xiaopo.flying.puzzle.slant;
 
 import android.graphics.Path;
 import android.graphics.PointF;
+import android.graphics.RectF;
+import java.util.Arrays;
+import java.util.List;
 
 import static com.xiaopo.flying.puzzle.slant.SlantUtil.crossProduct;
 
@@ -21,6 +24,7 @@ public class SlantArea implements Area {
   PointF rightBottom;
 
   private Path areaPath = new Path();
+  private RectF areaRect = new RectF();
 
   public SlantArea() {
 
@@ -38,6 +42,38 @@ public class SlantArea implements Area {
     this.rightBottom = src.rightBottom;
   }
 
+  @Override public float left() {
+    return Math.min(leftTop.x, leftBottom.x);
+  }
+
+  @Override public float top() {
+    return Math.min(leftTop.y, rightTop.y);
+  }
+
+  @Override public float right() {
+    return Math.max(rightTop.x, rightBottom.x);
+  }
+
+  @Override public float bottom() {
+    return Math.max(leftBottom.y, rightBottom.y);
+  }
+
+  @Override public float centerX() {
+    return (left() + right()) / 2;
+  }
+
+  @Override public float centerY() {
+    return (top() + bottom()) / 2;
+  }
+
+  @Override public float width() {
+    return right() - left();
+  }
+
+  @Override public float height() {
+    return bottom() - top();
+  }
+
   public Path getAreaPath() {
     areaPath.reset();
     areaPath.moveTo(leftTop.x, leftTop.y);
@@ -47,6 +83,11 @@ public class SlantArea implements Area {
     areaPath.lineTo(leftTop.x, leftTop.y);
 
     return areaPath;
+  }
+
+  @Override public RectF getAreaRect() {
+    areaRect.set(left(), top(), right(), bottom());
+    return areaRect;
   }
 
   public boolean contains(float x, float y) {
@@ -70,5 +111,9 @@ public class SlantArea implements Area {
 
   @Override public boolean contains(PointF point) {
     return contains(point.x, point.y);
+  }
+
+  @Override public List<Line> getLines() {
+    return Arrays.asList((Line) lineLeft, lineTop, lineRight, lineBottom);
   }
 }
