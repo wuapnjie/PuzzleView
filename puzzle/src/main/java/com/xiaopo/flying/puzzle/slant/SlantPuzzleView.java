@@ -170,7 +170,6 @@ public class SlantPuzzleView extends View {
     }
   }
 
-  // TODO handle bar draw
   private void drawSelectedArea(Canvas canvas, SlantPuzzlePiece piece) {
     final Area area = piece.getArea();
     // draw select area
@@ -251,7 +250,7 @@ public class SlantPuzzleView extends View {
         break;
       case DRAG:
         if (!handlingPiece.isFilledArea()) {
-          moveToFillArea(handlingPiece);
+          moveToFillArea(handlingPiece, 400);
         }
         break;
       case ZOOM:
@@ -279,7 +278,7 @@ public class SlantPuzzleView extends View {
     }
   }
 
-  private void moveToFillArea(SlantPuzzlePiece piece) {
+  private void moveToFillArea(SlantPuzzlePiece piece, int duration) {
     piece.prepare();
 
     Area area = piece.getArea();
@@ -303,7 +302,11 @@ public class SlantPuzzleView extends View {
       offsetY = area.bottom() - rectF.bottom;
     }
 
-    piece.translate(offsetX, offsetY);
+    if (duration == 0) {
+      piece.translate(offsetX, offsetY);
+    } else {
+      piece.translate(this, offsetX, offsetY, duration);
+    }
 
     if (!piece.isFilledArea()) {
       fillArea(piece);
@@ -341,13 +344,29 @@ public class SlantPuzzleView extends View {
     }
 
     puzzleLayout.update();
-    updatePiecesInArea();
+    updatePiecesInArea(line, event);
   }
 
   // TODO
-  private void updatePiecesInArea() {
+  private void updatePiecesInArea(Line line, MotionEvent event) {
     for (SlantPuzzlePiece piece : needChangePieces) {
-      fillArea(piece);
+
+      final float scale = MatrixUtils.getMatrixScale(piece.getMatrix());
+      final float minScale = AreaUtils.getMinMatrixScale(piece);
+
+      if (scale >= minScale) {
+        if (line.direction() == Line.Direction.HORIZONTAL) {
+          piece.translate(0, (event.getY() - downY) / 2);
+        } else if (line.direction() == Line.Direction.VERTICAL) {
+          piece.translate((event.getX() - downX) / 2, 0);
+        }
+
+        if (!piece.isFilledArea()) {
+          moveToFillArea(piece, 0);
+        }
+      } else {
+
+      }
     }
   }
 
@@ -439,9 +458,8 @@ public class SlantPuzzleView extends View {
     return null;
   }
 
-
   private List<SlantPuzzlePiece> findNeedChangedPieces() {
-    if (handlingPiece == null) return new ArrayList<>();
+    if (handlingLine == null) return new ArrayList<>();
 
     List<SlantPuzzlePiece> needChanged = new ArrayList<>();
 
@@ -487,7 +505,7 @@ public class SlantPuzzleView extends View {
   }
 
   public void addPiece(Bitmap bitmap) {
-    addPiece(new BitmapDrawable(bitmap));
+    addPiece(new BitmapDrawable(getResources(), bitmap));
   }
 
   // TODO 增加Padding，Bitmap等

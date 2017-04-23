@@ -13,6 +13,10 @@ public class AreaUtils {
     //no instance
   }
 
+  public static float getMinMatrixScale(SlantPuzzlePiece piece) {
+    return MatrixUtils.getMatrixScale(generateMatrix(piece, 0));
+  }
+
   public static Matrix generateMatrix(SlantPuzzlePiece piece, float extra) {
     return generateMatrix(piece.getArea(), piece.getDrawable(), extra);
   }

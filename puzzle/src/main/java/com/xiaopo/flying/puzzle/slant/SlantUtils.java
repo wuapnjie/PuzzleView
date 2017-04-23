@@ -1,6 +1,5 @@
 package com.xiaopo.flying.puzzle.slant;
 
-import android.graphics.Path;
 import android.graphics.PointF;
 import java.util.ArrayList;
 import java.util.List;
@@ -226,23 +225,5 @@ public class SlantUtils {
       float k = calculateSlope(line);
       return line.start.y - k * line.start.x;
     }
-  }
-
-  // TODO
-  public Path generateHandleBounds(SlantArea area, Line line){
-    Path path = new Path();
-    PointF start;
-    PointF end;
-    if (area.lineLeft == line){
-
-    }else if (area.lineTop == line){
-
-    }else if (area.lineRight == line){
-
-    }else if (area.lineBottom == line){
-
-    }
-
-    return path;
   }
 }
