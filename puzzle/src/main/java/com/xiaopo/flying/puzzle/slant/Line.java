@@ -17,6 +17,18 @@ public interface Line {
 
   PointF endPoint();
 
+  Line lowerLine();
+
+  Line upperLine();
+
+  Line attachStartLine();
+
+  Line attachEndLine();
+
+  void setLowerLine(Line lowerLine);
+
+  void setUpperLine(Line upperLine);
+
   Direction direction();
 
   float slope();
@@ -28,4 +40,12 @@ public interface Line {
   void move(float offset, float extra);
 
   void update();
+
+  float minX();
+
+  float maxX();
+
+  float minY();
+
+  float maxY();
 }

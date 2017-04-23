@@ -38,5 +38,6 @@
   <string name="prompt_save_failed">保存失败</string>
   <string name="licence">LICENCE</string>
   <string name="licence_info">Apache-2.0</string>
+  <string name="prompt.slant.test">斜线测试</string>
 
 </resources>

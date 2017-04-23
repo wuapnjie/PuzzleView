@@ -10,6 +10,7 @@ import android.graphics.PointF;
 import android.graphics.RectF;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
+import android.os.Handler;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.MotionEvent;
@@ -25,7 +26,7 @@ public class SlantPuzzleView extends View {
   private static final String TAG = "SlantPuzzleView";
 
   private enum ActionMode {
-    NONE, DRAG, ZOOM, MOVE
+    NONE, DRAG, ZOOM, MOVE, SWAP
   }
 
   private ActionMode currentMode = ActionMode.NONE;
@@ -36,18 +37,31 @@ public class SlantPuzzleView extends View {
   private SlantLayout puzzleLayout;
   private RectF bounds;
 
-  private Paint linePaint;
   private int lineSize = 4;
-
   private Line handlingLine;
+
   private SlantPuzzlePiece handlingPiece;
+  private SlantPuzzlePiece replacePiece;
 
   private Paint bitmapPaint;
+  private Paint linePaint;
+  private Paint selectedAreaPaint;
 
   private float downX;
   private float downY;
   private float previousDistance;
   private PointF midPoint;
+
+  private boolean needDrawLine;
+  private boolean needDrawOuterLine;
+
+  private Handler handler;
+  private Runnable switchToSwapAction = new Runnable() {
+    @Override public void run() {
+      currentMode = ActionMode.SWAP;
+      invalidate();
+    }
+  };
 
   public SlantPuzzleView(Context context) {
     this(context, null);
@@ -75,6 +89,14 @@ public class SlantPuzzleView extends View {
     bitmapPaint = new Paint();
     bitmapPaint.setAntiAlias(true);
     bitmapPaint.setFilterBitmap(true);
+
+    selectedAreaPaint = new Paint();
+    selectedAreaPaint.setAntiAlias(true);
+    selectedAreaPaint.setStyle(Paint.Style.STROKE);
+    selectedAreaPaint.setColor(Color.parseColor("#99BBFB"));
+    selectedAreaPaint.setStrokeWidth(lineSize);
+
+    handler = new Handler();
   }
 
   @Override protected void onSizeChanged(int w, int h, int oldw, int oldh) {
@@ -104,24 +126,57 @@ public class SlantPuzzleView extends View {
       }
 
       SlantPuzzlePiece piece = puzzlePieces.get(i);
+
+      if (piece == handlingPiece && currentMode == ActionMode.SWAP) {
+        continue;
+      }
+
       if (puzzlePieces.size() > i) {
         piece.draw(canvas);
       }
     }
 
     // draw outer bounds
-    for (SlantLine outerLine : puzzleLayout.getOuterLines()) {
-      drawLine(canvas, outerLine);
+    if (needDrawOuterLine) {
+      for (Line outerLine : puzzleLayout.getOuterLines()) {
+        drawLine(canvas, outerLine);
+      }
     }
 
     // draw slant lines
-    for (SlantLine line : puzzleLayout.getLines()) {
-      drawLine(canvas, line);
+    if (needDrawLine) {
+      for (Line line : puzzleLayout.getLines()) {
+        drawLine(canvas, line);
+      }
+    }
+
+    // draw selected area
+    if (handlingPiece != null && currentMode != ActionMode.SWAP) {
+      drawSelectedArea(canvas, handlingPiece);
+    }
+
+    // draw swap piece
+    if (handlingPiece != null && currentMode == ActionMode.SWAP) {
+      handlingPiece.draw(canvas, 128);
+      if (replacePiece != null) {
+        drawSelectedArea(canvas, replacePiece);
+      }
     }
   }
 
-  private void drawLine(Canvas canvas, SlantLine line) {
-    canvas.drawLine(line.start.x, line.start.y, line.end.x, line.end.y, linePaint);
+  // TODO handle bar draw
+  private void drawSelectedArea(Canvas canvas, SlantPuzzlePiece piece) {
+    canvas.drawPath(piece.getArea().getAreaPath(), selectedAreaPaint);
+    for (Line line : piece.getArea().getLines()) {
+      if (puzzleLayout.getLines().contains(line)) {
+
+      }
+    }
+  }
+
+  private void drawLine(Canvas canvas, Line line) {
+    canvas.drawLine(line.startPoint().x, line.startPoint().y, line.endPoint().x, line.endPoint().y,
+        linePaint);
   }
 
   public void setPuzzleLayout(SlantLayout puzzleLayout) {
@@ -153,15 +208,51 @@ public class SlantPuzzleView extends View {
 
       case MotionEvent.ACTION_MOVE:
         performAction(event);
-        invalidate();
+
+        if ((Math.abs(event.getX() - downX) > 10 || Math.abs(event.getY() - downY) > 10)
+            && currentMode != ActionMode.SWAP) {
+          handler.removeCallbacksAndMessages(null);
+        }
+
         break;
 
       case MotionEvent.ACTION_UP:
+        finishAction(event);
         currentMode = ActionMode.NONE;
+        handler.removeCallbacks(switchToSwapAction);
         break;
     }
 
+    invalidate();
     return true;
+  }
+
+  // 结束Action
+  private void finishAction(MotionEvent event) {
+    switch (currentMode) {
+      case NONE:
+        break;
+      case DRAG:
+        break;
+      case ZOOM:
+        break;
+      case MOVE:
+        break;
+      case SWAP:
+        if (handlingPiece != null && replacePiece != null) {
+          Drawable temp = handlingPiece.getDrawable();
+
+          handlingPiece.setDrawable(replacePiece.getDrawable());
+          replacePiece.setDrawable(temp);
+
+          fillArea(handlingPiece);
+          fillArea(replacePiece);
+
+          handlingPiece = null;
+          replacePiece = null;
+        }
+        break;
+    }
   }
 
   // 执行Action
@@ -174,6 +265,11 @@ public class SlantPuzzleView extends View {
         break;
       case ZOOM:
         zoomPiece(handlingPiece, event);
+        break;
+      case SWAP:
+        dragPiece(handlingPiece, event);
+        replacePiece = findReplacePiece(event);
+
         break;
       case MOVE:
         moveLine(handlingLine, event);
@@ -248,6 +344,8 @@ public class SlantPuzzleView extends View {
         handlingPiece = findHandlingPiece();
         if (handlingPiece != null) {
           currentMode = ActionMode.DRAG;
+
+          handler.postDelayed(switchToSwapAction, 1000);
         }
       }
     } else if (event.getPointerCount() > 1) {
@@ -268,8 +366,8 @@ public class SlantPuzzleView extends View {
     return null;
   }
 
-  private SlantLine findHandlingLine() {
-    for (SlantLine line : puzzleLayout.getLines()) {
+  private Line findHandlingLine() {
+    for (Line line : puzzleLayout.getLines()) {
       if (line.contains(downX, downY, 20)) {
         Log.d(TAG, "findHandlingLine: --> " + line.toString());
         return line;
@@ -277,6 +375,16 @@ public class SlantPuzzleView extends View {
     }
     return null;
   }
+
+  private SlantPuzzlePiece findReplacePiece(MotionEvent event) {
+    for (SlantPuzzlePiece piece : puzzlePieces) {
+      if (piece.contains(event.getX(), event.getY())) {
+        return piece;
+      }
+    }
+    return null;
+  }
+
 
   private List<SlantPuzzlePiece> findNeedChangedPieces() {
     if (handlingPiece == null) return new ArrayList<>();
@@ -347,6 +455,16 @@ public class SlantPuzzleView extends View {
 
     puzzlePieces.add(piece);
 
+    invalidate();
+  }
+
+  public void setNeedDrawLine(boolean needDrawLine) {
+    this.needDrawLine = needDrawLine;
+    invalidate();
+  }
+
+  public void setNeedDrawOuterLine(boolean needDrawOuterLine) {
+    this.needDrawOuterLine = needDrawOuterLine;
     invalidate();
   }
 }

@@ -26,13 +26,19 @@ public class SlantPuzzlePiece {
   }
 
   public void draw(Canvas canvas){
-    draw(canvas , 255);
+    draw(canvas, 255, true);
   }
 
   public void draw(Canvas canvas, int alpha){
+    draw(canvas, alpha, false);
+  }
+
+  public void draw(Canvas canvas, int alpha, boolean needClip) {
     canvas.save();
 
-    canvas.clipPath(area.getAreaPath());
+    if (needClip) {
+      canvas.clipPath(area.getAreaPath());
+    }
     canvas.concat(matrix);
     drawable.setBounds(drawableBounds);
     drawable.setAlpha(alpha);
@@ -43,6 +49,11 @@ public class SlantPuzzlePiece {
 
   public Area getArea() {
     return area;
+  }
+
+  public void setDrawable(Drawable drawable) {
+    this.drawable = drawable;
+    this.drawableBounds = new Rect(0,0,getWidth(),getHeight());
   }
 
   public Drawable getDrawable() {

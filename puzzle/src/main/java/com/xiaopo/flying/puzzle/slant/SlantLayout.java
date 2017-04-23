@@ -7,7 +7,8 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
-import static com.xiaopo.flying.puzzle.slant.SlantUtils.*;
+import static com.xiaopo.flying.puzzle.slant.SlantUtils.createSlantLine;
+import static com.xiaopo.flying.puzzle.slant.SlantUtils.cutArea;
 
 /**
  * TODO 考虑和PuzzleLayout合并
@@ -19,9 +20,9 @@ import static com.xiaopo.flying.puzzle.slant.SlantUtils.*;
 public abstract class SlantLayout {
   private SlantArea outerArea;
 
-  private List<SlantLine> outerLines = new ArrayList<>();
+  private List<Line> outerLines = new ArrayList<>();
   private List<SlantArea> areas = new ArrayList<>();
-  private List<SlantLine> lines = new ArrayList<>();
+  private List<Line> lines = new ArrayList<>();
 
   private Comparator<SlantArea> slantAreaComparator = new SlantAreaComparator();
 
@@ -80,9 +81,62 @@ public abstract class SlantLayout {
 
     areas.addAll(increasedArea);
 
-    // TODO 增加一些边界判断
+    updateLineLimit();
 
     sortArea();
+  }
+
+  private void updateLineLimit() {
+    for (Line line : lines) {
+      updateUpperLine(line);
+      updateLowerLine(line);
+    }
+  }
+
+  private void updateLowerLine(final Line line) {
+    for (Line l : lines) {
+      if (l.direction() != line.direction()) {
+        continue;
+      }
+
+      if (l.attachStartLine() != line.attachStartLine()
+          || l.attachEndLine() != line.attachEndLine()) {
+        continue;
+      }
+
+      if (l.direction() == Line.Direction.HORIZONTAL) {
+        if (l.minY() > line.lowerLine().maxY() && l.maxY() < line.minY()) {
+          line.setLowerLine(line);
+        }
+      } else {
+        if (l.minX() > line.lowerLine().maxX() && l.maxX() < line.minX()) {
+          line.setLowerLine(line);
+        }
+      }
+    }
+  }
+
+  private void updateUpperLine(final Line line) {
+    for (Line l : lines) {
+      if (l.direction() != line.direction()) {
+        continue;
+      }
+
+      if (l.attachStartLine() != line.attachStartLine()
+          || l.attachEndLine() != line.attachEndLine()) {
+        continue;
+      }
+
+      if (l.direction() == Line.Direction.HORIZONTAL) {
+        if (l.maxY() < line.upperLine().minY() && l.minY() > line.maxY()) {
+          line.setUpperLine(l);
+        }
+      } else {
+        if (l.maxX() < line.upperLine().minX() && l.minX() > line.maxX()) {
+          line.setUpperLine(l);
+        }
+      }
+    }
   }
 
   public int getAreaCount() {
@@ -98,7 +152,7 @@ public abstract class SlantLayout {
   }
 
   public void update() {
-    for (SlantLine line : lines) {
+    for (Line line : lines) {
       line.update();
     }
   }
@@ -107,7 +161,7 @@ public abstract class SlantLayout {
     Collections.sort(areas, slantAreaComparator);
   }
 
-  public List<SlantLine> getOuterLines() {
+  public List<Line> getOuterLines() {
     return outerLines;
   }
 
@@ -123,7 +177,7 @@ public abstract class SlantLayout {
     return areas.get(position);
   }
 
-  public List<SlantLine> getLines() {
+  public List<Line> getLines() {
     return lines;
   }
 }

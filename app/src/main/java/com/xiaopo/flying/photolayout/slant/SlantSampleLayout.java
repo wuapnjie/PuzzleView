@@ -12,5 +12,6 @@ public class SlantSampleLayout extends SlantLayout {
     addLine(0, Line.Direction.VERTICAL, 0.4f, 0.6f);
     addLine(1, Line.Direction.HORIZONTAL, 0.5f, 0.4f);
     addLine(0, Line.Direction.HORIZONTAL , 0.5f ,0.4f);
+    addLine(2, Line.Direction.HORIZONTAL, 0.4f, 0.6f);
   }
 }

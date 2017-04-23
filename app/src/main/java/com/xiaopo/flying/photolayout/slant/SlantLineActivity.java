@@ -1,12 +1,19 @@
 package com.xiaopo.flying.photolayout.slant;
 
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.design.widget.BottomSheetDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.PopupMenu;
+import android.view.Gravity;
+import android.view.MenuItem;
+import android.view.View;
 import com.squareup.picasso.Picasso;
 import com.squareup.picasso.Target;
+import com.xiaopo.flying.photolayout.PlaygroundActivity;
 import com.xiaopo.flying.photolayout.R;
 import com.xiaopo.flying.puzzle.slant.SlantLayout;
 import com.xiaopo.flying.puzzle.slant.SquareSlantPuzzleView;
@@ -20,6 +27,7 @@ import java.util.List;
 public class SlantLineActivity extends AppCompatActivity {
   private SquareSlantPuzzleView puzzleView;
   private SlantLayout puzzleLayout;
+  private View btnMore;
 
   private List<Target> targets = new ArrayList<>();
 
@@ -31,6 +39,15 @@ public class SlantLineActivity extends AppCompatActivity {
     puzzleLayout = new SlantSampleLayout();
     puzzleView.reset();
     puzzleView.setPuzzleLayout(puzzleLayout);
+    puzzleView.setNeedDrawLine(true);
+    puzzleView.setNeedDrawOuterLine(true);
+
+    btnMore = findViewById(R.id.btn_more);
+    btnMore.setOnClickListener(new View.OnClickListener() {
+      @Override public void onClick(View v) {
+        showMoreDialog(v);
+      }
+    });
 
     loadPhotoFromRes();
   }
@@ -75,5 +92,31 @@ public class SlantLineActivity extends AppCompatActivity {
 
       targets.add(target);
     }
+  }
+
+  private void showMoreDialog(View view) {
+    PopupMenu popupMenu = new PopupMenu(this, view, Gravity.BOTTOM);
+    popupMenu.inflate(R.menu.menu_main);
+    popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+      @Override public boolean onMenuItemClick(MenuItem item) {
+        switch (item.getItemId()) {
+          case R.id.action_playground:
+            Intent intent = new Intent(SlantLineActivity.this, PlaygroundActivity.class);
+            startActivity(intent);
+            break;
+          case R.id.action_about:
+            showAboutInfo();
+            break;
+        }
+        return false;
+      }
+    });
+    popupMenu.show();
+  }
+
+  private void showAboutInfo() {
+    BottomSheetDialog bottomSheetDialog = new BottomSheetDialog(this);
+    bottomSheetDialog.setContentView(R.layout.about_info);
+    bottomSheetDialog.show();
   }
 }

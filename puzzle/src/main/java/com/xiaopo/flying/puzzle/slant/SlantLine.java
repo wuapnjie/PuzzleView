@@ -4,6 +4,8 @@ import android.graphics.PointF;
 
 import static com.xiaopo.flying.puzzle.slant.SlantUtils.crossProduct;
 import static com.xiaopo.flying.puzzle.slant.SlantUtils.intersectionOfLines;
+import static java.lang.Math.max;
+import static java.lang.Math.min;
 import static java.lang.Math.pow;
 import static java.lang.Math.sqrt;
 
@@ -30,8 +32,8 @@ public class SlantLine implements Line{
   public SlantLine attachLineStart;
   public SlantLine attachLineEnd;
 
-  public SlantLine upperLine;
-  public SlantLine lowerLine;
+  public Line upperLine;
+  public Line lowerLine;
 
   public SlantLine(Line.Direction direction) {
     this.direction = direction;
@@ -53,6 +55,30 @@ public class SlantLine implements Line{
 
   @Override public PointF endPoint() {
     return end;
+  }
+
+  @Override public Line lowerLine() {
+    return lowerLine;
+  }
+
+  @Override public Line upperLine() {
+    return upperLine;
+  }
+
+  @Override public Line attachStartLine() {
+    return attachLineStart;
+  }
+
+  @Override public Line attachEndLine() {
+    return attachLineEnd;
+  }
+
+  @Override public void setLowerLine(Line lowerLine) {
+    this.lowerLine = lowerLine;
+  }
+
+  @Override public void setUpperLine(Line upperLine) {
+    this.upperLine = upperLine;
   }
 
   @Override public Direction direction() {
@@ -98,9 +124,23 @@ public class SlantLine implements Line{
   // TODO 移动范围限制
   public void move(float offset, float extra) {
     if (direction == Line.Direction.HORIZONTAL) {
+      if (previousStart.y + offset < lowerLine.maxY() + extra
+          || previousStart.y + offset > upperLine.minY() - extra
+          || previousEnd.y + offset < lowerLine.maxY() + extra
+          || previousEnd.y + offset > upperLine.minY() - extra) {
+        return;
+      }
+
       start.y = previousStart.y + offset;
       end.y = previousEnd.y + offset;
     } else {
+      if (previousStart.x + offset < lowerLine.maxX() + extra
+          || previousStart.x + offset > upperLine.minX() - extra
+          || previousEnd.x + offset < lowerLine.maxX() + extra
+          || previousEnd.x + offset > upperLine.minX() - extra) {
+        return;
+      }
+
       start.x = previousStart.x + offset;
       end.x = previousEnd.x + offset;
     }
@@ -115,6 +155,22 @@ public class SlantLine implements Line{
   public void update() {
     this.start.set(intersectionOfLines(this, attachLineStart));
     this.end.set(intersectionOfLines(this, attachLineEnd));
+  }
+
+  @Override public float minX() {
+    return min(start.x, end.x);
+  }
+
+  @Override public float maxX() {
+    return max(start.x, end.x);
+  }
+
+  @Override public float minY() {
+    return min(start.y, end.y);
+  }
+
+  @Override public float maxY() {
+    return max(start.y, end.y);
   }
 
   @Override public String toString() {
