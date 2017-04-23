@@ -12,8 +12,8 @@ import java.util.List;
 /**
  * Created by snowbean on 16-8-13.
  */
-class BorderUtil {
-  private static final String TAG = "BorderUtil";
+class BorderUtils {
+  private static final String TAG = "BorderUtils";
 
   static StraightLine createLine(final Border border, final Line.Direction direction,
       final float ratio) {

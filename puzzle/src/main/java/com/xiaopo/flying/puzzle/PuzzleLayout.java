@@ -72,10 +72,10 @@ public abstract class PuzzleLayout {
 
   protected List<Border> addLine(Border border, Line.Direction direction, float ratio) {
     mBorders.remove(border);
-    StraightLine line = BorderUtil.createLine(border, direction, ratio);
+    StraightLine line = BorderUtils.createLine(border, direction, ratio);
     mLines.add(line);
 
-    List<Border> borders = BorderUtil.cutBorder(border, line);
+    List<Border> borders = BorderUtils.cutBorder(border, line);
     mBorders.addAll(borders);
 
     updateLineLimit();
@@ -98,12 +98,12 @@ public abstract class PuzzleLayout {
   protected List<Border> addCross(Border border, float horizontalRadio, float verticalRadio) {
     mBorders.remove(border);
     StraightLine horizontal =
-        BorderUtil.createLine(border, Line.Direction.HORIZONTAL, horizontalRadio);
-    StraightLine vertical = BorderUtil.createLine(border, Line.Direction.VERTICAL, verticalRadio);
+        BorderUtils.createLine(border, Line.Direction.HORIZONTAL, horizontalRadio);
+    StraightLine vertical = BorderUtils.createLine(border, Line.Direction.VERTICAL, verticalRadio);
     mLines.add(horizontal);
     mLines.add(vertical);
 
-    List<Border> borders = BorderUtil.cutBorderCross(border, horizontal, vertical);
+    List<Border> borders = BorderUtils.cutBorderCross(border, horizontal, vertical);
     mBorders.addAll(borders);
 
     updateLineLimit();
@@ -130,22 +130,22 @@ public abstract class PuzzleLayout {
             borders.addAll(addCross(border, 1f / 2));
             break;
           case 2:
-            StraightLine l1 = BorderUtil.createLine(border, Line.Direction.VERTICAL, 1f / 3);
-            StraightLine l2 = BorderUtil.createLine(border, Line.Direction.VERTICAL, 2f / 3);
-            StraightLine l3 = BorderUtil.createLine(border, Line.Direction.HORIZONTAL, 1f / 2);
+            StraightLine l1 = BorderUtils.createLine(border, Line.Direction.VERTICAL, 1f / 3);
+            StraightLine l2 = BorderUtils.createLine(border, Line.Direction.VERTICAL, 2f / 3);
+            StraightLine l3 = BorderUtils.createLine(border, Line.Direction.HORIZONTAL, 1f / 2);
 
             mLines.add(l1);
             mLines.add(l2);
             mLines.add(l3);
 
-            borders.addAll(BorderUtil.cutBorder(border, l1, l2, l3, Line.Direction.VERTICAL));
+            borders.addAll(BorderUtils.cutBorder(border, l1, l2, l3, Line.Direction.VERTICAL));
             break;
 
           case 3:
-            StraightLine ll1 = BorderUtil.createLine(border, Line.Direction.VERTICAL, 1f / 4);
-            StraightLine ll2 = BorderUtil.createLine(border, Line.Direction.VERTICAL, 2f / 4);
-            StraightLine ll3 = BorderUtil.createLine(border, Line.Direction.VERTICAL, 3f / 4);
-            StraightLine ll4 = BorderUtil.createLine(border, Line.Direction.HORIZONTAL, 1f / 2);
+            StraightLine ll1 = BorderUtils.createLine(border, Line.Direction.VERTICAL, 1f / 4);
+            StraightLine ll2 = BorderUtils.createLine(border, Line.Direction.VERTICAL, 2f / 4);
+            StraightLine ll3 = BorderUtils.createLine(border, Line.Direction.VERTICAL, 3f / 4);
+            StraightLine ll4 = BorderUtils.createLine(border, Line.Direction.HORIZONTAL, 1f / 2);
 
             mLines.add(ll1);
             mLines.add(ll2);
@@ -153,7 +153,7 @@ public abstract class PuzzleLayout {
             mLines.add(ll4);
 
             borders.addAll(
-                BorderUtil.cutBorder(border, ll1, ll2, ll3, ll4, Line.Direction.VERTICAL));
+                BorderUtils.cutBorder(border, ll1, ll2, ll3, ll4, Line.Direction.VERTICAL));
 
             break;
         }
@@ -162,29 +162,29 @@ public abstract class PuzzleLayout {
       case 2:
         switch (vSize) {
           case 1:
-            StraightLine l1 = BorderUtil.createLine(border, Line.Direction.HORIZONTAL, 1f / 3);
-            StraightLine l2 = BorderUtil.createLine(border, Line.Direction.HORIZONTAL, 2f / 3);
-            StraightLine l3 = BorderUtil.createLine(border, Line.Direction.VERTICAL, 1f / 2);
+            StraightLine l1 = BorderUtils.createLine(border, Line.Direction.HORIZONTAL, 1f / 3);
+            StraightLine l2 = BorderUtils.createLine(border, Line.Direction.HORIZONTAL, 2f / 3);
+            StraightLine l3 = BorderUtils.createLine(border, Line.Direction.VERTICAL, 1f / 2);
 
             mLines.add(l1);
             mLines.add(l2);
             mLines.add(l3);
 
-            borders.addAll(BorderUtil.cutBorder(border, l1, l2, l3, Line.Direction.HORIZONTAL));
+            borders.addAll(BorderUtils.cutBorder(border, l1, l2, l3, Line.Direction.HORIZONTAL));
 
             break;
           case 2:
-            StraightLine ll1 = BorderUtil.createLine(border, Line.Direction.HORIZONTAL, 1f / 3);
-            StraightLine ll2 = BorderUtil.createLine(border, Line.Direction.HORIZONTAL, 2f / 3);
-            StraightLine ll3 = BorderUtil.createLine(border, Line.Direction.VERTICAL, 1f / 3);
-            StraightLine ll4 = BorderUtil.createLine(border, Line.Direction.VERTICAL, 2f / 3);
+            StraightLine ll1 = BorderUtils.createLine(border, Line.Direction.HORIZONTAL, 1f / 3);
+            StraightLine ll2 = BorderUtils.createLine(border, Line.Direction.HORIZONTAL, 2f / 3);
+            StraightLine ll3 = BorderUtils.createLine(border, Line.Direction.VERTICAL, 1f / 3);
+            StraightLine ll4 = BorderUtils.createLine(border, Line.Direction.VERTICAL, 2f / 3);
 
             mLines.add(ll1);
             mLines.add(ll2);
             mLines.add(ll3);
             mLines.add(ll4);
 
-            borders.addAll(BorderUtil.cutBorder(border, ll1, ll2, ll3, ll4));
+            borders.addAll(BorderUtils.cutBorder(border, ll1, ll2, ll3, ll4));
             break;
         }
         break;
@@ -192,10 +192,10 @@ public abstract class PuzzleLayout {
       case 3:
         switch (vSize) {
           case 1:
-            StraightLine ll1 = BorderUtil.createLine(border, Line.Direction.HORIZONTAL, 1f / 4);
-            StraightLine ll2 = BorderUtil.createLine(border, Line.Direction.HORIZONTAL, 2f / 4);
-            StraightLine ll3 = BorderUtil.createLine(border, Line.Direction.HORIZONTAL, 3f / 4);
-            StraightLine ll4 = BorderUtil.createLine(border, Line.Direction.VERTICAL, 1f / 2);
+            StraightLine ll1 = BorderUtils.createLine(border, Line.Direction.HORIZONTAL, 1f / 4);
+            StraightLine ll2 = BorderUtils.createLine(border, Line.Direction.HORIZONTAL, 2f / 4);
+            StraightLine ll3 = BorderUtils.createLine(border, Line.Direction.HORIZONTAL, 3f / 4);
+            StraightLine ll4 = BorderUtils.createLine(border, Line.Direction.VERTICAL, 1f / 2);
 
             mLines.add(ll1);
             mLines.add(ll2);
@@ -203,7 +203,7 @@ public abstract class PuzzleLayout {
             mLines.add(ll4);
 
             borders.addAll(
-                BorderUtil.cutBorder(border, ll1, ll2, ll3, ll4, Line.Direction.HORIZONTAL));
+                BorderUtils.cutBorder(border, ll1, ll2, ll3, ll4, Line.Direction.HORIZONTAL));
             break;
         }
     }

@@ -569,7 +569,7 @@ public class PuzzleView extends View {
         PuzzlePiece piece = mPuzzlePieces.get(i);
         piece.setBorder(mPuzzleLayout.getBorder(i));
         piece.getMatrix()
-            .set(BorderUtil.createMatrix(mPuzzleLayout.getBorder(i), piece.getWidth(),
+            .set(BorderUtils.createMatrix(mPuzzleLayout.getBorder(i), piece.getWidth(),
                 piece.getHeight(), mExtraSize));
       }
     }
@@ -687,7 +687,7 @@ public class PuzzleView extends View {
       return;
     }
 
-    Matrix matrix = BorderUtil.createMatrix(mPuzzleLayout.getBorder(index), drawable, mExtraSize);
+    Matrix matrix = BorderUtils.createMatrix(mPuzzleLayout.getBorder(index), drawable, mExtraSize);
 
     PuzzlePiece layoutPhoto = new PuzzlePiece(drawable, mPuzzleLayout.getBorder(index), matrix);
     layoutPhoto.setPadding(paddingLeft, paddingTop, paddingRight, paddingBottom);

@@ -2,8 +2,8 @@ package com.xiaopo.flying.puzzle.slant;
 
 import android.graphics.PointF;
 
-import static com.xiaopo.flying.puzzle.slant.SlantUtil.crossProduct;
-import static com.xiaopo.flying.puzzle.slant.SlantUtil.intersectionOfLines;
+import static com.xiaopo.flying.puzzle.slant.SlantUtils.crossProduct;
+import static com.xiaopo.flying.puzzle.slant.SlantUtils.intersectionOfLines;
 import static java.lang.Math.pow;
 import static java.lang.Math.sqrt;
 
@@ -60,7 +60,7 @@ public class SlantLine implements Line{
   }
 
   @Override public float slope() {
-    return SlantUtil.calculateSlope(this);
+    return SlantUtils.calculateSlope(this);
   }
 
   public boolean contains(float x, float y, float extra) {

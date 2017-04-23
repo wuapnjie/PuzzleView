@@ -6,7 +6,7 @@ import android.graphics.RectF;
 import java.util.Arrays;
 import java.util.List;
 
-import static com.xiaopo.flying.puzzle.slant.SlantUtil.crossProduct;
+import static com.xiaopo.flying.puzzle.slant.SlantUtils.crossProduct;
 
 /**
  * @author wupanjie

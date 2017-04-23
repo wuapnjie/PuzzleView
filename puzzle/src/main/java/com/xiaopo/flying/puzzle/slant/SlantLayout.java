@@ -7,9 +7,10 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
-import static com.xiaopo.flying.puzzle.slant.SlantUtil.*;
+import static com.xiaopo.flying.puzzle.slant.SlantUtils.*;
 
 /**
+ * TODO 考虑和PuzzleLayout合并
  * 斜线布局，外围区域为一矩形
  *
  * @author wupanjie
@@ -84,6 +85,28 @@ public abstract class SlantLayout {
     sortArea();
   }
 
+  public int getAreaCount() {
+    return areas.size();
+  }
+
+
+  public void reset() {
+    outerArea = null;
+    outerLines.clear();
+    areas.clear();
+    lines.clear();
+  }
+
+  public void update() {
+    for (SlantLine line : lines) {
+      line.update();
+    }
+  }
+
+  private void sortArea() {
+    Collections.sort(areas, slantAreaComparator);
+  }
+
   public List<SlantLine> getOuterLines() {
     return outerLines;
   }
@@ -102,22 +125,5 @@ public abstract class SlantLayout {
 
   public List<SlantLine> getLines() {
     return lines;
-  }
-
-  public void reset() {
-    outerArea = null;
-    outerLines.clear();
-    areas.clear();
-    lines.clear();
-  }
-
-  public void update() {
-    for (SlantLine line : lines) {
-      line.update();
-    }
-  }
-
-  private void sortArea() {
-    Collections.sort(areas, slantAreaComparator);
   }
 }

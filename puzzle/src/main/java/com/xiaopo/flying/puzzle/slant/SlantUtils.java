@@ -8,8 +8,8 @@ import java.util.List;
  * @author wupanjie
  */
 
-public class SlantUtil {
-  private SlantUtil() {
+public class SlantUtils {
+  private SlantUtils() {
     //no instance
   }
 
