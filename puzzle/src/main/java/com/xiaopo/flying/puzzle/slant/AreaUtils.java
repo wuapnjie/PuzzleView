@@ -13,6 +13,10 @@ public class AreaUtils {
     //no instance
   }
 
+  public static Matrix generateMatrix(SlantPuzzlePiece piece, float extra) {
+    return generateMatrix(piece.getArea(), piece.getDrawable(), extra);
+  }
+
   public static Matrix generateMatrix(Area area, Drawable drawable, float extraSize) {
     return generateCenterCropMatrix(area, drawable.getIntrinsicWidth(),
         drawable.getIntrinsicHeight(), extraSize);

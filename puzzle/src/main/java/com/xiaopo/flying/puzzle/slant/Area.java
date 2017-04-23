@@ -30,6 +30,8 @@ public interface Area {
 
   boolean contains(float x, float y);
 
+  boolean contains(Line line);
+
   Path getAreaPath();
 
   RectF getAreaRect();

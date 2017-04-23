@@ -1,7 +1,6 @@
 package com.xiaopo.flying.photolayout.slant;
 
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -28,11 +27,9 @@ public class SlantLineActivity extends AppCompatActivity {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.activity_slant_line);
 
-    Bitmap bitmap1 = BitmapFactory.decodeResource(getResources(), R.drawable.demo1);
-    Bitmap bitmap2 = BitmapFactory.decodeResource(getResources(), R.drawable.demo2);
-
     puzzleView = (SquareSlantPuzzleView) findViewById(R.id.puzzle_view);
     puzzleLayout = new SlantSampleLayout();
+    puzzleView.reset();
     puzzleView.setPuzzleLayout(puzzleLayout);
 
     loadPhotoFromRes();

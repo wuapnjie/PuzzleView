@@ -6,6 +6,7 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Matrix;
 import android.graphics.Paint;
+import android.graphics.PointF;
 import android.graphics.RectF;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
@@ -23,7 +24,14 @@ import java.util.List;
 public class SlantPuzzleView extends View {
   private static final String TAG = "SlantPuzzleView";
 
+  private enum ActionMode {
+    NONE, DRAG, ZOOM, MOVE
+  }
+
+  private ActionMode currentMode = ActionMode.NONE;
+
   private List<SlantPuzzlePiece> puzzlePieces = new ArrayList<>();
+  private List<SlantPuzzlePiece> needChangePieces = new ArrayList<>();
 
   private SlantLayout puzzleLayout;
   private RectF bounds;
@@ -32,11 +40,14 @@ public class SlantPuzzleView extends View {
   private int lineSize = 4;
 
   private Line handlingLine;
+  private SlantPuzzlePiece handlingPiece;
 
   private Paint bitmapPaint;
 
   private float downX;
   private float downY;
+  private float previousDistance;
+  private PointF midPoint;
 
   public SlantPuzzleView(Context context) {
     this(context, null);
@@ -128,35 +139,133 @@ public class SlantPuzzleView extends View {
         downX = event.getX();
         downY = event.getY();
 
-        handlingLine = findHandlingLine();
-        if (handlingLine != null) {
-          handlingLine.prepareMove();
-        }
+        decideActionMode(event);
+        prepareAction(event);
 
-        for (int i = 0; i < puzzleLayout.getAreas().size(); i++) {
-          SlantArea slantArea = puzzleLayout.getArea(i);
-          if (slantArea.contains(downX, downY)) {
-            Log.d(TAG, "onTouchEvent: position --> " + i);
-          }
-        }
+        break;
+
+      case MotionEvent.ACTION_POINTER_DOWN:
+        previousDistance = calculateDistance(event);
+        midPoint = calculateMidPoint(event);
+
+        decideActionMode(event);
         break;
 
       case MotionEvent.ACTION_MOVE:
-        if (handlingLine != null) {
-          if (handlingLine.direction() == Line.Direction.HORIZONTAL) {
-            handlingLine.move(event.getY() - downY, 40f);
-          } else {
-            handlingLine.move(event.getX() - downX, 40f);
-          }
-
-          puzzleLayout.update();
-        }
-
+        performAction(event);
         invalidate();
+        break;
+
+      case MotionEvent.ACTION_UP:
+        currentMode = ActionMode.NONE;
         break;
     }
 
     return true;
+  }
+
+  // 执行Action
+  private void performAction(MotionEvent event) {
+    switch (currentMode) {
+      case NONE:
+        break;
+      case DRAG:
+        dragPiece(handlingPiece, event);
+        break;
+      case ZOOM:
+        zoomPiece(handlingPiece, event);
+        break;
+      case MOVE:
+        moveLine(handlingLine, event);
+        break;
+    }
+  }
+
+  private void moveLine(Line line, MotionEvent event) {
+    if (line == null || event == null) return;
+
+    if (line.direction() == Line.Direction.HORIZONTAL) {
+      line.move(event.getY() - downY, 20);
+    } else {
+      line.move(event.getX() - downX, 20);
+    }
+
+    puzzleLayout.update();
+    updatePiecesInArea();
+  }
+
+  // TODO
+  private void updatePiecesInArea() {
+    for (SlantPuzzlePiece piece : puzzlePieces) {
+      fillArea(piece);
+    }
+  }
+
+  // TODO
+  private void fillArea(SlantPuzzlePiece piece) {
+    piece.set(AreaUtils.generateMatrix(piece, 100f));
+  }
+
+  private void zoomPiece(SlantPuzzlePiece piece, MotionEvent event) {
+    if (piece == null || event == null || event.getPointerCount() < 2) return;
+    float scale = calculateDistance(event) / previousDistance;
+    piece.zoom(scale, scale, midPoint);
+  }
+
+  private void dragPiece(SlantPuzzlePiece piece, MotionEvent event) {
+    if (piece == null || event == null) return;
+    piece.translate(event.getX() - downX, event.getY() - downY);
+  }
+
+  // 执行Action前的准备工作
+  private void prepareAction(MotionEvent event) {
+    switch (currentMode) {
+      case NONE:
+        break;
+      case DRAG:
+        handlingPiece.prepare();
+        break;
+      case ZOOM:
+        break;
+      case MOVE:
+        handlingLine.prepareMove();
+        needChangePieces.clear();
+        needChangePieces.addAll(findNeedChangedPieces());
+        for (SlantPuzzlePiece piece : needChangePieces) {
+          piece.prepare();
+        }
+        break;
+    }
+  }
+
+  // 决定应该执行什么Action
+  private void decideActionMode(MotionEvent event) {
+    if (event.getPointerCount() == 1) {
+      handlingLine = findHandlingLine();
+      if (handlingLine != null) {
+        currentMode = ActionMode.MOVE;
+      } else {
+        handlingPiece = findHandlingPiece();
+        if (handlingPiece != null) {
+          currentMode = ActionMode.DRAG;
+        }
+      }
+    } else if (event.getPointerCount() > 1) {
+      if (handlingPiece != null
+          && handlingPiece.contains(event.getX(1), event.getY(1))
+          && currentMode == ActionMode.DRAG) {
+        currentMode = ActionMode.ZOOM;
+      }
+    }
+  }
+
+  private SlantPuzzlePiece findHandlingPiece() {
+    for (SlantPuzzlePiece piece : puzzlePieces) {
+      if (piece.contains(downX, downY)) {
+        return piece;
+      }
+    }
+    return null;
   }
 
   private SlantLine findHandlingLine() {
@@ -167,6 +276,44 @@ public class SlantPuzzleView extends View {
       }
     }
     return null;
+  }
+
+  private List<SlantPuzzlePiece> findNeedChangedPieces() {
+    if (handlingPiece == null) return new ArrayList<>();
+
+    List<SlantPuzzlePiece> needChanged = new ArrayList<>();
+
+    for (SlantPuzzlePiece piece : puzzlePieces) {
+      if (piece.contains(handlingLine)) {
+        needChanged.add(piece);
+      }
+    }
+
+    return needChanged;
+  }
+
+  private float calculateDistance(MotionEvent event) {
+    float x = event.getX(0) - event.getX(1);
+    float y = event.getY(0) - event.getY(1);
+
+    return (float) Math.sqrt(x * x + y * y);
+  }
+
+  private PointF calculateMidPoint(MotionEvent event) {
+    float x = (event.getX(0) + event.getX(1)) / 2;
+    float y = (event.getY(0) + event.getY(1)) / 2;
+    return new PointF(x, y);
+  }
+
+  public void reset() {
+    handlingLine = null;
+    handlingPiece = null;
+
+    if (puzzleLayout != null) {
+      puzzleLayout.reset();
+    }
+
+    puzzlePieces.clear();
   }
 
   public void addPieces(List<Bitmap> bitmaps) {

@@ -109,6 +109,10 @@ public class SlantArea implements Area {
         && crossProduct(DA, DM) > 0;
   }
 
+  @Override public boolean contains(Line line) {
+    return lineLeft == line || lineTop == line || lineRight == line || lineBottom == line;
+  }
+
   @Override public boolean contains(PointF point) {
     return contains(point.x, point.y);
   }
