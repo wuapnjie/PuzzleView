@@ -173,6 +173,7 @@ public class SlantLine implements Line{
     return max(start.y, end.y);
   }
 
+
   @Override public String toString() {
     return "start --> " + start.toString() + ",end --> " + end.toString();
   }

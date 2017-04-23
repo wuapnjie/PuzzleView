@@ -37,4 +37,6 @@ public interface Area {
   RectF getAreaRect();
 
   List<Line> getLines();
+
+  PointF[] getHandleBarPoints(Line line);
 }

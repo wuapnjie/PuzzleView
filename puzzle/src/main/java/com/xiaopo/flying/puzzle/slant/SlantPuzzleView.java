@@ -45,6 +45,7 @@ public class SlantPuzzleView extends View {
 
   private Paint linePaint;
   private Paint selectedAreaPaint;
+  private Paint handleBarPaint;
 
   private float downX;
   private float downY;
@@ -53,6 +54,10 @@ public class SlantPuzzleView extends View {
 
   private boolean needDrawLine;
   private boolean needDrawOuterLine;
+
+  private int lineColor = Color.WHITE;
+  private int selectedLineColor = Color.parseColor("#99BBFB");
+  private int handleBarColor = selectedLineColor;
 
   private Handler handler;
   private Runnable switchToSwapAction = new Runnable() {
@@ -82,14 +87,20 @@ public class SlantPuzzleView extends View {
     linePaint = new Paint();
 
     linePaint.setAntiAlias(true);
-    linePaint.setColor(Color.WHITE);
+    linePaint.setColor(lineColor);
     linePaint.setStrokeWidth(lineSize);
 
     selectedAreaPaint = new Paint();
     selectedAreaPaint.setAntiAlias(true);
     selectedAreaPaint.setStyle(Paint.Style.STROKE);
-    selectedAreaPaint.setColor(Color.parseColor("#99BBFB"));
+    selectedAreaPaint.setColor(selectedLineColor);
     selectedAreaPaint.setStrokeWidth(lineSize);
+
+    handleBarPaint = new Paint();
+    handleBarPaint.setAntiAlias(true);
+    handleBarPaint.setStyle(Paint.Style.FILL);
+    handleBarPaint.setColor(handleBarColor);
+    handleBarPaint.setStrokeWidth(lineSize * 3);
 
     handler = new Handler();
   }
@@ -161,10 +172,21 @@ public class SlantPuzzleView extends View {
 
   // TODO handle bar draw
   private void drawSelectedArea(Canvas canvas, SlantPuzzlePiece piece) {
-    canvas.drawPath(piece.getArea().getAreaPath(), selectedAreaPaint);
-    for (Line line : piece.getArea().getLines()) {
-      if (puzzleLayout.getLines().contains(line)) {
+    final Area area = piece.getArea();
+    // draw select area
+    canvas.drawPath(area.getAreaPath(), selectedAreaPaint);
 
+    // draw handle bar
+    for (Line line : area.getLines()) {
+      if (puzzleLayout.getLines().contains(line)) {
+        handleBarPaint.setStrokeWidth(lineSize * 3);
+        PointF[] handleBarPoints = area.getHandleBarPoints(line);
+        canvas.drawLine(handleBarPoints[0].x, handleBarPoints[0].y, handleBarPoints[1].x,
+            handleBarPoints[1].y, handleBarPaint);
+        canvas.drawCircle(handleBarPoints[0].x, handleBarPoints[0].y, lineSize * 3 / 2,
+            handleBarPaint);
+        canvas.drawCircle(handleBarPoints[1].x, handleBarPoints[1].y, lineSize * 3 / 2,
+            handleBarPaint);
       }
     }
   }
@@ -264,7 +286,6 @@ public class SlantPuzzleView extends View {
       case SWAP:
         dragPiece(handlingPiece, event);
         replacePiece = findReplacePiece(event);
-
         break;
       case MOVE:
         moveLine(handlingLine, event);
@@ -460,6 +481,21 @@ public class SlantPuzzleView extends View {
 
   public void setNeedDrawOuterLine(boolean needDrawOuterLine) {
     this.needDrawOuterLine = needDrawOuterLine;
+    invalidate();
+  }
+
+  public void setLineColor(int lineColor) {
+    this.lineColor = lineColor;
+    invalidate();
+  }
+
+  public void setSelectedLineColor(int selectedLineColor) {
+    this.selectedLineColor = selectedLineColor;
+    invalidate();
+  }
+
+  public void setHandleBarColor(int handleBarColor) {
+    this.handleBarColor = handleBarColor;
     invalidate();
   }
 }

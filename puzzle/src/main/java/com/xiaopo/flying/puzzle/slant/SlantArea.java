@@ -120,4 +120,22 @@ public class SlantArea implements Area {
   @Override public List<Line> getLines() {
     return Arrays.asList((Line) lineLeft, lineTop, lineRight, lineBottom);
   }
+
+  @Override public PointF[] getHandleBarPoints(Line line) {
+    PointF[] points = new PointF[2];
+    if (line == lineLeft) {
+      points[0] = SlantUtils.getPoint(leftTop, leftBottom, line.direction(), 0.25f);
+      points[1] = SlantUtils.getPoint(leftTop, leftBottom, line.direction(), 0.75f);
+    } else if (line == lineTop) {
+      points[0] = SlantUtils.getPoint(leftTop, rightTop, line.direction(), 0.25f);
+      points[1] = SlantUtils.getPoint(leftTop, rightTop, line.direction(), 0.75f);
+    } else if (line == lineRight) {
+      points[0] = SlantUtils.getPoint(rightTop, rightBottom, line.direction(), 0.25f);
+      points[1] = SlantUtils.getPoint(rightTop, rightBottom, line.direction(), 0.75f);
+    } else if (line == lineBottom) {
+      points[0] = SlantUtils.getPoint(leftBottom, rightBottom, line.direction(), 0.25f);
+      points[1] = SlantUtils.getPoint(leftBottom, rightBottom, line.direction(), 0.75f);
+    }
+    return points;
+  }
 }
