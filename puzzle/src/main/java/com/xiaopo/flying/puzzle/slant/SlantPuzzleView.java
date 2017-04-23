@@ -43,7 +43,6 @@ public class SlantPuzzleView extends View {
   private SlantPuzzlePiece handlingPiece;
   private SlantPuzzlePiece replacePiece;
 
-  private Paint bitmapPaint;
   private Paint linePaint;
   private Paint selectedAreaPaint;
 
@@ -85,10 +84,6 @@ public class SlantPuzzleView extends View {
     linePaint.setAntiAlias(true);
     linePaint.setColor(Color.WHITE);
     linePaint.setStrokeWidth(lineSize);
-
-    bitmapPaint = new Paint();
-    bitmapPaint.setAntiAlias(true);
-    bitmapPaint.setFilterBitmap(true);
 
     selectedAreaPaint = new Paint();
     selectedAreaPaint.setAntiAlias(true);
@@ -211,7 +206,7 @@ public class SlantPuzzleView extends View {
 
         if ((Math.abs(event.getX() - downX) > 10 || Math.abs(event.getY() - downY) > 10)
             && currentMode != ActionMode.SWAP) {
-          handler.removeCallbacksAndMessages(null);
+          handler.removeCallbacks(switchToSwapAction);
         }
 
         break;
@@ -292,7 +287,7 @@ public class SlantPuzzleView extends View {
 
   // TODO
   private void updatePiecesInArea() {
-    for (SlantPuzzlePiece piece : puzzlePieces) {
+    for (SlantPuzzlePiece piece : needChangePieces) {
       fillArea(piece);
     }
   }
