@@ -250,8 +250,15 @@ public class SlantPuzzleView extends View {
       case NONE:
         break;
       case DRAG:
+        if (!handlingPiece.isFilledArea()) {
+          moveToFillArea(handlingPiece);
+        }
         break;
       case ZOOM:
+        // TODO 过于强硬
+        if (!handlingPiece.isFilledArea()) {
+          fillArea(handlingPiece);
+        }
         break;
       case MOVE:
         break;
@@ -269,6 +276,37 @@ public class SlantPuzzleView extends View {
           replacePiece = null;
         }
         break;
+    }
+  }
+
+  private void moveToFillArea(SlantPuzzlePiece piece) {
+    piece.prepare();
+
+    Area area = piece.getArea();
+    RectF rectF = piece.getMappedBounds();
+    float offsetX = 0f;
+    float offsetY = 0f;
+
+    if (rectF.left > area.left()) {
+      offsetX = area.left() - rectF.left;
+    }
+
+    if (rectF.top > area.top()) {
+      offsetY = area.top() - rectF.top;
+    }
+
+    if (rectF.right < area.right()) {
+      offsetX = area.right() - rectF.right;
+    }
+
+    if (rectF.bottom < area.bottom()) {
+      offsetY = area.bottom() - rectF.bottom;
+    }
+
+    piece.translate(offsetX, offsetY);
+
+    if (!piece.isFilledArea()) {
+      fillArea(piece);
     }
   }
 

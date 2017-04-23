@@ -121,7 +121,6 @@ public class SlantLine implements Line{
         && crossProduct(DA, DM) > 0;
   }
 
-  // TODO 移动范围限制
   public void move(float offset, float extra) {
     if (direction == Line.Direction.HORIZONTAL) {
       if (previousStart.y + offset < lowerLine.maxY() + extra

@@ -1,9 +1,12 @@
 package com.xiaopo.flying.puzzle.slant;
 
+import android.animation.Animator;
+import android.animation.ValueAnimator;
 import android.graphics.Canvas;
 import android.graphics.Matrix;
 import android.graphics.PointF;
 import android.graphics.Rect;
+import android.graphics.RectF;
 import android.graphics.drawable.Drawable;
 
 /**
@@ -76,6 +79,20 @@ public class SlantPuzzlePiece {
     return area.contains(line);
   }
 
+  public RectF getMappedBounds() {
+    RectF dst = new RectF();
+    matrix.mapRect(dst, new RectF(drawableBounds));
+    return dst;
+  }
+
+  public boolean isFilledArea() {
+    RectF bounds = getMappedBounds();
+    return !(bounds.left > area.left()
+        || bounds.top > area.top()
+        || bounds.right < area.right()
+        || bounds.bottom < area.bottom());
+  }
+
   public void prepare() {
     previousMatrix.set(matrix);
   }
@@ -92,5 +109,10 @@ public class SlantPuzzlePiece {
 
   public void set(Matrix matrix){
     this.matrix.set(matrix);
+  }
+
+  public void translate(float offsetX, float offsetY, int duration) {
+    Animator xAnimator = ValueAnimator.ofFloat(0, offsetX);
+    xAnimator.setDuration(duration);
   }
 }
