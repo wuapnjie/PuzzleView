@@ -1,6 +1,6 @@
 package com.xiaopo.flying.puzzle.layout;
 
-import com.xiaopo.flying.puzzle.slant.Line;
+import com.xiaopo.flying.puzzle.base.Line;
 
 /**
  * Created by snowbean on 16-8-17.

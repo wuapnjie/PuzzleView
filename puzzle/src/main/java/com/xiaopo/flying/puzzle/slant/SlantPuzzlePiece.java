@@ -7,9 +7,12 @@ import android.graphics.PointF;
 import android.graphics.Rect;
 import android.graphics.RectF;
 import android.graphics.drawable.Drawable;
-import android.util.Log;
 import android.view.View;
 import android.view.animation.DecelerateInterpolator;
+import com.xiaopo.flying.puzzle.base.Area;
+import com.xiaopo.flying.puzzle.base.AreaUtils;
+import com.xiaopo.flying.puzzle.base.Line;
+import com.xiaopo.flying.puzzle.base.MatrixUtils;
 
 /**
  * @author wupanjie
@@ -23,12 +26,18 @@ public class SlantPuzzlePiece {
   private Area area;
   private Rect drawableBounds;
 
+  private ValueAnimator translateAnimator;
+  private ValueAnimator zoomAnimator;
+
   public SlantPuzzlePiece(Drawable drawable, Area area, Matrix matrix) {
     this.drawable = drawable;
     this.area = area;
     this.matrix = matrix;
     this.previousMatrix = new Matrix();
     this.drawableBounds = new Rect(0, 0, getWidth(), getHeight());
+
+    translateAnimator = ValueAnimator.ofFloat(0f, 1f);
+    zoomAnimator = ValueAnimator.ofFloat(0f, 1f);
   }
 
   public void draw(Canvas canvas) {
@@ -64,6 +73,10 @@ public class SlantPuzzlePiece {
 
   public Matrix getMatrix() {
     return matrix;
+  }
+
+  public Matrix getPreviousMatrix() {
+    return previousMatrix;
   }
 
   public Drawable getDrawable() {
@@ -108,6 +121,12 @@ public class SlantPuzzlePiece {
         || bounds.bottom < area.bottom());
   }
 
+  public boolean canFilledArea() {
+    float scale = MatrixUtils.getMatrixScale(matrix);
+    float minScale = AreaUtils.getMinMatrixScale(this);
+    return scale >= minScale;
+  }
+
   public void prepare() {
     previousMatrix.set(matrix);
   }
@@ -122,15 +141,23 @@ public class SlantPuzzlePiece {
     matrix.postScale(scaleX, scaleY, midPoint.x, midPoint.y);
   }
 
+  public void zoomAndTranslate(float scaleX, float scaleY, PointF midPoint, float offsetX,
+      float offsetY) {
+    matrix.set(previousMatrix);
+    matrix.postTranslate(offsetX, offsetY);
+    matrix.postScale(scaleX, scaleY, midPoint.x, midPoint.y);
+  }
+
   public void set(Matrix matrix) {
     this.matrix.set(matrix);
   }
 
   public void translate(final View view, final float offsetX, final float offsetY, int duration) {
-    ValueAnimator animator = ValueAnimator.ofFloat(0, 1f);
-    animator.setDuration(duration);
-    animator.setInterpolator(new DecelerateInterpolator());
-    animator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+    translateAnimator.end();
+    translateAnimator.removeAllUpdateListeners();
+    translateAnimator.setDuration(duration);
+    translateAnimator.setInterpolator(new DecelerateInterpolator());
+    translateAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
       @Override public void onAnimationUpdate(ValueAnimator animation) {
         float x = offsetX * (float) animation.getAnimatedValue();
         float y = offsetY * (float) animation.getAnimatedValue();
@@ -140,25 +167,25 @@ public class SlantPuzzlePiece {
       }
     });
 
-    animator.start();
+    translateAnimator.start();
   }
 
   public void zoom(final View view, final float scaleX, final float scaleY, final PointF midPoint,
       int duration) {
-    ValueAnimator animator = ValueAnimator.ofFloat(0, 1f);
-    animator.setDuration(duration);
-    animator.setInterpolator(new DecelerateInterpolator());
-    animator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+    zoomAnimator.end();
+    zoomAnimator.removeAllUpdateListeners();
+    zoomAnimator.setDuration(duration);
+    zoomAnimator.setInterpolator(new DecelerateInterpolator());
+    zoomAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
       @Override public void onAnimationUpdate(ValueAnimator animation) {
         float x = scaleX * (float) animation.getAnimatedValue();
         float y = scaleY * (float) animation.getAnimatedValue();
 
-        Log.d(TAG, "onAnimationUpdate: midPoint --> " + midPoint.toString());
         zoom(x, y, midPoint);
         view.invalidate();
       }
     });
 
-    animator.start();
+    zoomAnimator.start();
   }
 }

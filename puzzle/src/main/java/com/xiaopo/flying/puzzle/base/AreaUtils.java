@@ -1,8 +1,9 @@
-package com.xiaopo.flying.puzzle.slant;
+package com.xiaopo.flying.puzzle.base;
 
 import android.graphics.Matrix;
 import android.graphics.RectF;
 import android.graphics.drawable.Drawable;
+import com.xiaopo.flying.puzzle.slant.SlantPuzzlePiece;
 
 /**
  * @author wupanjie

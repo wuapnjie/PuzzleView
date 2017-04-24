@@ -11,15 +11,15 @@ import java.util.List;
  *
  * @see PuzzlePiece
  * each border consist of four lines : left,top,right,bottom
- * @see StraightLine
+ * @see BeeLine
  * <p>
  * Created by snowbean on 16-8-13.
  */
 class Border {
-  StraightLine lineLeft;
-  StraightLine lineTop;
-  StraightLine lineRight;
-  StraightLine lineBottom;
+  BeeLine lineLeft;
+  BeeLine lineTop;
+  BeeLine lineRight;
+  BeeLine lineBottom;
 
   Border(Border src) {
     lineLeft = src.lineLeft;
@@ -41,10 +41,10 @@ class Border {
     PointF three = new PointF(baseRect.left, baseRect.bottom);
     PointF four = new PointF(baseRect.right, baseRect.bottom);
 
-    lineLeft = new StraightLine(one, three);
-    lineTop = new StraightLine(one, two);
-    lineRight = new StraightLine(two, four);
-    lineBottom = new StraightLine(three, four);
+    lineLeft = new BeeLine(one, three);
+    lineTop = new BeeLine(one, two);
+    lineRight = new BeeLine(two, four);
+    lineBottom = new BeeLine(three, four);
   }
 
   float width() {
@@ -79,7 +79,7 @@ class Border {
     return (bottom() + top()) * 0.5f;
   }
 
-  List<StraightLine> getLines() {
+  List<BeeLine> getLines() {
     return Arrays.asList(lineLeft, lineTop, lineRight, lineBottom);
   }
 
@@ -87,7 +87,7 @@ class Border {
     return new RectF(left(), top(), right(), bottom());
   }
 
-  boolean contains(StraightLine line) {
+  boolean contains(BeeLine line) {
     return lineLeft == line || lineTop == line || lineRight == line || lineBottom == line;
   }
 

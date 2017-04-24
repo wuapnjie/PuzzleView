@@ -5,7 +5,7 @@ import android.graphics.Matrix;
 import android.graphics.PointF;
 import android.graphics.RectF;
 import android.graphics.drawable.Drawable;
-import com.xiaopo.flying.puzzle.slant.Line;
+import com.xiaopo.flying.puzzle.base.Line;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -15,7 +15,7 @@ import java.util.List;
 class BorderUtils {
   private static final String TAG = "BorderUtils";
 
-  static StraightLine createLine(final Border border, final Line.Direction direction,
+  static BeeLine createLine(final Border border, final Line.Direction direction,
       final float ratio) {
     PointF one = new PointF();
     PointF two = new PointF();
@@ -31,7 +31,7 @@ class BorderUtils {
       two.y = border.bottom();
     }
 
-    StraightLine line = new StraightLine(one, two);
+    BeeLine line = new BeeLine(one, two);
 
     if (direction == Line.Direction.HORIZONTAL) {
       line.setAttachLineStart(border.lineLeft);
@@ -50,7 +50,7 @@ class BorderUtils {
     return line;
   }
 
-  static List<Border> cutBorder(final Border border, final StraightLine line) {
+  static List<Border> cutBorder(final Border border, final BeeLine line) {
     List<Border> list = new ArrayList<>();
     if (line.getDirection() == Line.Direction.HORIZONTAL) {
       Border one = new Border(border);
@@ -73,8 +73,8 @@ class BorderUtils {
     return list;
   }
 
-  static List<Border> cutBorder(final Border border, final StraightLine l1, final StraightLine l2,
-      final StraightLine l3, Line.Direction direction) {
+  static List<Border> cutBorder(final Border border, final BeeLine l1, final BeeLine l2,
+      final BeeLine l3, Line.Direction direction) {
     List<Border> list = new ArrayList<>();
     if (direction == Line.Direction.HORIZONTAL) {
       Border one = new Border(border);
@@ -146,8 +146,8 @@ class BorderUtils {
     return list;
   }
 
-  static List<Border> cutBorder(final Border border, final StraightLine l1, final StraightLine l2,
-      final StraightLine l3, final StraightLine l4, Line.Direction direction) {
+  static List<Border> cutBorder(final Border border, final BeeLine l1, final BeeLine l2,
+      final BeeLine l3, final BeeLine l4, Line.Direction direction) {
     List<Border> list = new ArrayList<>();
     if (direction == Line.Direction.HORIZONTAL) {
 
@@ -244,8 +244,8 @@ class BorderUtils {
     return list;
   }
 
-  static List<Border> cutBorder(final Border border, final StraightLine l1, final StraightLine l2,
-      final StraightLine l3, final StraightLine l4) {
+  static List<Border> cutBorder(final Border border, final BeeLine l1, final BeeLine l2,
+      final BeeLine l3, final BeeLine l4) {
     List<Border> list = new ArrayList<>();
 
     Border one = new Border(border);
@@ -302,8 +302,8 @@ class BorderUtils {
     return list;
   }
 
-  static List<Border> cutBorderCross(final Border border, final StraightLine horizontal,
-      final StraightLine vertical) {
+  static List<Border> cutBorderCross(final Border border, final BeeLine horizontal,
+      final BeeLine vertical) {
     List<Border> list = new ArrayList<>();
 
     Border one = new Border(border);

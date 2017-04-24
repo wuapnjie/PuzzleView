@@ -3,13 +3,13 @@ package com.xiaopo.flying.puzzle;
 import android.graphics.PointF;
 import android.graphics.RectF;
 import android.util.Log;
-import com.xiaopo.flying.puzzle.slant.Line;
+import com.xiaopo.flying.puzzle.base.Line;
 
 /**
  * the line to divide the rect border
  * Created by snowbean on 16-8-13.
  */
-public class StraightLine {
+public class BeeLine {
 
   /**
    * for horizontal line, start means left, end means right
@@ -20,11 +20,11 @@ public class StraightLine {
 
   private Line.Direction direction = Line.Direction.HORIZONTAL;
 
-  private StraightLine attachLineStart;
-  private StraightLine attachLineEnd;
+  private BeeLine attachLineStart;
+  private BeeLine attachLineEnd;
 
-  private StraightLine mUpperLine;
-  private StraightLine mLowerLine;
+  private BeeLine mUpperLine;
+  private BeeLine mLowerLine;
 
   private final RectF mBound = new RectF();
 
@@ -52,7 +52,7 @@ public class StraightLine {
     return stringBuilder.append("\n").toString();
   }
 
-  public StraightLine(PointF start, PointF end) {
+  public BeeLine(PointF start, PointF end) {
     this.start = start;
     this.end = end;
 
@@ -61,7 +61,7 @@ public class StraightLine {
     } else if (start.y == end.y) {
       direction = Line.Direction.HORIZONTAL;
     } else {
-      Log.d("StraightLine", "StraightLine: current only support two direction");
+      Log.d("BeeLine", "BeeLine: current only support two direction");
     }
   }
 
@@ -158,19 +158,19 @@ public class StraightLine {
     }
   }
 
-  public StraightLine getAttachLineStart() {
+  public BeeLine getAttachLineStart() {
     return attachLineStart;
   }
 
-  public void setAttachLineStart(StraightLine attachLineStart) {
+  public void setAttachLineStart(BeeLine attachLineStart) {
     this.attachLineStart = attachLineStart;
   }
 
-  public StraightLine getAttachLineEnd() {
+  public BeeLine getAttachLineEnd() {
     return attachLineEnd;
   }
 
-  public void setAttachLineEnd(StraightLine attachLineEnd) {
+  public void setAttachLineEnd(BeeLine attachLineEnd) {
     this.attachLineEnd = attachLineEnd;
   }
 
@@ -178,19 +178,19 @@ public class StraightLine {
     return direction;
   }
 
-  public StraightLine getUpperLine() {
+  public BeeLine getUpperLine() {
     return mUpperLine;
   }
 
-  public void setUpperLine(StraightLine upperLine) {
+  public void setUpperLine(BeeLine upperLine) {
     mUpperLine = upperLine;
   }
 
-  public StraightLine getLowerLine() {
+  public BeeLine getLowerLine() {
     return mLowerLine;
   }
 
-  public void setLowerLine(StraightLine lowerLine) {
+  public void setLowerLine(BeeLine lowerLine) {
     mLowerLine = lowerLine;
   }
 }

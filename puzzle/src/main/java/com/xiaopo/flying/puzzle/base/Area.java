@@ -1,4 +1,4 @@
-package com.xiaopo.flying.puzzle.slant;
+package com.xiaopo.flying.puzzle.base;
 
 import android.graphics.Path;
 import android.graphics.PointF;
@@ -25,6 +25,8 @@ public interface Area {
   float width();
 
   float height();
+
+  PointF getCenterPoint();
 
   boolean contains(PointF point);
 

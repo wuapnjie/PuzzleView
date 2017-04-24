@@ -15,6 +15,10 @@ import android.util.AttributeSet;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
+import com.xiaopo.flying.puzzle.base.Area;
+import com.xiaopo.flying.puzzle.base.AreaUtils;
+import com.xiaopo.flying.puzzle.base.Line;
+import com.xiaopo.flying.puzzle.base.PuzzleLayout;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -34,7 +38,7 @@ public class SlantPuzzleView extends View {
   private List<SlantPuzzlePiece> puzzlePieces = new ArrayList<>();
   private List<SlantPuzzlePiece> needChangePieces = new ArrayList<>();
 
-  private SlantLayout puzzleLayout;
+  private PuzzleLayout puzzleLayout;
   private RectF bounds;
 
   private int lineSize = 4;
@@ -113,7 +117,8 @@ public class SlantPuzzleView extends View {
     bounds.bottom = h - getPaddingBottom();
 
     if (puzzleLayout != null) {
-      puzzleLayout.setOuterBorder(bounds);
+      puzzleLayout.reset();
+      puzzleLayout.setOuterBounds(bounds);
       puzzleLayout.layout();
     }
   }
@@ -195,10 +200,10 @@ public class SlantPuzzleView extends View {
         linePaint);
   }
 
-  public void setPuzzleLayout(SlantLayout puzzleLayout) {
+  public void setPuzzleLayout(PuzzleLayout puzzleLayout) {
     this.puzzleLayout = puzzleLayout;
 
-    this.puzzleLayout.setOuterBorder(bounds);
+    this.puzzleLayout.setOuterBounds(bounds);
     this.puzzleLayout.layout();
 
     invalidate();
@@ -250,13 +255,17 @@ public class SlantPuzzleView extends View {
         break;
       case DRAG:
         if (!handlingPiece.isFilledArea()) {
-          moveToFillArea(handlingPiece, 400);
+          moveToFillArea(handlingPiece, 300);
         }
         break;
       case ZOOM:
-        // TODO 过于强硬
         if (!handlingPiece.isFilledArea()) {
-          fillArea(handlingPiece);
+          if (handlingPiece.canFilledArea()) {
+            moveToFillArea(handlingPiece, 300);
+          } else {
+            // TODO 过于强硬
+            fillArea(handlingPiece);
+          }
         }
         break;
       case MOVE:
@@ -338,9 +347,9 @@ public class SlantPuzzleView extends View {
     if (line == null || event == null) return;
 
     if (line.direction() == Line.Direction.HORIZONTAL) {
-      line.move(event.getY() - downY, 20);
+      line.move(event.getY() - downY, 80);
     } else {
-      line.move(event.getX() - downX, 20);
+      line.move(event.getX() - downX, 80);
     }
 
     puzzleLayout.update();
@@ -351,34 +360,18 @@ public class SlantPuzzleView extends View {
   private void updatePiecesInArea(Line line, MotionEvent event) {
     for (SlantPuzzlePiece piece : needChangePieces) {
 
-      final float scale = MatrixUtils.getMatrixScale(piece.getMatrix());
-      final float minScale = AreaUtils.getMinMatrixScale(piece);
-
-      if (scale >= minScale) {
-        if (line.direction() == Line.Direction.HORIZONTAL) {
-          piece.translate(0, (event.getY() - downY) / 2);
-        } else if (line.direction() == Line.Direction.VERTICAL) {
-          piece.translate((event.getX() - downX) / 2, 0);
-        }
-
-        if (!piece.isFilledArea()) {
-          moveToFillArea(piece, 0);
-        }
-      } else {
-
-      }
     }
   }
 
   // TODO
   private void fillArea(SlantPuzzlePiece piece) {
-    piece.set(AreaUtils.generateMatrix(piece, 100f));
+    piece.set(AreaUtils.generateMatrix(piece, 0f));
   }
 
   private void zoomPiece(SlantPuzzlePiece piece, MotionEvent event) {
     if (piece == null || event == null || event.getPointerCount() < 2) return;
     float scale = calculateDistance(event) / previousDistance;
-    piece.zoom(scale, scale, midPoint);
+    piece.zoomAndTranslate(scale, scale, midPoint, event.getX() - downX, event.getY() - downY);
   }
 
   private void dragPiece(SlantPuzzlePiece piece, MotionEvent event) {
@@ -441,7 +434,7 @@ public class SlantPuzzleView extends View {
 
   private Line findHandlingLine() {
     for (Line line : puzzleLayout.getLines()) {
-      if (line.contains(downX, downY, 20)) {
+      if (line.contains(downX, downY, 40)) {
         Log.d(TAG, "findHandlingLine: --> " + line.toString());
         return line;
       }
@@ -521,7 +514,7 @@ public class SlantPuzzleView extends View {
 
     final Area area = puzzleLayout.getArea(position);
 
-    final Matrix matrix = AreaUtils.generateMatrix(area, drawable, 100);
+    final Matrix matrix = AreaUtils.generateMatrix(area, drawable, 100f);
 
     SlantPuzzlePiece piece = new SlantPuzzlePiece(drawable, area, matrix);
 

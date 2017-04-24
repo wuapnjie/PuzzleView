@@ -1,53 +1,55 @@
-package com.xiaopo.flying.puzzle.slant;
+package com.xiaopo.flying.puzzle.square;
 
 import android.graphics.PointF;
+import android.graphics.RectF;
+import android.util.Log;
 import com.xiaopo.flying.puzzle.base.Line;
 
-import static com.xiaopo.flying.puzzle.slant.SlantUtils.crossProduct;
-import static com.xiaopo.flying.puzzle.slant.SlantUtils.intersectionOfLines;
 import static java.lang.Math.max;
 import static java.lang.Math.min;
-import static java.lang.Math.pow;
-import static java.lang.Math.sqrt;
 
 /**
- * 分为两种斜线，横谢线和竖线线
- * 横斜线-->start为左边的点，end为右边的点
- * 竖斜线-->start为上面的点，end为下面的点
- *
  * @author wupanjie
  */
 
-public class SlantLine implements Line {
-  private static final String TAG = "SlantLine";
+public class StraightLine implements Line {
+  private static final String TAG = "StraightLine";
 
   public PointF start;
   public PointF end;
 
-  // 移动前的点
   public PointF previousStart = new PointF();
   public PointF previousEnd = new PointF();
 
-  public final Line.Direction direction;
+  public Line.Direction direction = Direction.HORIZONTAL;
 
-  public SlantLine attachLineStart;
-  public SlantLine attachLineEnd;
+  public StraightLine attachLineStart;
+  public StraightLine attachLineEnd;
 
   public Line upperLine;
   public Line lowerLine;
 
-  public SlantLine(Line.Direction direction) {
+  private RectF bounds = new RectF();
+
+  public StraightLine(Line.Direction direction) {
     this.direction = direction;
   }
 
-  public SlantLine(PointF start, PointF end, Line.Direction direction) {
+  public StraightLine(PointF start, PointF end) {
     this.start = start;
     this.end = end;
-    this.direction = direction;
+
+    if (start.x == end.x) {
+      direction = Line.Direction.VERTICAL;
+    } else if (start.y == end.y) {
+      direction = Line.Direction.HORIZONTAL;
+    } else {
+      Log.d("StraightLine", "StraightLine: current only support two direction");
+    }
   }
 
-  public float length() {
-    return (float) sqrt(pow(end.x - start.x, 2) + pow(end.y - start.y, 2));
+  @Override public float length() {
+    return (float) Math.sqrt(Math.pow(end.x - start.x, 2) + Math.pow(end.y - start.y, 2));
   }
 
   @Override public PointF startPoint() {
@@ -87,42 +89,34 @@ public class SlantLine implements Line {
   }
 
   @Override public float slope() {
-    return SlantUtils.calculateSlope(this);
+    return direction == Direction.HORIZONTAL ? 0 : Float.MAX_VALUE;
   }
 
-  public boolean contains(float x, float y, float extra) {
-    PointF A, B, C, D;
-    if (direction == Line.Direction.VERTICAL) {
-      A = new PointF(start.x - extra, start.y);
-      B = new PointF(start.x + extra, start.y);
-      C = new PointF(end.x + extra, end.y);
-      D = new PointF(end.x - extra, end.y);
-    } else {
-      A = new PointF(start.x, start.y - extra);
-      B = new PointF(end.x, end.y - extra);
-      C = new PointF(end.x, end.y + extra);
-      D = new PointF(start.x, start.y + extra);
+  @Override public boolean contains(float x, float y, float extra) {
+    if (direction == Line.Direction.HORIZONTAL) {
+      bounds.left = start.x;
+      bounds.right = end.x;
+      bounds.top = start.y - extra / 2;
+      bounds.bottom = start.y + extra / 2;
+    } else if (direction == Line.Direction.VERTICAL) {
+      bounds.top = start.y;
+      bounds.bottom = end.y;
+      bounds.left = start.x - extra / 2;
+      bounds.right = start.x + extra / 2;
     }
 
-    PointF AB = new PointF(B.x - A.x, B.y - A.y);
-    PointF AM = new PointF(x - A.x, y - A.y);
+    Log.d(TAG, "contains: --> " + bounds.contains(x, y));
 
-    PointF BC = new PointF(C.x - B.x, C.y - B.y);
-    PointF BM = new PointF(x - B.x, y - B.y);
-
-    PointF CD = new PointF(D.x - C.x, D.y - C.y);
-    PointF CM = new PointF(x - C.x, y - C.y);
-
-    PointF DA = new PointF(A.x - D.x, A.y - D.y);
-    PointF DM = new PointF(x - D.x, y - D.y);
-
-    return crossProduct(AB, AM) > 0
-        && crossProduct(BC, BM) > 0
-        && crossProduct(CD, CM) > 0
-        && crossProduct(DA, DM) > 0;
+    return bounds.contains(x, y);
   }
 
-  public void move(float offset, float extra) {
+  @Override public void prepareMove() {
+    previousStart.set(start);
+    previousEnd.set(end);
+  }
+
+  // TODO
+  @Override public void move(float offset, float extra) {
     if (direction == Line.Direction.HORIZONTAL) {
       if (previousStart.y + offset < lowerLine.maxY() + extra
           || previousStart.y + offset > upperLine.minY() - extra
@@ -146,15 +140,30 @@ public class SlantLine implements Line {
     }
   }
 
-  public void prepareMove() {
-    previousStart.set(start);
-    previousEnd.set(end);
+  @Override public void update() {
+    if (direction == Line.Direction.HORIZONTAL) {
+      if (attachLineStart != null) {
+        start.x = attachLineStart.getPosition();
+      }
+      if (attachLineEnd != null) {
+        end.x = attachLineEnd.getPosition();
+      }
+    } else if (direction == Line.Direction.VERTICAL) {
+      if (attachLineStart != null) {
+        start.y = attachLineStart.getPosition();
+      }
+      if (attachLineEnd != null) {
+        end.y = attachLineEnd.getPosition();
+      }
+    }
   }
 
-  // TODO 需要判断点是否超出总范围
-  public void update() {
-    this.start.set(intersectionOfLines(this, attachLineStart));
-    this.end.set(intersectionOfLines(this, attachLineEnd));
+  public float getPosition() {
+    if (direction == Line.Direction.HORIZONTAL) {
+      return start.y;
+    } else {
+      return start.x;
+    }
   }
 
   @Override public float minX() {
@@ -172,7 +181,6 @@ public class SlantLine implements Line {
   @Override public float maxY() {
     return max(start.y, end.y);
   }
-
 
   @Override public String toString() {
     return "start --> " + start.toString() + ",end --> " + end.toString();

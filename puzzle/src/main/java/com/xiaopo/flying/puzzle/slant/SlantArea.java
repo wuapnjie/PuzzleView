@@ -3,6 +3,8 @@ package com.xiaopo.flying.puzzle.slant;
 import android.graphics.Path;
 import android.graphics.PointF;
 import android.graphics.RectF;
+import com.xiaopo.flying.puzzle.base.Area;
+import com.xiaopo.flying.puzzle.base.Line;
 import java.util.Arrays;
 import java.util.List;
 
@@ -72,6 +74,10 @@ public class SlantArea implements Area {
 
   @Override public float height() {
     return bottom() - top();
+  }
+
+  @Override public PointF getCenterPoint() {
+    return new PointF(centerX(), centerY());
   }
 
   public Path getAreaPath() {

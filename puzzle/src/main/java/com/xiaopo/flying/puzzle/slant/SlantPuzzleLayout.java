@@ -2,6 +2,8 @@ package com.xiaopo.flying.puzzle.slant;
 
 import android.graphics.PointF;
 import android.graphics.RectF;
+import com.xiaopo.flying.puzzle.base.Line;
+import com.xiaopo.flying.puzzle.base.PuzzleLayout;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -17,24 +19,24 @@ import static com.xiaopo.flying.puzzle.slant.SlantUtils.cutArea;
  * @author wupanjie
  */
 
-public abstract class SlantLayout {
+public abstract class SlantPuzzleLayout implements PuzzleLayout {
   private SlantArea outerArea;
 
   private List<Line> outerLines = new ArrayList<>();
   private List<SlantArea> areas = new ArrayList<>();
   private List<Line> lines = new ArrayList<>();
 
-  private Comparator<SlantArea> slantAreaComparator = new SlantAreaComparator();
+  private Comparator<SlantArea> areaComparator = new SlantAreaComparator();
 
-  public SlantLayout() {
+  public SlantPuzzleLayout() {
 
   }
 
-  public SlantLayout(RectF outerRect) {
-    setOuterBorder(outerRect);
+  public SlantPuzzleLayout(RectF outerRect) {
+    setOuterBounds(outerRect);
   }
 
-  public void setOuterBorder(RectF baseRect) {
+  @Override  public void setOuterBounds(RectF baseRect) {
     reset();
 
     PointF leftTop = new PointF(baseRect.left, baseRect.top);
@@ -71,21 +73,6 @@ public abstract class SlantLayout {
 
   public abstract void layout();
 
-  protected void addLine(int position, Line.Direction direction, float startRadio, float endRadio) {
-    SlantArea area = areas.get(position);
-    areas.remove(area);
-    SlantLine line = createSlantLine(area, direction, startRadio, endRadio);
-    lines.add(line);
-
-    List<SlantArea> increasedArea = cutArea(area, line);
-
-    areas.addAll(increasedArea);
-
-    updateLineLimit();
-
-    sortArea();
-  }
-
   private void updateLineLimit() {
     for (Line line : lines) {
       updateUpperLine(line);
@@ -106,11 +93,11 @@ public abstract class SlantLayout {
 
       if (l.direction() == Line.Direction.HORIZONTAL) {
         if (l.minY() > line.lowerLine().maxY() && l.maxY() < line.minY()) {
-          line.setLowerLine(line);
+          line.setLowerLine(l);
         }
       } else {
         if (l.minX() > line.lowerLine().maxX() && l.maxX() < line.minX()) {
-          line.setLowerLine(line);
+          line.setLowerLine(l);
         }
       }
     }
@@ -139,29 +126,27 @@ public abstract class SlantLayout {
     }
   }
 
-  public int getAreaCount() {
+  @Override public int getAreaCount() {
     return areas.size();
   }
 
-
-  public void reset() {
-    outerArea = null;
-    outerLines.clear();
-    areas.clear();
+  @Override public void reset() {
     lines.clear();
+    areas.clear();
+    areas.add(outerArea);
   }
 
-  public void update() {
+  @Override public void update() {
     for (Line line : lines) {
       line.update();
     }
   }
 
-  private void sortArea() {
-    Collections.sort(areas, slantAreaComparator);
+  private void sortAreas() {
+    Collections.sort(areas, areaComparator);
   }
 
-  public List<Line> getOuterLines() {
+  @Override public List<Line> getOuterLines() {
     return outerLines;
   }
 
@@ -173,11 +158,28 @@ public abstract class SlantLayout {
     return areas;
   }
 
-  public SlantArea getArea(int position) {
+  @Override public SlantArea getArea(int position) {
     return areas.get(position);
   }
 
-  public List<Line> getLines() {
+  @Override public List<Line> getLines() {
     return lines;
+  }
+
+  protected List<SlantArea> addLine(int position, Line.Direction direction, float startRadio, float endRadio) {
+    SlantArea area = areas.get(position);
+    areas.remove(area);
+    SlantLine line = createSlantLine(area, direction, startRadio, endRadio);
+    lines.add(line);
+
+    List<SlantArea> increasedAreas = cutArea(area, line);
+
+    areas.addAll(increasedAreas);
+
+    updateLineLimit();
+
+    sortAreas();
+
+    return increasedAreas;
   }
 }
