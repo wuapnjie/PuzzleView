@@ -49,7 +49,7 @@
 
   </LinearLayout>
 
-  <com.xiaopo.flying.puzzle.slant.SquareSlantPuzzleView
+  <com.xiaopo.flying.puzzle.widget.SquarePuzzleView
       android:id="@+id/puzzle_view"
       android:layout_width="match_parent"
       android:layout_height="match_parent"

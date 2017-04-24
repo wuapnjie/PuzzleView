@@ -7,17 +7,17 @@ import android.util.AttributeSet;
  * the square puzzle view
  * Created by snowbean on 16-8-16.
  */
-public class SquarePuzzleView extends PuzzleView {
+public class SquareBeePuzzleView extends BeePuzzleView {
 
-  public SquarePuzzleView(Context context) {
+  public SquareBeePuzzleView(Context context) {
     super(context);
   }
 
-  public SquarePuzzleView(Context context, AttributeSet attrs) {
+  public SquareBeePuzzleView(Context context, AttributeSet attrs) {
     super(context, attrs);
   }
 
-  public SquarePuzzleView(Context context, AttributeSet attrs, int defStyleAttr) {
+  public SquareBeePuzzleView(Context context, AttributeSet attrs, int defStyleAttr) {
     super(context, attrs, defStyleAttr);
   }
 

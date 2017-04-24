@@ -7,7 +7,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.xiaopo.flying.puzzle.PuzzleLayout;
-import com.xiaopo.flying.puzzle.SquarePuzzleView;
+import com.xiaopo.flying.puzzle.SquareBeePuzzleView;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -93,11 +93,11 @@ public class PuzzleAdapter extends RecyclerView.Adapter<PuzzleAdapter.PuzzleView
 
   public static class PuzzleViewHolder extends RecyclerView.ViewHolder {
 
-    SquarePuzzleView mPuzzleView;
+    SquareBeePuzzleView mPuzzleView;
 
     public PuzzleViewHolder(View itemView) {
       super(itemView);
-      mPuzzleView = (SquarePuzzleView) itemView.findViewById(R.id.puzzle);
+      mPuzzleView = (SquareBeePuzzleView) itemView.findViewById(R.id.puzzle);
     }
   }
 

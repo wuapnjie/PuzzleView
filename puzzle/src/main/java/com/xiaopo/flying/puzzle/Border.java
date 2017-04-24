@@ -9,7 +9,7 @@ import java.util.List;
 /**
  * the border to layout puzzle piece
  *
- * @see PuzzlePiece
+ * @see BeePuzzlePiece
  * each border consist of four lines : left,top,right,bottom
  * @see BeeLine
  * <p>

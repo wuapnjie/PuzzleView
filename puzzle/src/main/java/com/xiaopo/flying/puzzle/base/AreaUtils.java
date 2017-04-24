@@ -3,7 +3,6 @@ package com.xiaopo.flying.puzzle.base;
 import android.graphics.Matrix;
 import android.graphics.RectF;
 import android.graphics.drawable.Drawable;
-import com.xiaopo.flying.puzzle.slant.SlantPuzzlePiece;
 
 /**
  * @author wupanjie
@@ -14,11 +13,11 @@ public class AreaUtils {
     //no instance
   }
 
-  public static float getMinMatrixScale(SlantPuzzlePiece piece) {
+  public static float getMinMatrixScale(PuzzlePiece piece) {
     return MatrixUtils.getMatrixScale(generateMatrix(piece, 0));
   }
 
-  public static Matrix generateMatrix(SlantPuzzlePiece piece, float extra) {
+  public static Matrix generateMatrix(PuzzlePiece piece, float extra) {
     return generateMatrix(piece.getArea(), piece.getDrawable(), extra);
   }
 

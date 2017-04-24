@@ -1,4 +1,4 @@
-package com.xiaopo.flying.puzzle.slant;
+package com.xiaopo.flying.puzzle.widget;
 
 import android.content.Context;
 import android.graphics.Bitmap;
@@ -19,6 +19,7 @@ import com.xiaopo.flying.puzzle.base.Area;
 import com.xiaopo.flying.puzzle.base.AreaUtils;
 import com.xiaopo.flying.puzzle.base.Line;
 import com.xiaopo.flying.puzzle.base.PuzzleLayout;
+import com.xiaopo.flying.puzzle.base.PuzzlePiece;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -26,7 +27,7 @@ import java.util.List;
  * @author wupanjie
  */
 
-public class SlantPuzzleView extends View {
+public class PuzzleView extends View {
   private static final String TAG = "SlantPuzzleView";
 
   private enum ActionMode {
@@ -35,8 +36,8 @@ public class SlantPuzzleView extends View {
 
   private ActionMode currentMode = ActionMode.NONE;
 
-  private List<SlantPuzzlePiece> puzzlePieces = new ArrayList<>();
-  private List<SlantPuzzlePiece> needChangePieces = new ArrayList<>();
+  private List<PuzzlePiece> puzzlePieces = new ArrayList<>();
+  private List<PuzzlePiece> needChangePieces = new ArrayList<>();
 
   private PuzzleLayout puzzleLayout;
   private RectF bounds;
@@ -44,8 +45,8 @@ public class SlantPuzzleView extends View {
   private int lineSize = 4;
   private Line handlingLine;
 
-  private SlantPuzzlePiece handlingPiece;
-  private SlantPuzzlePiece replacePiece;
+  private PuzzlePiece handlingPiece;
+  private PuzzlePiece replacePiece;
 
   private Paint linePaint;
   private Paint selectedAreaPaint;
@@ -71,15 +72,15 @@ public class SlantPuzzleView extends View {
     }
   };
 
-  public SlantPuzzleView(Context context) {
+  public PuzzleView(Context context) {
     this(context, null);
   }
 
-  public SlantPuzzleView(Context context, AttributeSet attrs) {
+  public PuzzleView(Context context, AttributeSet attrs) {
     this(context, attrs, 0);
   }
 
-  public SlantPuzzleView(Context context, AttributeSet attrs, int defStyleAttr) {
+  public PuzzleView(Context context, AttributeSet attrs, int defStyleAttr) {
     super(context, attrs, defStyleAttr);
     init();
   }
@@ -136,7 +137,7 @@ public class SlantPuzzleView extends View {
         break;
       }
 
-      SlantPuzzlePiece piece = puzzlePieces.get(i);
+      PuzzlePiece piece = puzzlePieces.get(i);
 
       if (piece == handlingPiece && currentMode == ActionMode.SWAP) {
         continue;
@@ -175,7 +176,7 @@ public class SlantPuzzleView extends View {
     }
   }
 
-  private void drawSelectedArea(Canvas canvas, SlantPuzzlePiece piece) {
+  private void drawSelectedArea(Canvas canvas, PuzzlePiece piece) {
     final Area area = piece.getArea();
     // draw select area
     canvas.drawPath(area.getAreaPath(), selectedAreaPaint);
@@ -287,7 +288,7 @@ public class SlantPuzzleView extends View {
     }
   }
 
-  private void moveToFillArea(SlantPuzzlePiece piece, int duration) {
+  private void moveToFillArea(PuzzlePiece piece, int duration) {
     piece.prepare();
 
     Area area = piece.getArea();
@@ -358,23 +359,23 @@ public class SlantPuzzleView extends View {
 
   // TODO
   private void updatePiecesInArea(Line line, MotionEvent event) {
-    for (SlantPuzzlePiece piece : needChangePieces) {
+    for (PuzzlePiece piece : needChangePieces) {
 
     }
   }
 
   // TODO
-  private void fillArea(SlantPuzzlePiece piece) {
+  private void fillArea(PuzzlePiece piece) {
     piece.set(AreaUtils.generateMatrix(piece, 0f));
   }
 
-  private void zoomPiece(SlantPuzzlePiece piece, MotionEvent event) {
+  private void zoomPiece(PuzzlePiece piece, MotionEvent event) {
     if (piece == null || event == null || event.getPointerCount() < 2) return;
     float scale = calculateDistance(event) / previousDistance;
     piece.zoomAndTranslate(scale, scale, midPoint, event.getX() - downX, event.getY() - downY);
   }
 
-  private void dragPiece(SlantPuzzlePiece piece, MotionEvent event) {
+  private void dragPiece(PuzzlePiece piece, MotionEvent event) {
     if (piece == null || event == null) return;
     piece.translate(event.getX() - downX, event.getY() - downY);
   }
@@ -393,7 +394,7 @@ public class SlantPuzzleView extends View {
         handlingLine.prepareMove();
         needChangePieces.clear();
         needChangePieces.addAll(findNeedChangedPieces());
-        for (SlantPuzzlePiece piece : needChangePieces) {
+        for (PuzzlePiece piece : needChangePieces) {
           piece.prepare();
         }
         break;
@@ -423,8 +424,8 @@ public class SlantPuzzleView extends View {
     }
   }
 
-  private SlantPuzzlePiece findHandlingPiece() {
-    for (SlantPuzzlePiece piece : puzzlePieces) {
+  private PuzzlePiece findHandlingPiece() {
+    for (PuzzlePiece piece : puzzlePieces) {
       if (piece.contains(downX, downY)) {
         return piece;
       }
@@ -442,8 +443,8 @@ public class SlantPuzzleView extends View {
     return null;
   }
 
-  private SlantPuzzlePiece findReplacePiece(MotionEvent event) {
-    for (SlantPuzzlePiece piece : puzzlePieces) {
+  private PuzzlePiece findReplacePiece(MotionEvent event) {
+    for (PuzzlePiece piece : puzzlePieces) {
       if (piece.contains(event.getX(), event.getY())) {
         return piece;
       }
@@ -451,12 +452,12 @@ public class SlantPuzzleView extends View {
     return null;
   }
 
-  private List<SlantPuzzlePiece> findNeedChangedPieces() {
+  private List<PuzzlePiece> findNeedChangedPieces() {
     if (handlingLine == null) return new ArrayList<>();
 
-    List<SlantPuzzlePiece> needChanged = new ArrayList<>();
+    List<PuzzlePiece> needChanged = new ArrayList<>();
 
-    for (SlantPuzzlePiece piece : puzzlePieces) {
+    for (PuzzlePiece piece : puzzlePieces) {
       if (piece.contains(handlingLine)) {
         needChanged.add(piece);
       }
@@ -516,7 +517,7 @@ public class SlantPuzzleView extends View {
 
     final Matrix matrix = AreaUtils.generateMatrix(area, drawable, 100f);
 
-    SlantPuzzlePiece piece = new SlantPuzzlePiece(drawable, area, matrix);
+    PuzzlePiece piece = new PuzzlePiece(drawable, area, matrix);
 
     puzzlePieces.add(piece);
 

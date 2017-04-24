@@ -1,4 +1,4 @@
-package com.xiaopo.flying.puzzle.slant;
+package com.xiaopo.flying.puzzle.widget;
 
 import android.content.Context;
 import android.util.AttributeSet;
@@ -7,16 +7,16 @@ import android.util.AttributeSet;
  * @author wupanjie
  */
 
-public class SquareSlantPuzzleView extends SlantPuzzleView {
-  public SquareSlantPuzzleView(Context context) {
+public class SquarePuzzleView extends PuzzleView {
+  public SquarePuzzleView(Context context) {
     super(context);
   }
 
-  public SquareSlantPuzzleView(Context context, AttributeSet attrs) {
+  public SquarePuzzleView(Context context, AttributeSet attrs) {
     super(context, attrs);
   }
 
-  public SquareSlantPuzzleView(Context context, AttributeSet attrs, int defStyleAttr) {
+  public SquarePuzzleView(Context context, AttributeSet attrs, int defStyleAttr) {
     super(context, attrs, defStyleAttr);
   }
 

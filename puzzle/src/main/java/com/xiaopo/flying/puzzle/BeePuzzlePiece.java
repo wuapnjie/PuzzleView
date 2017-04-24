@@ -13,7 +13,7 @@ import android.graphics.drawable.Drawable;
  * <p>
  * Created by snowbean on 16-8-16.
  */
-public class PuzzlePiece {
+public class BeePuzzlePiece {
   private Drawable mDrawable;
   private Rect mRealBound;
 
@@ -33,13 +33,13 @@ public class PuzzlePiece {
   private int paddingRight;
   private int paddingBottom;
 
-  private PuzzlePiece(Matrix matrix, Border border) {
+  private BeePuzzlePiece(Matrix matrix, Border border) {
     mMatrix = matrix;
     mBorder = border;
     mDownMatrix = new Matrix();
   }
 
-  public PuzzlePiece(Drawable drawable, Border border, Matrix matrix) {
+  public BeePuzzlePiece(Drawable drawable, Border border, Matrix matrix) {
     this(matrix, border);
     mDrawable = drawable;
     mRealBound = new Rect(0, 0, getWidth(), getHeight());

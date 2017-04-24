@@ -32,7 +32,7 @@ import java.util.List;
  * @see PuzzleLayout
  * Created by snowbean on 16-8-16.
  */
-public class PuzzleView extends View {
+public class BeePuzzleView extends View {
   private static final String TAG = "PuzzleView";
 
   private enum Mode {
@@ -60,14 +60,14 @@ public class PuzzleView extends View {
   private float mOldDistance;
   private PointF mMidPoint;
 
-  private List<PuzzlePiece> mPuzzlePieces = new ArrayList<>();
+  private List<BeePuzzlePiece> mPuzzlePieces = new ArrayList<>();
 
   private BeeLine mHandlingLine;
-  private PuzzlePiece mHandlingPiece;
-  private PuzzlePiece mPreviewHandlingPiece;
-  private PuzzlePiece mReplacePiece;
+  private BeePuzzlePiece mHandlingPiece;
+  private BeePuzzlePiece mPreviewHandlingPiece;
+  private BeePuzzlePiece mReplacePiece;
 
-  private List<PuzzlePiece> mChangedPieces = new ArrayList<>();
+  private List<BeePuzzlePiece> mChangedPieces = new ArrayList<>();
 
   private boolean mNeedDrawBorder = false;
   private boolean mMoveLineEnable = true;
@@ -76,15 +76,15 @@ public class PuzzleView extends View {
   private Handler mHandler;
   private OnPieceSelectedListener mOnPieceSelectedListener;
 
-  public PuzzleView(Context context) {
+  public BeePuzzleView(Context context) {
     this(context, null, 0);
   }
 
-  public PuzzleView(Context context, AttributeSet attrs) {
+  public BeePuzzleView(Context context, AttributeSet attrs) {
     this(context, attrs, 0);
   }
 
-  public PuzzleView(Context context, AttributeSet attrs, int defStyleAttr) {
+  public BeePuzzleView(Context context, AttributeSet attrs, int defStyleAttr) {
     super(context, attrs, defStyleAttr);
 
     mBorderRect = new RectF();
@@ -126,7 +126,7 @@ public class PuzzleView extends View {
         break;
       }
 
-      PuzzlePiece piece = mPuzzlePieces.get(i);
+      BeePuzzlePiece piece = mPuzzlePieces.get(i);
       canvas.save();
       canvas.clipRect(border.getRect());
       if (mPuzzlePieces.size() > i) {
@@ -163,7 +163,7 @@ public class PuzzleView extends View {
     }
   }
 
-  private void drawSelectedBorder(Canvas canvas, PuzzlePiece piece) {
+  private void drawSelectedBorder(Canvas canvas, BeePuzzlePiece piece) {
     mSelectedRect.set(piece.getPaddingBorderRect());
 
     mSelectedRect.left += mBorderWidth / 2f;
@@ -333,7 +333,7 @@ public class PuzzleView extends View {
     return true;
   }
 
-  private void zoomPiece(PuzzlePiece piece, MotionEvent event) {
+  private void zoomPiece(BeePuzzlePiece piece, MotionEvent event) {
     if (piece != null && event.getPointerCount() >= 2) {
       float newDistance = calculateDistance(event);
 
@@ -346,7 +346,7 @@ public class PuzzleView extends View {
     }
   }
 
-  private void dragPiece(PuzzlePiece piece, MotionEvent event) {
+  private void dragPiece(BeePuzzlePiece piece, MotionEvent event) {
     if (piece != null) {
       piece.getMatrix().set(piece.getDownMatrix());
       piece.getMatrix().postTranslate(event.getX() - mDownX, event.getY() - mDownY);
@@ -357,7 +357,7 @@ public class PuzzleView extends View {
     }
   }
 
-  private void moveToFillBorder(final PuzzlePiece piece) {
+  private void moveToFillBorder(final BeePuzzlePiece piece) {
     Border border = piece.getBorder();
     RectF rectF = piece.getMappedBound();
     float offsetX = 0f;
@@ -395,7 +395,7 @@ public class PuzzleView extends View {
    * @param piece puzzle piece which can not be null
    * @return the scale factor to fill with border
    */
-  private void fillBorder(PuzzlePiece piece) {
+  private void fillBorder(BeePuzzlePiece piece) {
     piece.getMatrix().reset();
 
     final RectF rectF = piece.getBorder().getRect();
@@ -425,7 +425,7 @@ public class PuzzleView extends View {
     piece.setScaleFactor(0f);
   }
 
-  private float calculateFillScaleFactor(PuzzlePiece piece) {
+  private float calculateFillScaleFactor(BeePuzzlePiece piece) {
     final RectF rectF = piece.getBorder().getRect();
     float scale;
     if (piece.getRotation() == 90 || piece.getRotation() == 270) {
@@ -444,7 +444,7 @@ public class PuzzleView extends View {
     return scale;
   }
 
-  private float calculateFillScaleFactor(PuzzlePiece piece, Border border) {
+  private float calculateFillScaleFactor(BeePuzzlePiece piece, Border border) {
     final RectF rectF = border.getRect();
     float scale;
     if (piece.getWidth() * rectF.height() > rectF.width() * piece.getHeight()) {
@@ -456,7 +456,7 @@ public class PuzzleView extends View {
   }
 
   private void updatePieceInBorder(MotionEvent event) {
-    for (PuzzlePiece piece : mChangedPieces) {
+    for (BeePuzzlePiece piece : mChangedPieces) {
       float scale = calculateFillScaleFactor(piece, mPuzzleLayout.getOuterBorder());
 
       if (piece.getScaleFactor() > scale && piece.isFilledBorder()) {
@@ -494,12 +494,12 @@ public class PuzzleView extends View {
     }
   }
 
-  private List<PuzzlePiece> findChangedPiece() {
+  private List<BeePuzzlePiece> findChangedPiece() {
     if (mHandlingLine == null) return new ArrayList<>();
 
-    List<PuzzlePiece> puzzlePieces = new ArrayList<>();
+    List<BeePuzzlePiece> puzzlePieces = new ArrayList<>();
 
-    for (PuzzlePiece piece : mPuzzlePieces) {
+    for (BeePuzzlePiece piece : mPuzzlePieces) {
       if (piece.getBorder().contains(mHandlingLine)) {
         puzzlePieces.add(piece);
       }
@@ -517,8 +517,8 @@ public class PuzzleView extends View {
     return null;
   }
 
-  private PuzzlePiece findHandlingPiece() {
-    for (PuzzlePiece piece : mPuzzlePieces) {
+  private BeePuzzlePiece findHandlingPiece() {
+    for (BeePuzzlePiece piece : mPuzzlePieces) {
       if (piece.contains(mDownX, mDownY)) {
         return piece;
       }
@@ -526,8 +526,8 @@ public class PuzzleView extends View {
     return null;
   }
 
-  private PuzzlePiece findReplacePiece(MotionEvent event) {
-    for (PuzzlePiece piece : mPuzzlePieces) {
+  private BeePuzzlePiece findReplacePiece(MotionEvent event) {
+    for (BeePuzzlePiece piece : mPuzzlePieces) {
       if (piece.contains(event.getX(), event.getY()) && piece != mHandlingPiece) {
         return piece;
       }
@@ -535,7 +535,7 @@ public class PuzzleView extends View {
     return null;
   }
 
-  private boolean isInPhotoArea(PuzzlePiece handlingPhoto, float x, float y) {
+  private boolean isInPhotoArea(BeePuzzlePiece handlingPhoto, float x, float y) {
     return handlingPhoto.contains(x, y);
   }
 
@@ -566,7 +566,7 @@ public class PuzzleView extends View {
 
     if (mPuzzlePieces.size() != 0) {
       for (int i = 0; i < mPuzzlePieces.size(); i++) {
-        PuzzlePiece piece = mPuzzlePieces.get(i);
+        BeePuzzlePiece piece = mPuzzlePieces.get(i);
         piece.setBorder(mPuzzleLayout.getBorder(i));
         piece.getMatrix()
             .set(BorderUtils.createMatrix(mPuzzleLayout.getBorder(i), piece.getWidth(),
@@ -600,7 +600,7 @@ public class PuzzleView extends View {
     flipVertically(mHandlingPiece, true);
   }
 
-  private void flipHorizontally(PuzzlePiece piece, boolean needChangeStatus) {
+  private void flipHorizontally(BeePuzzlePiece piece, boolean needChangeStatus) {
     if (piece == null) return;
     if (needChangeStatus) {
       piece.setNeedHorizontalFlip(!piece.isNeedHorizontalFlip());
@@ -611,7 +611,7 @@ public class PuzzleView extends View {
     invalidate();
   }
 
-  private void flipVertically(PuzzlePiece piece, boolean needChangeStatus) {
+  private void flipVertically(BeePuzzlePiece piece, boolean needChangeStatus) {
     if (piece == null) return;
     if (needChangeStatus) {
       piece.setNeedVerticalFlip(!piece.isNeedVerticalFlip());
@@ -627,7 +627,7 @@ public class PuzzleView extends View {
     rotate(mHandlingPiece, rotate, true);
   }
 
-  private void rotate(PuzzlePiece piece, float rotate, boolean needChangeStatus) {
+  private void rotate(BeePuzzlePiece piece, float rotate, boolean needChangeStatus) {
     if (piece == null) return;
     if (needChangeStatus) {
       piece.setRotation((piece.getRotation() + rotate) % 360f);
@@ -689,7 +689,7 @@ public class PuzzleView extends View {
 
     Matrix matrix = BorderUtils.createMatrix(mPuzzleLayout.getBorder(index), drawable, mExtraSize);
 
-    PuzzlePiece layoutPhoto = new PuzzlePiece(drawable, mPuzzleLayout.getBorder(index), matrix);
+    BeePuzzlePiece layoutPhoto = new BeePuzzlePiece(drawable, mPuzzleLayout.getBorder(index), matrix);
     layoutPhoto.setPadding(paddingLeft, paddingTop, paddingRight, paddingBottom);
 
     mPuzzlePieces.add(layoutPhoto);
@@ -874,6 +874,6 @@ public class PuzzleView extends View {
   }
 
   public interface OnPieceSelectedListener {
-    void onPieceSelected(PuzzlePiece piece);
+    void onPieceSelected(BeePuzzlePiece piece);
   }
 }

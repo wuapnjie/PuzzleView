@@ -6,7 +6,7 @@
     android:padding="8dp"
     >
 
-  <com.xiaopo.flying.puzzle.SquarePuzzleView
+  <com.xiaopo.flying.puzzle.SquareBeePuzzleView
       android:id="@+id/puzzle"
       android:layout_width="match_parent"
       android:layout_height="match_parent"

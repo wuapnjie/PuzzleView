@@ -16,7 +16,7 @@ import com.squareup.picasso.Target;
 import com.xiaopo.flying.photolayout.PlaygroundActivity;
 import com.xiaopo.flying.photolayout.R;
 import com.xiaopo.flying.puzzle.base.PuzzleLayout;
-import com.xiaopo.flying.puzzle.slant.SquareSlantPuzzleView;
+import com.xiaopo.flying.puzzle.widget.SquarePuzzleView;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -25,7 +25,7 @@ import java.util.List;
  */
 
 public class SlantLineActivity extends AppCompatActivity {
-  private SquareSlantPuzzleView puzzleView;
+  private SquarePuzzleView puzzleView;
   private PuzzleLayout puzzleLayout;
   private View btnMore;
 
@@ -35,7 +35,7 @@ public class SlantLineActivity extends AppCompatActivity {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.activity_slant_line);
 
-    puzzleView = (SquareSlantPuzzleView) findViewById(R.id.puzzle_view);
+    puzzleView = (SquarePuzzleView) findViewById(R.id.puzzle_view);
     puzzleLayout = new StraightSampleLayout();
     puzzleView.reset();
     puzzleView.setPuzzleLayout(puzzleLayout);

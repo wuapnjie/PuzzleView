@@ -1,4 +1,4 @@
-package com.xiaopo.flying.puzzle.slant;
+package com.xiaopo.flying.puzzle.base;
 
 import android.animation.ValueAnimator;
 import android.graphics.Canvas;
@@ -9,17 +9,13 @@ import android.graphics.RectF;
 import android.graphics.drawable.Drawable;
 import android.view.View;
 import android.view.animation.DecelerateInterpolator;
-import com.xiaopo.flying.puzzle.base.Area;
-import com.xiaopo.flying.puzzle.base.AreaUtils;
-import com.xiaopo.flying.puzzle.base.Line;
-import com.xiaopo.flying.puzzle.base.MatrixUtils;
 
 /**
  * @author wupanjie
  */
 
-public class SlantPuzzlePiece {
-  private static final String TAG = "SlantPuzzlePiece";
+public class PuzzlePiece {
+  private static final String TAG = "PuzzlePiece";
   private Drawable drawable;
   private Matrix matrix;
   private Matrix previousMatrix;
@@ -29,7 +25,7 @@ public class SlantPuzzlePiece {
   private ValueAnimator translateAnimator;
   private ValueAnimator zoomAnimator;
 
-  public SlantPuzzlePiece(Drawable drawable, Area area, Matrix matrix) {
+  public PuzzlePiece(Drawable drawable, Area area, Matrix matrix) {
     this.drawable = drawable;
     this.area = area;
     this.matrix = matrix;
