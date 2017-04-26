@@ -36,7 +36,7 @@ public class SlantLineActivity extends AppCompatActivity {
     setContentView(R.layout.activity_slant_line);
 
     puzzleView = (SquarePuzzleView) findViewById(R.id.puzzle_view);
-    puzzleLayout = new StraightSampleLayout();
+    puzzleLayout = new SlantSampleLayout();
     puzzleView.reset();
     puzzleView.setPuzzleLayout(puzzleLayout);
     puzzleView.setNeedDrawLine(true);
