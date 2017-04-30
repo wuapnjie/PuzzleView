@@ -49,4 +49,19 @@ public class AreaUtils {
 
     return matrix;
   }
+
+  public static float getMinFillScale(Area area, Drawable drawable) {
+    final RectF rectF = area.getAreaRect();
+    final float width = drawable.getIntrinsicWidth();
+    final float height = drawable.getIntrinsicHeight();
+    float scale;
+
+    if (width * rectF.height() > rectF.width() * height) {
+      scale = rectF.height() / height;
+    } else {
+      scale = rectF.width() / width;
+    }
+
+    return scale;
+  }
 }

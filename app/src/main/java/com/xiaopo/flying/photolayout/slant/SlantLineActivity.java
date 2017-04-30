@@ -36,7 +36,7 @@ public class SlantLineActivity extends AppCompatActivity {
     setContentView(R.layout.activity_slant_line);
 
     puzzleView = (SquarePuzzleView) findViewById(R.id.puzzle_view);
-    puzzleLayout = new SlantSampleLayout();
+    puzzleLayout = new StraightSampleLayout();
     puzzleView.reset();
     puzzleView.setPuzzleLayout(puzzleLayout);
     puzzleView.setNeedDrawLine(true);
@@ -56,8 +56,8 @@ public class SlantLineActivity extends AppCompatActivity {
     final List<Bitmap> pieces = new ArrayList<>();
 
     final int[] resIds = new int[] {
-        R.drawable.demo1, R.drawable.demo2, R.drawable.demo3, R.drawable.demo4, R.drawable.demo5,
-        R.drawable.demo6, R.drawable.demo7, R.drawable.demo8, R.drawable.demo9,
+        R.drawable.demo9, R.drawable.demo2, R.drawable.demo3, R.drawable.demo4, R.drawable.demo5,
+        R.drawable.demo6, R.drawable.demo7, R.drawable.demo8, R.drawable.demo1,
     };
 
     final int count = resIds.length > puzzleLayout.getAreaCount() ? puzzleLayout.getAreaCount()

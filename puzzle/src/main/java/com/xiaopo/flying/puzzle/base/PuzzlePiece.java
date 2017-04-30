@@ -22,8 +22,10 @@ public class PuzzlePiece {
   private Area area;
   private Rect drawableBounds;
 
-  private ValueAnimator translateAnimator;
-  private ValueAnimator zoomAnimator;
+  private ValueAnimator animator;
+
+  private float previousMoveX;
+  private float previousMoveY;
 
   public PuzzlePiece(Drawable drawable, Area area, Matrix matrix) {
     this.drawable = drawable;
@@ -32,8 +34,8 @@ public class PuzzlePiece {
     this.previousMatrix = new Matrix();
     this.drawableBounds = new Rect(0, 0, getWidth(), getHeight());
 
-    translateAnimator = ValueAnimator.ofFloat(0f, 1f);
-    zoomAnimator = ValueAnimator.ofFloat(0f, 1f);
+    this.animator = ValueAnimator.ofFloat(0f, 1f);
+    this.animator.setInterpolator(new DecelerateInterpolator());
   }
 
   public void draw(Canvas canvas) {
@@ -109,6 +111,22 @@ public class PuzzlePiece {
     return new PointF(dst[0], dst[1]);
   }
 
+  public void setPreviousMoveX(float previousMoveX) {
+    this.previousMoveX = previousMoveX;
+  }
+
+  public void setPreviousMoveY(float previousMoveY) {
+    this.previousMoveY = previousMoveY;
+  }
+
+  public float getPreviousMoveX() {
+    return previousMoveX;
+  }
+
+  public float getPreviousMoveY() {
+    return previousMoveY;
+  }
+
   public boolean isFilledArea() {
     RectF bounds = getMappedBounds();
     return !(bounds.left > area.left()
@@ -129,59 +147,30 @@ public class PuzzlePiece {
 
   public void translate(float offsetX, float offsetY) {
     matrix.set(previousMatrix);
-    matrix.postTranslate(offsetX, offsetY);
+    postTranslate(offsetX, offsetY);
   }
 
   public void zoom(float scaleX, float scaleY, PointF midPoint) {
     matrix.set(previousMatrix);
-    matrix.postScale(scaleX, scaleY, midPoint.x, midPoint.y);
+    postScale(scaleX, scaleY, midPoint);
   }
 
   public void zoomAndTranslate(float scaleX, float scaleY, PointF midPoint, float offsetX,
       float offsetY) {
     matrix.set(previousMatrix);
-    matrix.postTranslate(offsetX, offsetY);
-    matrix.postScale(scaleX, scaleY, midPoint.x, midPoint.y);
+    postTranslate(offsetX, offsetY);
+    postScale(scaleX, scaleY, midPoint);
   }
 
   public void set(Matrix matrix) {
     this.matrix.set(matrix);
   }
 
-  public void translate(final View view, final float offsetX, final float offsetY, int duration) {
-    translateAnimator.end();
-    translateAnimator.removeAllUpdateListeners();
-    translateAnimator.setDuration(duration);
-    translateAnimator.setInterpolator(new DecelerateInterpolator());
-    translateAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
-      @Override public void onAnimationUpdate(ValueAnimator animation) {
-        float x = offsetX * (float) animation.getAnimatedValue();
-        float y = offsetY * (float) animation.getAnimatedValue();
-
-        translate(x, y);
-        view.invalidate();
-      }
-    });
-
-    translateAnimator.start();
+  public void postTranslate(float x, float y) {
+    this.matrix.postTranslate(x, y);
   }
 
-  public void zoom(final View view, final float scaleX, final float scaleY, final PointF midPoint,
-      int duration) {
-    zoomAnimator.end();
-    zoomAnimator.removeAllUpdateListeners();
-    zoomAnimator.setDuration(duration);
-    zoomAnimator.setInterpolator(new DecelerateInterpolator());
-    zoomAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
-      @Override public void onAnimationUpdate(ValueAnimator animation) {
-        float x = scaleX * (float) animation.getAnimatedValue();
-        float y = scaleY * (float) animation.getAnimatedValue();
-
-        zoom(x, y, midPoint);
-        view.invalidate();
-      }
-    });
-
-    zoomAnimator.start();
+  public void postScale(float scaleX, float scaleY, PointF midPoint) {
+    this.matrix.postScale(scaleX, scaleY, midPoint.x, midPoint.y);
   }
 }
