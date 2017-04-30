@@ -22,10 +22,15 @@ public class PuzzlePiece {
   private Area area;
   private Rect drawableBounds;
 
-  private ValueAnimator animator;
-
   private float previousMoveX;
   private float previousMoveY;
+
+  private final RectF mappedBounds;
+  private final PointF centerPoint;
+  private final PointF mappedCenterPoint;
+
+  private ValueAnimator animator;
+  private Matrix tempMatrix;
 
   public PuzzlePiece(Drawable drawable, Area area, Matrix matrix) {
     this.drawable = drawable;
@@ -34,8 +39,14 @@ public class PuzzlePiece {
     this.previousMatrix = new Matrix();
     this.drawableBounds = new Rect(0, 0, getWidth(), getHeight());
 
+    this.mappedBounds = new RectF();
+    this.centerPoint = new PointF();
+    this.mappedCenterPoint = new PointF();
+
     this.animator = ValueAnimator.ofFloat(0f, 1f);
     this.animator.setInterpolator(new DecelerateInterpolator());
+
+    this.tempMatrix = new Matrix();
   }
 
   public void draw(Canvas canvas) {
@@ -97,18 +108,30 @@ public class PuzzlePiece {
     return area.contains(line);
   }
 
-  public RectF getMappedBounds() {
-    RectF dst = new RectF();
-    matrix.mapRect(dst, new RectF(drawableBounds));
-    return dst;
+  public Rect getDrawableBounds() {
+    return drawableBounds;
   }
 
-  public PointF getMappedCenterPoint() {
-    float[] dst = new float[2];
-    float[] src = { area.centerX(), area.centerY() };
-    matrix.mapPoints(dst, src);
+  public RectF getCurrentDrawableBounds() {
+    matrix.mapRect(mappedBounds, new RectF(drawableBounds));
+    return mappedBounds;
+  }
 
-    return new PointF(dst[0], dst[1]);
+  public PointF getCurrentDrawableCenterPoint() {
+    getCurrentDrawableBounds();
+    mappedCenterPoint.x = mappedBounds.centerX();
+    mappedCenterPoint.y = mappedBounds.centerY();
+    return mappedCenterPoint;
+  }
+
+  public PointF getAreaCenterPoint() {
+    centerPoint.x = area.centerX();
+    centerPoint.y = area.centerY();
+    return centerPoint;
+  }
+
+  public float getMatrixScale() {
+    return MatrixUtils.getMatrixScale(matrix);
   }
 
   public void setPreviousMoveX(float previousMoveX) {
@@ -128,7 +151,7 @@ public class PuzzlePiece {
   }
 
   public boolean isFilledArea() {
-    RectF bounds = getMappedBounds();
+    RectF bounds = getCurrentDrawableBounds();
     return !(bounds.left > area.left()
         || bounds.top > area.top()
         || bounds.right < area.right()
@@ -172,5 +195,86 @@ public class PuzzlePiece {
 
   public void postScale(float scaleX, float scaleY, PointF midPoint) {
     this.matrix.postScale(scaleX, scaleY, midPoint.x, midPoint.y);
+  }
+
+  public void animateTranslate(final View view, final float translateX, final float translateY,
+      int duration) {
+    animator.end();
+    animator.removeAllUpdateListeners();
+    animator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+      @Override public void onAnimationUpdate(ValueAnimator animation) {
+        float x = translateX * (float) animation.getAnimatedValue();
+        float y = translateY * (float) animation.getAnimatedValue();
+
+        translate(x, y);
+        view.invalidate();
+      }
+    });
+    animator.setDuration(duration);
+    animator.start();
+  }
+
+  public void fillArea(final View view, boolean quick, int duration) {
+    if (quick) {
+      set(AreaUtils.generateMatrix(this, 0f));
+    } else {
+      prepare();
+
+      final float startScale = getMatrixScale();
+      final float endScale = AreaUtils.getMinMatrixScale(this);
+
+      final PointF midPoint = new PointF();
+      midPoint.set(getCurrentDrawableCenterPoint());
+
+      tempMatrix.set(matrix);
+      tempMatrix.postScale(endScale / startScale, endScale / startScale, midPoint.x, midPoint.y);
+
+      RectF rectF = new RectF(drawableBounds);
+      tempMatrix.mapRect(rectF);
+
+      float offsetX = 0f;
+      float offsetY = 0f;
+
+      if (rectF.left > area.left()) {
+        offsetX = area.left() - rectF.left;
+      }
+
+      if (rectF.top > area.top()) {
+        offsetY = area.top() - rectF.top;
+      }
+
+      if (rectF.right < area.right()) {
+        offsetX = area.right() - rectF.right;
+      }
+
+      if (rectF.bottom < area.bottom()) {
+        offsetY = area.bottom() - rectF.bottom;
+      }
+
+      final float translateX = offsetX;
+      final float translateY = offsetY;
+
+      animator.end();
+      animator.removeAllUpdateListeners();
+      animator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+        @Override public void onAnimationUpdate(ValueAnimator animation) {
+          float value = (float) animation.getAnimatedValue();
+          float scale = (startScale + (endScale - startScale) * value) / startScale;
+          float x = translateX * value;
+          float y = translateY * value;
+
+          zoom(scale, scale, midPoint);
+          postTranslate(x, y);
+          view.invalidate();
+        }
+      });
+
+      animator.setDuration(duration);
+      animator.start();
+    }
+  }
+
+  public boolean isAnimateRunning(){
+    return animator.isRunning();
   }
 }

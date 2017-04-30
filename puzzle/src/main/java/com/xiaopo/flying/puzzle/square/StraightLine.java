@@ -105,8 +105,6 @@ public class StraightLine implements Line {
       bounds.right = start.x + extra / 2;
     }
 
-    Log.d(TAG, "contains: --> " + bounds.contains(x, y));
-
     return bounds.contains(x, y);
   }
 

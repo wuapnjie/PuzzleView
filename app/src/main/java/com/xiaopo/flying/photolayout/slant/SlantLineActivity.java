@@ -8,6 +8,7 @@ import android.support.annotation.Nullable;
 import android.support.design.widget.BottomSheetDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.PopupMenu;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.MenuItem;
 import android.view.View;
@@ -25,6 +26,7 @@ import java.util.List;
  */
 
 public class SlantLineActivity extends AppCompatActivity {
+  private static final String TAG = "SlantLineActivity";
   private SquarePuzzleView puzzleView;
   private PuzzleLayout puzzleLayout;
   private View btnMore;
@@ -49,15 +51,20 @@ public class SlantLineActivity extends AppCompatActivity {
       }
     });
 
-    loadPhotoFromRes();
+    puzzleView.post(new Runnable() {
+      @Override public void run() {
+        loadPhotoFromRes();
+      }
+    });
   }
 
   private void loadPhotoFromRes() {
+    Log.d(TAG, "loadPhotoFromRes: ");
     final List<Bitmap> pieces = new ArrayList<>();
 
     final int[] resIds = new int[] {
-        R.drawable.demo9, R.drawable.demo2, R.drawable.demo3, R.drawable.demo4, R.drawable.demo5,
-        R.drawable.demo6, R.drawable.demo7, R.drawable.demo8, R.drawable.demo1,
+        R.drawable.demo8, R.drawable.demo2, R.drawable.demo3, R.drawable.demo4, R.drawable.demo5,
+        R.drawable.demo6, R.drawable.demo7, R.drawable.demo8, R.drawable.demo9,
     };
 
     final int count = resIds.length > puzzleLayout.getAreaCount() ? puzzleLayout.getAreaCount()

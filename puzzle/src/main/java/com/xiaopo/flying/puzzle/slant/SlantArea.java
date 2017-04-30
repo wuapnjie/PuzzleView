@@ -27,6 +27,7 @@ public class SlantArea implements Area {
 
   private Path areaPath = new Path();
   private RectF areaRect = new RectF();
+  private PointF[] handleBarPoints = new PointF[2];
 
   public SlantArea() {
 
@@ -128,20 +129,19 @@ public class SlantArea implements Area {
   }
 
   @Override public PointF[] getHandleBarPoints(Line line) {
-    PointF[] points = new PointF[2];
     if (line == lineLeft) {
-      points[0] = SlantUtils.getPoint(leftTop, leftBottom, line.direction(), 0.25f);
-      points[1] = SlantUtils.getPoint(leftTop, leftBottom, line.direction(), 0.75f);
+      handleBarPoints[0] = SlantUtils.getPoint(leftTop, leftBottom, line.direction(), 0.25f);
+      handleBarPoints[1] = SlantUtils.getPoint(leftTop, leftBottom, line.direction(), 0.75f);
     } else if (line == lineTop) {
-      points[0] = SlantUtils.getPoint(leftTop, rightTop, line.direction(), 0.25f);
-      points[1] = SlantUtils.getPoint(leftTop, rightTop, line.direction(), 0.75f);
+      handleBarPoints[0] = SlantUtils.getPoint(leftTop, rightTop, line.direction(), 0.25f);
+      handleBarPoints[1] = SlantUtils.getPoint(leftTop, rightTop, line.direction(), 0.75f);
     } else if (line == lineRight) {
-      points[0] = SlantUtils.getPoint(rightTop, rightBottom, line.direction(), 0.25f);
-      points[1] = SlantUtils.getPoint(rightTop, rightBottom, line.direction(), 0.75f);
+      handleBarPoints[0] = SlantUtils.getPoint(rightTop, rightBottom, line.direction(), 0.25f);
+      handleBarPoints[1] = SlantUtils.getPoint(rightTop, rightBottom, line.direction(), 0.75f);
     } else if (line == lineBottom) {
-      points[0] = SlantUtils.getPoint(leftBottom, rightBottom, line.direction(), 0.25f);
-      points[1] = SlantUtils.getPoint(leftBottom, rightBottom, line.direction(), 0.75f);
+      handleBarPoints[0] = SlantUtils.getPoint(leftBottom, rightBottom, line.direction(), 0.25f);
+      handleBarPoints[1] = SlantUtils.getPoint(leftBottom, rightBottom, line.direction(), 0.75f);
     }
-    return points;
+    return handleBarPoints;
   }
 }
