@@ -10,15 +10,14 @@ Android拼图支持库，想法来自Layout for Instagram。
 </br>
 [点击观看Youku](http://v.youku.com/v_show/id_XMTY5Nzk3NTYyMA==.html?beta&)
 
-</br>
-</br>
-![](https://github.com/wuapnjie/PuzzleView/blob/master/screenshots/screenshot1.gif)
-![](https://github.com/wuapnjie/PuzzleView/blob/master/screenshots/screenshot2.gif)
+
+![](https://github.com/wuapnjie/PuzzleView/blob/master/screenshots/screenshot1.png)
+![](https://github.com/wuapnjie/PuzzleView/blob/master/screenshots/screenshot2.png)
 
 ### 使用
 在build.gradle添加，当然你也可以直接导入library module，方便修改。
 ```gradle
-compile 'com.flying.xiaopo:puzzle:1.1.0'
+compile 'com.flying.xiaopo:puzzle:1.1.2'
 ```
 
 在xml布局中
@@ -91,6 +90,7 @@ public class CustomLayout extends PuzzleLayout {
 [Click here](http://weibo.com/5350471787/E54jjxzlI)
 
 ### 更新
+* **2017/04/15**  1.1.1 add piece select listener
 * **2017/02/15**  1.1.0 add piece padding function 
 ### License
 

@@ -17,7 +17,7 @@ Due the size of the gif file, the example below may not render well, in that cas
 ### Usage
 in build.gradle
 ```gradle
-compile 'com.flying.xiaopo:puzzle:1.1.0'
+compile 'com.flying.xiaopo:puzzle:1.1.2'
 ```
 
 in xml layout
@@ -86,6 +86,7 @@ to see some photos by puzzle
 [Click here](http://weibo.com/5350471787/E54jjxzlI)
 
 ### Update
+* **2017/04/15**  1.1.1 add piece select listener
 * **2017/02/15**  1.1.0 add piece padding function 
 
 ### License
