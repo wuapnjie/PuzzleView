@@ -1,4 +1,4 @@
-package com.xiaopo.flying.puzzle.square;
+package com.xiaopo.flying.puzzle.straight;
 
 import android.graphics.PointF;
 import android.graphics.RectF;
@@ -11,16 +11,16 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
-import static android.content.ContentValues.TAG;
-import static com.xiaopo.flying.puzzle.square.StraightUtils.createLine;
-import static com.xiaopo.flying.puzzle.square.StraightUtils.cutArea;
-import static com.xiaopo.flying.puzzle.square.StraightUtils.cutAreaCross;
+import static com.xiaopo.flying.puzzle.straight.StraightUtils.createLine;
+import static com.xiaopo.flying.puzzle.straight.StraightUtils.cutArea;
+import static com.xiaopo.flying.puzzle.straight.StraightUtils.cutAreaCross;
 
 /**
  * @author wupanjie
  */
 
 public abstract class StraightPuzzleLayout implements PuzzleLayout {
+  private static final String TAG = "StraightPuzzleLayout";
   private StraightArea outerArea;
 
   private List<StraightArea> areas = new ArrayList<>();

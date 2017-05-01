@@ -1,7 +1,7 @@
 package com.xiaopo.flying.photolayout.layout;
 
 import android.util.Log;
-import com.xiaopo.flying.puzzle.square.StraightPuzzleLayout;
+import com.xiaopo.flying.puzzle.straight.StraightPuzzleLayout;
 
 /**
  * Created by snowbean on 16-8-17.

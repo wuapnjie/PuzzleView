@@ -1,4 +1,4 @@
-package com.xiaopo.flying.puzzle.square;
+package com.xiaopo.flying.puzzle.straight;
 
 import android.graphics.Path;
 import android.graphics.PointF;

@@ -1,7 +1,7 @@
 package com.xiaopo.flying.photolayout.slant;
 
 import com.xiaopo.flying.puzzle.Line;
-import com.xiaopo.flying.puzzle.square.StraightPuzzleLayout;
+import com.xiaopo.flying.puzzle.straight.StraightPuzzleLayout;
 
 /**
  * @author wupanjie
