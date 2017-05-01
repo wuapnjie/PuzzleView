@@ -186,5 +186,4 @@ public abstract class SlantPuzzleLayout implements PuzzleLayout {
 
     return increasedAreas;
   }
-
 }
