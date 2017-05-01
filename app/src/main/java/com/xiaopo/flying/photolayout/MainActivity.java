@@ -42,29 +42,29 @@ public class MainActivity extends AppCompatActivity {
 
   private static final String TAG = "MainActivity";
 
-  private RecyclerView mPhotoList;
-  private RecyclerView mPuzzleList;
+  private RecyclerView photoList;
+  private RecyclerView puzzleList;
 
-  private PuzzleAdapter mPuzzleAdapter;
-  private PhotoAdapter mPhotoAdapter;
+  private PuzzleAdapter puzzleAdapter;
+  private PhotoAdapter photoAdapter;
 
-  private List<Bitmap> mBitmaps = new ArrayList<>();
-  private ArrayMap<String, Bitmap> mArrayBitmaps = new ArrayMap<>();
-  private ArrayList<String> mSelectedPath = new ArrayList<>();
+  private List<Bitmap> bitmaps = new ArrayList<>();
+  private ArrayMap<String, Bitmap> arrayBitmaps = new ArrayMap<>();
+  private ArrayList<String> selectedPath = new ArrayList<>();
 
-  private PuzzleHandler mPuzzleHandler;
+  private PuzzleHandler puzzleHandler;
 
-  private List<Target> mTargets = new ArrayList<>();
+  private List<Target> targets = new ArrayList<>();
 
-  private int mDeviceWidth;
+  private int deviceWidth;
 
   @Override protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.activity_main);
 
-    mPuzzleHandler = new PuzzleHandler(this);
+    puzzleHandler = new PuzzleHandler(this);
 
-    mDeviceWidth = getResources().getDisplayMetrics().widthPixels;
+    deviceWidth = getResources().getDisplayMetrics().widthPixels;
 
     initView();
 
@@ -85,67 +85,67 @@ public class MainActivity extends AppCompatActivity {
     new GetAllPhotoTask() {
       @Override protected void onPostExecute(List<Photo> photos) {
         super.onPostExecute(photos);
-        mPhotoAdapter.refreshData(photos);
+        photoAdapter.refreshData(photos);
       }
     }.execute(new PhotoManager(this));
   }
 
   private void initView() {
-    mPhotoList = (RecyclerView) findViewById(R.id.photo_list);
-    mPuzzleList = (RecyclerView) findViewById(R.id.puzzle_list);
+    photoList = (RecyclerView) findViewById(R.id.photo_list);
+    puzzleList = (RecyclerView) findViewById(R.id.puzzle_list);
 
-    mPhotoAdapter = new PhotoAdapter();
-    mPhotoAdapter.setMaxCount(9);
-    mPhotoAdapter.setSelectedResId(R.drawable.photo_selected_shadow);
+    photoAdapter = new PhotoAdapter();
+    photoAdapter.setMaxCount(9);
+    photoAdapter.setSelectedResId(R.drawable.photo_selected_shadow);
 
-    mPhotoList.setAdapter(mPhotoAdapter);
-    mPhotoList.setLayoutManager(new GridLayoutManager(this, 4));
+    photoList.setAdapter(photoAdapter);
+    photoList.setLayoutManager(new GridLayoutManager(this, 4));
 
-    mPuzzleAdapter = new PuzzleAdapter();
-    mPuzzleList.setAdapter(mPuzzleAdapter);
-    mPuzzleList.setLayoutManager(
+    puzzleAdapter = new PuzzleAdapter();
+    puzzleList.setAdapter(puzzleAdapter);
+    puzzleList.setLayoutManager(
         new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
-    mPuzzleList.setHasFixedSize(true);
+    puzzleList.setHasFixedSize(true);
 
-    mPuzzleAdapter.setOnItemClickListener(new PuzzleAdapter.OnItemClickListener() {
+    puzzleAdapter.setOnItemClickListener(new PuzzleAdapter.OnItemClickListener() {
       @Override public void onItemClick(PuzzleLayout puzzleLayout, int themeId) {
         Intent intent = new Intent(MainActivity.this, ProcessActivity.class);
-        intent.putStringArrayListExtra("photo_path", mSelectedPath);
-        intent.putExtra("piece_size", mSelectedPath.size());
+        intent.putStringArrayListExtra("photo_path", selectedPath);
+        intent.putExtra("piece_size", selectedPath.size());
         intent.putExtra("theme_id", themeId);
 
         startActivity(intent);
       }
     });
 
-    mPhotoAdapter.setOnPhotoSelectedListener(new PhotoAdapter.OnPhotoSelectedListener() {
+    photoAdapter.setOnPhotoSelectedListener(new PhotoAdapter.OnPhotoSelectedListener() {
       @Override public void onPhotoSelected(final Photo photo, int position) {
         Message message = Message.obtain();
         message.what = 120;
         message.obj = photo.getPath();
-        mPuzzleHandler.sendMessage(message);
+        puzzleHandler.sendMessage(message);
 
         //prefetch the photo
         Picasso.with(MainActivity.this)
             .load("file:///" + photo.getPath())
-            .resize(mDeviceWidth, mDeviceWidth)
+            .resize(deviceWidth, deviceWidth)
             .centerInside()
             .memoryPolicy(MemoryPolicy.NO_CACHE)
             .fetch();
       }
     });
 
-    mPhotoAdapter.setOnPhotoUnSelectedListener(new PhotoAdapter.OnPhotoUnSelectedListener() {
+    photoAdapter.setOnPhotoUnSelectedListener(new PhotoAdapter.OnPhotoUnSelectedListener() {
       @Override public void onPhotoUnSelected(Photo photo, int position) {
-        Bitmap bitmap = mArrayBitmaps.remove(photo.getPath());
-        mBitmaps.remove(bitmap);
-        mSelectedPath.remove(photo.getPath());
+        Bitmap bitmap = arrayBitmaps.remove(photo.getPath());
+        bitmaps.remove(bitmap);
+        selectedPath.remove(photo.getPath());
 
-        mPuzzleAdapter.refreshData(PuzzleLayoutHelper.getAllThemeLayout(mBitmaps.size()), mBitmaps);
+        puzzleAdapter.refreshData(PuzzleLayoutHelper.getAllThemeLayout(bitmaps.size()), bitmaps);
       }
     });
 
-    mPhotoAdapter.setOnSelectedMaxListener(new PhotoAdapter.OnSelectedMaxListener() {
+    photoAdapter.setOnSelectedMaxListener(new PhotoAdapter.OnSelectedMaxListener() {
       @Override public void onSelectedMax() {
         Toast.makeText(MainActivity.this, "装不下了～", Toast.LENGTH_SHORT).show();
       }
@@ -154,17 +154,17 @@ public class MainActivity extends AppCompatActivity {
     ImageView btnCancel = (ImageView) findViewById(R.id.btn_cancel);
     btnCancel.setOnClickListener(new View.OnClickListener() {
       @Override public void onClick(View view) {
-        if (mBitmaps == null || mBitmaps.size() == 0) {
+        if (bitmaps == null || bitmaps.size() == 0) {
           onBackPressed();
           return;
         }
 
-        mArrayBitmaps.clear();
-        mBitmaps.clear();
-        mSelectedPath.clear();
+        arrayBitmaps.clear();
+        bitmaps.clear();
+        selectedPath.clear();
 
-        mPhotoAdapter.reset();
-        mPuzzleHandler.sendEmptyMessage(119);
+        photoAdapter.reset();
+        puzzleHandler.sendEmptyMessage(119);
       }
     });
 
@@ -215,17 +215,17 @@ public class MainActivity extends AppCompatActivity {
   @Override protected void onDestroy() {
     super.onDestroy();
 
-    mArrayBitmaps.clear();
-    mArrayBitmaps = null;
+    arrayBitmaps.clear();
+    arrayBitmaps = null;
 
-    mBitmaps.clear();
-    mBitmaps = null;
+    bitmaps.clear();
+    bitmaps = null;
   }
 
   private void refreshLayout() {
-    mPuzzleList.post(new Runnable() {
+    puzzleList.post(new Runnable() {
       @Override public void run() {
-        mPuzzleAdapter.refreshData(PuzzleLayoutHelper.getAllThemeLayout(mBitmaps.size()), mBitmaps);
+        puzzleAdapter.refreshData(PuzzleLayoutHelper.getAllThemeLayout(bitmaps.size()), bitmaps);
       }
     });
   }
@@ -237,12 +237,12 @@ public class MainActivity extends AppCompatActivity {
 
         Log.d(TAG, "onBitmapLoaded: ");
 
-        mArrayBitmaps.put(path, bitmap);
-        mBitmaps.add(bitmap);
-        mSelectedPath.add(path);
+        arrayBitmaps.put(path, bitmap);
+        bitmaps.add(bitmap);
+        selectedPath.add(path);
 
-        mPuzzleHandler.sendEmptyMessage(119);
-        mTargets.remove(this);
+        puzzleHandler.sendEmptyMessage(119);
+        targets.remove(this);
       }
 
       @Override public void onBitmapFailed(Drawable errorDrawable) {
@@ -261,7 +261,7 @@ public class MainActivity extends AppCompatActivity {
         .config(Bitmap.Config.RGB_565)
         .into(target);
 
-    mTargets.add(target);
+    targets.add(target);
   }
 
   private static class PuzzleHandler extends Handler {

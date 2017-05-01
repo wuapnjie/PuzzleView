@@ -6,6 +6,7 @@ import android.graphics.RectF;
 import com.xiaopo.flying.puzzle.Area;
 import com.xiaopo.flying.puzzle.Line;
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.List;
 
 /**
@@ -137,5 +138,21 @@ public class StraightArea implements Area {
       handleBarPoints[1].y = bottom();
     }
     return handleBarPoints;
+  }
+
+  public static class AreaComparator implements Comparator<StraightArea> {
+    @Override public int compare(StraightArea lhs, StraightArea rhs) {
+      if (lhs.top() < rhs.top()) {
+        return -1;
+      } else if (lhs.top() == rhs.top()) {
+        if (lhs.left() < rhs.left()) {
+          return -1;
+        } else {
+          return 1;
+        }
+      } else {
+        return 1;
+      }
+    }
   }
 }

@@ -43,6 +43,7 @@ public class SlantLineActivity extends AppCompatActivity {
     puzzleView.setPuzzleLayout(puzzleLayout);
     puzzleView.setNeedDrawLine(true);
     puzzleView.setNeedDrawOuterLine(true);
+    puzzleView.setAnimateDuration(300);
 
     btnMore = findViewById(R.id.btn_more);
     btnMore.setOnClickListener(new View.OnClickListener() {

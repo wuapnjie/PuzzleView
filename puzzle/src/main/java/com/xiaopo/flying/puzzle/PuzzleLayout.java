@@ -18,6 +18,8 @@ public interface PuzzleLayout {
 
   List<Line> getLines();
 
+  Area getOuterArea();
+
   void update();
 
   void reset();

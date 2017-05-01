@@ -172,6 +172,7 @@ public class ProcessActivity extends AppCompatActivity implements View.OnClickLi
     puzzleView.setLineColor(Color.WHITE);
     puzzleView.setSelectedLineColor(Color.parseColor("#99BBFB"));
     puzzleView.setHandleBarColor(Color.parseColor("#99BBFB"));
+    puzzleView.setAnimateDuration(300);
     //puzzleView.setOnPieceSelectedListener(new BeePuzzleView.OnPieceSelectedListener() {
     //  @Override public void onPieceSelected(BeePuzzlePiece piece) {
     //    Toast.makeText(ProcessActivity.this, "Piece selected", Toast.LENGTH_SHORT).show();

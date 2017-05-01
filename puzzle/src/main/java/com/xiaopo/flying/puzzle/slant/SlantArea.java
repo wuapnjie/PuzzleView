@@ -6,9 +6,8 @@ import android.graphics.RectF;
 import com.xiaopo.flying.puzzle.Area;
 import com.xiaopo.flying.puzzle.Line;
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.List;
-
-import static com.xiaopo.flying.puzzle.slant.SlantUtils.crossProduct;
 
 /**
  * @author wupanjie
@@ -30,10 +29,12 @@ public class SlantArea implements Area {
   private PointF[] handleBarPoints = new PointF[2];
 
   public SlantArea() {
-
+    handleBarPoints[0] = new PointF();
+    handleBarPoints[1] = new PointF();
   }
 
   public SlantArea(SlantArea src) {
+    this();
     this.lineLeft = src.lineLeft;
     this.lineTop = src.lineTop;
     this.lineRight = src.lineRight;
@@ -98,22 +99,7 @@ public class SlantArea implements Area {
   }
 
   public boolean contains(float x, float y) {
-    PointF AB = new PointF(rightTop.x - leftTop.x, rightTop.y - leftTop.y);
-    PointF AM = new PointF(x - leftTop.x, y - leftTop.y);
-
-    PointF BC = new PointF(rightBottom.x - rightTop.x, rightBottom.y - rightTop.y);
-    PointF BM = new PointF(x - rightTop.x, y - rightTop.y);
-
-    PointF CD = new PointF(leftBottom.x - rightBottom.x, leftBottom.y - rightBottom.y);
-    PointF CM = new PointF(x - rightBottom.x, y - rightBottom.y);
-
-    PointF DA = new PointF(leftTop.x - leftBottom.x, leftTop.y - leftBottom.y);
-    PointF DM = new PointF(x - leftBottom.x, y - leftBottom.y);
-
-    return crossProduct(AB, AM) > 0
-        && crossProduct(BC, BM) > 0
-        && crossProduct(CD, CM) > 0
-        && crossProduct(DA, DM) > 0;
+    return SlantUtils.contains(this, x, y);
   }
 
   @Override public boolean contains(Line line) {
@@ -130,18 +116,35 @@ public class SlantArea implements Area {
 
   @Override public PointF[] getHandleBarPoints(Line line) {
     if (line == lineLeft) {
-      handleBarPoints[0] = SlantUtils.getPoint(leftTop, leftBottom, line.direction(), 0.25f);
-      handleBarPoints[1] = SlantUtils.getPoint(leftTop, leftBottom, line.direction(), 0.75f);
+      SlantUtils.getPoint(handleBarPoints[0], leftTop, leftBottom, line.direction(), 0.25f);
+      SlantUtils.getPoint(handleBarPoints[1], leftTop, leftBottom, line.direction(), 0.75f);
     } else if (line == lineTop) {
-      handleBarPoints[0] = SlantUtils.getPoint(leftTop, rightTop, line.direction(), 0.25f);
-      handleBarPoints[1] = SlantUtils.getPoint(leftTop, rightTop, line.direction(), 0.75f);
+      SlantUtils.getPoint(handleBarPoints[0], leftTop, rightTop, line.direction(), 0.25f);
+      SlantUtils.getPoint(handleBarPoints[1], leftTop, rightTop, line.direction(), 0.75f);
     } else if (line == lineRight) {
-      handleBarPoints[0] = SlantUtils.getPoint(rightTop, rightBottom, line.direction(), 0.25f);
-      handleBarPoints[1] = SlantUtils.getPoint(rightTop, rightBottom, line.direction(), 0.75f);
+      SlantUtils.getPoint(handleBarPoints[0], rightTop, rightBottom, line.direction(), 0.25f);
+      SlantUtils.getPoint(handleBarPoints[1], rightTop, rightBottom, line.direction(), 0.75f);
     } else if (line == lineBottom) {
-      handleBarPoints[0] = SlantUtils.getPoint(leftBottom, rightBottom, line.direction(), 0.25f);
-      handleBarPoints[1] = SlantUtils.getPoint(leftBottom, rightBottom, line.direction(), 0.75f);
+      SlantUtils.getPoint(handleBarPoints[0], leftBottom, rightBottom, line.direction(), 0.25f);
+      SlantUtils.getPoint(handleBarPoints[1], leftBottom, rightBottom, line.direction(), 0.75f);
     }
     return handleBarPoints;
+  }
+
+  public static class AreaComparator implements Comparator<SlantArea> {
+
+    @Override public int compare(SlantArea one, SlantArea two) {
+      if (one.leftTop.y < two.leftTop.y) {
+        return -1;
+      } else if (one.leftTop.y == two.leftTop.y) {
+        if (one.leftTop.x < two.leftTop.x) {
+          return -1;
+        } else {
+          return 1;
+        }
+      } else {
+        return 1;
+      }
+    }
   }
 }

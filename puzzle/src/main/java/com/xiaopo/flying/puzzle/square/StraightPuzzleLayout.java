@@ -27,7 +27,7 @@ public abstract class StraightPuzzleLayout implements PuzzleLayout {
   private List<Line> lines = new ArrayList<>();
   private List<Line> outerLines = new ArrayList<>(4);
 
-  private Comparator<StraightArea> areaComparator = new StraightAreaComparator();
+  private Comparator<StraightArea> areaComparator = new StraightArea.AreaComparator();
 
   public StraightPuzzleLayout() {
 
@@ -89,6 +89,10 @@ public abstract class StraightPuzzleLayout implements PuzzleLayout {
 
   @Override public Area getArea(int position) {
     return areas.get(position);
+  }
+
+  @Override public StraightArea getOuterArea() {
+    return outerArea;
   }
 
   protected List<StraightArea> addLine(int position, Line.Direction direction, float ratio) {

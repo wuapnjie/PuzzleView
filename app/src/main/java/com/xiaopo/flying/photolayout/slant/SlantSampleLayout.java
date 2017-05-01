@@ -10,9 +10,9 @@ import com.xiaopo.flying.puzzle.slant.SlantPuzzleLayout;
 public class SlantSampleLayout extends SlantPuzzleLayout {
 
   @Override public void layout() {
-    addLine(0, Line.Direction.VERTICAL, 0.6f);
-    //addSlantLine(1, Line.Direction.HORIZONTAL, 0.5f, 0.4f);
-    //addSlantLine(0, Line.Direction.HORIZONTAL , 0.5f ,0.4f);
+    addLine(0, Line.Direction.VERTICAL, 0.5f);
+    addLine(1, Line.Direction.HORIZONTAL, 0.5f, 0.4f);
+    //addLine(0, Line.Direction.HORIZONTAL , 0.5f ,0.4f);
     //addLine(2, Line.Direction.HORIZONTAL, 0.4f, 0.6f);
   }
 }

@@ -10,6 +10,15 @@ import java.util.List;
  */
 
 public class SlantUtils {
+  private static final PointF AB = new PointF();
+  private static final PointF AM = new PointF();
+  private static final PointF BC = new PointF();
+  private static final PointF BM = new PointF();
+  private static final PointF CD = new PointF();
+  private static final PointF CM = new PointF();
+  private static final PointF DA = new PointF();
+  private static final PointF DM = new PointF();
+
   private SlantUtils() {
     //no instance
   }
@@ -70,8 +79,15 @@ public class SlantUtils {
     return line;
   }
 
-  public static PointF getPoint(PointF start, PointF end, Line.Direction direction, float radio) {
+  public static PointF getPoint(final PointF start, final PointF end,
+      final Line.Direction direction, float radio) {
     PointF point = new PointF();
+    getPoint(point, start, end, direction, radio);
+    return point;
+  }
+
+  public static void getPoint(final PointF dst, final PointF start, final PointF end,
+      final Line.Direction direction, float radio) {
     float deltaY = Math.abs(start.y - end.y);
     float deltaX = Math.abs(start.x - end.x);
     float maxY = Math.max(start.y, end.y);
@@ -79,27 +95,56 @@ public class SlantUtils {
     float maxX = Math.max(start.x, end.x);
     float minX = Math.min(start.x, end.x);
     if (direction == Line.Direction.HORIZONTAL) {
-      point.x = minX + deltaX * radio;
+      dst.x = minX + deltaX * radio;
       if (start.y < end.y) {
-        point.y = minY + radio * deltaY;
+        dst.y = minY + radio * deltaY;
       } else {
-        point.y = maxY - radio * deltaY;
+        dst.y = maxY - radio * deltaY;
       }
     } else {
-      point.y = minY + deltaY * radio;
+      dst.y = minY + deltaY * radio;
       if (start.x < end.x) {
-        point.x = minX + radio * deltaX;
+        dst.x = minX + radio * deltaX;
       } else {
-        point.x = maxX - radio * deltaX;
+        dst.x = maxX - radio * deltaX;
       }
     }
-
-    return point;
   }
 
   // 叉乘
   public static float crossProduct(final PointF a, final PointF b) {
     return a.x * b.y - b.x * a.y;
+  }
+
+  public static boolean contains(SlantArea area, float x, float y) {
+    AB.x = area.rightTop.x - area.leftTop.x;
+    AB.y = area.rightTop.y - area.leftTop.y;
+
+    AM.x = x - area.leftTop.x;
+    AM.y = y - area.leftTop.y;
+
+    BC.x = area.rightBottom.x - area.rightTop.x;
+    BC.y = area.rightBottom.y - area.rightTop.y;
+
+    BM.x = x - area.rightTop.x;
+    BM.y = y - area.rightTop.y;
+
+    CD.x = area.leftBottom.x - area.rightBottom.x;
+    CD.y = area.leftBottom.y - area.rightBottom.y;
+
+    CM.x = x - area.rightBottom.x;
+    CM.y = y - area.rightBottom.y;
+
+    DA.x = area.leftTop.x - area.leftBottom.x;
+    DA.y = area.leftTop.y - area.leftBottom.y;
+
+    DM.x = x - area.leftBottom.x;
+    DM.y = y - area.leftBottom.y;
+
+    return crossProduct(AB, AM) > 0
+        && crossProduct(BC, BM) > 0
+        && crossProduct(CD, CM) > 0
+        && crossProduct(DA, DM) > 0;
   }
 
   /**
@@ -109,59 +154,57 @@ public class SlantUtils {
    * @param lineTwo 线二
    * @return 两条线的交点, 如果两线平行，则返回（0，0）
    */
-  public static PointF intersectionOfLines(final SlantLine lineOne, final SlantLine lineTwo) {
+  public static void intersectionOfLines(final PointF dst, final SlantLine lineOne,
+      final SlantLine lineTwo) {
     if (isParallel(lineOne, lineTwo)) {
-      return new PointF(0, 0);
+      dst.set(0, 0);
+      return;
     }
 
     if (isHorizontalLine(lineOne) && isVerticalLine(lineTwo)) {
-      return new PointF(lineTwo.start.x, lineOne.start.y);
+      dst.set(lineTwo.start.x, lineOne.start.y);
+      return;
     }
 
     if (isVerticalLine(lineOne) && isHorizontalLine(lineTwo)) {
-      return new PointF(lineOne.start.x, lineTwo.start.y);
+      dst.set(lineOne.start.x, lineTwo.start.y);
+      return;
     }
-
-    PointF intersection = new PointF();
 
     if (isHorizontalLine(lineOne) && !isVerticalLine(lineTwo)) {
       float k = calculateSlope(lineTwo);
       float b = calculateVerticalIntercept(lineTwo);
 
-      intersection.y = lineOne.start.y;
-      intersection.x = (intersection.y - b) / k;
-
-      return intersection;
+      dst.y = lineOne.start.y;
+      dst.x = (dst.y - b) / k;
+      return;
     }
 
     if (isVerticalLine(lineOne) && !isHorizontalLine(lineTwo)) {
       float k = calculateSlope(lineTwo);
       float b = calculateVerticalIntercept(lineTwo);
 
-      intersection.x = lineOne.start.x;
-      intersection.y = k * intersection.x + b;
-
-      return intersection;
+      dst.x = lineOne.start.x;
+      dst.y = k * dst.x + b;
+      return;
     }
 
     if (isHorizontalLine(lineTwo) && !isVerticalLine(lineOne)) {
       float k = calculateSlope(lineOne);
       float b = calculateVerticalIntercept(lineOne);
 
-      intersection.y = lineTwo.start.y;
-      intersection.x = (intersection.y - b) / k;
-
-      return intersection;
+      dst.y = lineTwo.start.y;
+      dst.x = (dst.y - b) / k;
+      return;
     }
 
     if (isVerticalLine(lineTwo) && !isHorizontalLine(lineOne)) {
       float k = calculateSlope(lineOne);
       float b = calculateVerticalIntercept(lineOne);
 
-      intersection.x = lineTwo.start.x;
-      intersection.y = k * intersection.x + b;
-
-      return intersection;
+      dst.x = lineTwo.start.x;
+      dst.y = k * dst.x + b;
+      return;
     }
 
     final float k1 = calculateSlope(lineOne);
@@ -170,10 +213,8 @@ public class SlantUtils {
     final float k2 = calculateSlope(lineTwo);
     final float b2 = calculateVerticalIntercept(lineTwo);
 
-    intersection.x = (b2 - b1) / (k1 - k2);
-    intersection.y = intersection.x * k1 + b1;
-
-    return intersection;
+    dst.x = (b2 - b1) / (k1 - k2);
+    dst.y = dst.x * k1 + b1;
   }
 
   public static boolean isHorizontalLine(SlantLine line) {

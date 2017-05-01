@@ -37,6 +37,7 @@ public class PuzzleView extends View {
   private RectF bounds;
 
   private int lineSize = 4;
+  private int duration = 300;
 
   private Line handlingLine;
   private PuzzlePiece handlingPiece;
@@ -127,7 +128,7 @@ public class PuzzleView extends View {
 
     linePaint.setStrokeWidth(lineSize);
     selectedAreaPaint.setStrokeWidth(lineSize);
-    handleBarPaint.setStrokeWidth(lineSize);
+    handleBarPaint.setStrokeWidth(lineSize * 3);
 
     // draw pieces
     for (int i = 0; i < puzzleLayout.getAreaCount(); i++) {
@@ -347,7 +348,7 @@ public class PuzzleView extends View {
           if (handlingPiece.canFilledArea()) {
             handlingPiece.moveToFillArea(this);
           } else {
-            handlingPiece.fillArea(this, 300);
+            handlingPiece.fillArea(this, false);
           }
         }
 
@@ -362,8 +363,8 @@ public class PuzzleView extends View {
           handlingPiece.setDrawable(replacePiece.getDrawable());
           replacePiece.setDrawable(temp);
 
-          handlingPiece.fillArea(this, 0);
-          handlingPiece.fillArea(this, 0);
+          handlingPiece.fillArea(this, true);
+          replacePiece.fillArea(this, true);
 
           handlingPiece = null;
           replacePiece = null;
@@ -398,7 +399,7 @@ public class PuzzleView extends View {
 
       if (!piece.canFilledArea()) {
         final Area area = piece.getArea();
-        float deltaScale = AreaUtils.getMinMatrixScale(piece) / piece.getMatrixScale();
+        float deltaScale = MatrixUtils.getMinMatrixScale(piece) / piece.getMatrixScale();
         piece.postScale(deltaScale, deltaScale, area.getCenterPoint());
         piece.record();
 
@@ -471,7 +472,7 @@ public class PuzzleView extends View {
         }
 
         handlingPiece.setDrawable(bitmapDrawable);
-        handlingPiece.set(AreaUtils.generateMatrix(handlingPiece, 0f));
+        handlingPiece.set(MatrixUtils.generateMatrix(handlingPiece, 0f));
 
         postInvalidate();
       }
@@ -506,8 +507,8 @@ public class PuzzleView extends View {
     }
 
     handlingPiece.postRotate(degree);
-    handlingPiece.fillArea(this, 0);
     handlingPiece.record();
+    //handlingPiece.fillArea(this, 0);
 
     invalidate();
   }
@@ -603,13 +604,21 @@ public class PuzzleView extends View {
 
     final Area area = puzzleLayout.getArea(position);
 
-    final Matrix matrix = AreaUtils.generateMatrix(area, drawable, 0f);
+    final Matrix matrix = MatrixUtils.generateMatrix(area, drawable, 0f);
 
     PuzzlePiece piece = new PuzzlePiece(drawable, area, matrix);
+    piece.setAnimateDuration(duration);
 
     puzzlePieces.add(piece);
 
     invalidate();
+  }
+
+  public void setAnimateDuration(int duration) {
+    this.duration = duration;
+    for (PuzzlePiece piece : puzzlePieces) {
+      piece.setAnimateDuration(duration);
+    }
   }
 
   public boolean isNeedDrawLine() {
@@ -676,7 +685,7 @@ public class PuzzleView extends View {
     this.touchEnable = touchEnable;
   }
 
-  public void clearHandling(){
+  public void clearHandling() {
     handlingPiece = null;
     handlingLine = null;
     replacePiece = null;

@@ -10,6 +10,8 @@ import android.graphics.drawable.Drawable;
 import android.view.View;
 import android.view.animation.DecelerateInterpolator;
 
+import static com.xiaopo.flying.puzzle.MatrixUtils.*;
+
 /**
  * @author wupanjie
  */
@@ -21,6 +23,8 @@ public class PuzzlePiece {
   private Matrix previousMatrix;
   private Area area;
   private Rect drawableBounds;
+  private float[] drawablePoints;
+  private float[] mappedDrawablePoints;
 
   private float previousMoveX;
   private float previousMoveY;
@@ -30,6 +34,7 @@ public class PuzzlePiece {
   private final PointF mappedCenterPoint;
 
   private ValueAnimator animator;
+  private int duration = 300;
   private Matrix tempMatrix;
 
   public PuzzlePiece(Drawable drawable, Area area, Matrix matrix) {
@@ -38,6 +43,10 @@ public class PuzzlePiece {
     this.matrix = matrix;
     this.previousMatrix = new Matrix();
     this.drawableBounds = new Rect(0, 0, getWidth(), getHeight());
+    this.drawablePoints = new float[] {
+        0f, 0f, getWidth(), 0f, getWidth(), getHeight(), 0f, getHeight()
+    };
+    this.mappedDrawablePoints = new float[8];
 
     this.mappedBounds = new RectF();
     this.centerPoint = new PointF(area.centerX(), area.centerY());
@@ -78,6 +87,9 @@ public class PuzzlePiece {
   public void setDrawable(Drawable drawable) {
     this.drawable = drawable;
     this.drawableBounds = new Rect(0, 0, getWidth(), getHeight());
+    this.drawablePoints = new float[] {
+        0f, 0f, getWidth(), 0f, getWidth(), getHeight(), 0f, getHeight()
+    };
   }
 
   public Drawable getDrawable() {
@@ -126,6 +138,15 @@ public class PuzzlePiece {
     return MatrixUtils.getMatrixScale(matrix);
   }
 
+  public float getMatrixAngle() {
+    return MatrixUtils.getMatrixAngle(matrix);
+  }
+
+  public float[] getCurrentDrawablePoints() {
+    matrix.mapPoints(mappedDrawablePoints, drawablePoints);
+    return mappedDrawablePoints;
+  }
+
   public void setPreviousMoveX(float previousMoveX) {
     this.previousMoveX = previousMoveX;
   }
@@ -152,7 +173,7 @@ public class PuzzlePiece {
 
   public boolean canFilledArea() {
     float scale = MatrixUtils.getMatrixScale(matrix);
-    float minScale = AreaUtils.getMinMatrixScale(this);
+    float minScale = MatrixUtils.getMinMatrixScale(this);
     return scale >= minScale;
   }
 
@@ -199,10 +220,25 @@ public class PuzzlePiece {
 
   public void postRotate(float degree) {
     this.matrix.postRotate(degree, area.centerX(), area.centerY());
+
+    float minScale = getMinMatrixScale(this);
+    if (getMatrixScale() < minScale) {
+      final PointF midPoint = new PointF();
+      midPoint.set(getCurrentDrawableCenterPoint());
+
+      postScale(minScale / getMatrixScale(), minScale / getMatrixScale(), midPoint);
+    }
+
+    if (!judgeIsImageContainsBorder(this, getMatrixAngle())) {
+      final float[] imageIndents = calculateImageIndents(this);
+      float deltaX = -(imageIndents[0] + imageIndents[2]);
+      float deltaY = -(imageIndents[1] + imageIndents[3]);
+
+      postTranslate(deltaX, deltaY);
+    }
   }
 
-  public void animateTranslate(final View view, final float translateX, final float translateY,
-      int duration) {
+  public void animateTranslate(final View view, final float translateX, final float translateY) {
     animator.end();
     animator.removeAllUpdateListeners();
     animator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
@@ -242,26 +278,20 @@ public class PuzzlePiece {
       offsetY = area.bottom() - rectF.bottom;
     }
 
-    animateTranslate(view, offsetX, offsetY, 300);
+    animateTranslate(view, offsetX, offsetY);
 
-    if (!isFilledArea()) {
-      fillArea(view, true, 300);
-    }
   }
 
-  public void fillArea(final View view, int duration) {
-    fillArea(view, duration == 0, duration);
-  }
 
-  private void fillArea(final View view, boolean quick, int duration) {
+  public void fillArea(final View view, boolean quick) {
     if (isFilledArea()) return;
     if (quick) {
-      set(AreaUtils.generateMatrix(this, 0f));
+      set(MatrixUtils.generateMatrix(this, 0f));
     } else {
       record();
 
       final float startScale = getMatrixScale();
-      final float endScale = AreaUtils.getMinMatrixScale(this);
+      final float endScale = MatrixUtils.getMinMatrixScale(this);
 
       final PointF midPoint = new PointF();
       midPoint.set(getCurrentDrawableCenterPoint());
@@ -316,5 +346,9 @@ public class PuzzlePiece {
 
   public boolean isAnimateRunning() {
     return animator.isRunning();
+  }
+
+  public void setAnimateDuration(int duration) {
+    this.duration = duration;
   }
 }

@@ -153,8 +153,8 @@ public class SlantLine implements Line {
 
   // TODO 需要判断点是否超出总范围
   public void update() {
-    this.start.set(intersectionOfLines(this, attachLineStart));
-    this.end.set(intersectionOfLines(this, attachLineEnd));
+    intersectionOfLines(start, this, attachLineStart);
+    intersectionOfLines(end, this, attachLineEnd);
   }
 
   @Override public float minX() {
@@ -172,7 +172,6 @@ public class SlantLine implements Line {
   @Override public float maxY() {
     return max(start.y, end.y);
   }
-
 
   @Override public String toString() {
     return "start --> " + start.toString() + ",end --> " + end.toString();

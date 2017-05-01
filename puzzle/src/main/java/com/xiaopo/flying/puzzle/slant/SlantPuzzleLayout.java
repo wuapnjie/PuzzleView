@@ -2,6 +2,7 @@ package com.xiaopo.flying.puzzle.slant;
 
 import android.graphics.PointF;
 import android.graphics.RectF;
+import com.xiaopo.flying.puzzle.Area;
 import com.xiaopo.flying.puzzle.Line;
 import com.xiaopo.flying.puzzle.PuzzleLayout;
 import java.util.ArrayList;
@@ -21,11 +22,11 @@ import static com.xiaopo.flying.puzzle.slant.SlantUtils.cutArea;
 public abstract class SlantPuzzleLayout implements PuzzleLayout {
   private SlantArea outerArea;
 
-  private List<Line> outerLines = new ArrayList<>();
+  private List<Line> outerLines = new ArrayList<>(4);
   private List<SlantArea> areas = new ArrayList<>();
   private List<Line> lines = new ArrayList<>();
 
-  private Comparator<SlantArea> areaComparator = new SlantAreaComparator();
+  private Comparator<SlantArea> areaComparator = new SlantArea.AreaComparator();
 
   public SlantPuzzleLayout() {
 
@@ -149,7 +150,7 @@ public abstract class SlantPuzzleLayout implements PuzzleLayout {
     return outerLines;
   }
 
-  public SlantArea getOuterArea() {
+  @Override public Area getOuterArea() {
     return outerArea;
   }
 
