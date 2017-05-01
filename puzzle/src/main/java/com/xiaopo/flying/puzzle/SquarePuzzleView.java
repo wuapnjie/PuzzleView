@@ -1,4 +1,4 @@
-package com.xiaopo.flying.puzzle.widget;
+package com.xiaopo.flying.puzzle;
 
 import android.content.Context;
 import android.util.AttributeSet;

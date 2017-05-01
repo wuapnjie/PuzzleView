@@ -9,73 +9,73 @@
     tools:context="com.xiaopo.flying.photolayout.ProcessActivity"
     >
 
-  <android.support.design.widget.AppBarLayout
-      android:layout_width="match_parent"
-      android:layout_height="wrap_content"
-      android:theme="@style/AppTheme.AppBarOverlay"
-      >
-
-    <LinearLayout
+    <android.support.design.widget.AppBarLayout
         android:layout_width="match_parent"
-        android:layout_height="50dp"
-        android:orientation="horizontal"
+        android:layout_height="wrap_content"
+        android:theme="@style/AppTheme.AppBarOverlay"
         >
 
-      <ImageView
-          android:id="@+id/btn_back"
-          android:layout_width="50dp"
-          android:layout_height="50dp"
-          android:background="?attr/selectableItemBackgroundBorderless"
-          android:scaleType="center"
-          android:src="@drawable/ic_arrow_back_white_24dp"
-          />
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:orientation="horizontal"
+            >
 
-      <View
-          android:layout_width="0.5dp"
-          android:layout_height="match_parent"
-          android:layout_margin="4dp"
-          android:background="#BBFFFFFF"
-          />
+            <ImageView
+                android:id="@+id/btn_back"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:scaleType="center"
+                android:src="@drawable/ic_arrow_back_white_24dp"
+                />
 
-      <TextView
-          android:layout_width="0dp"
-          android:layout_height="match_parent"
-          android:layout_marginLeft="8dp"
-          android:layout_weight="1"
-          android:gravity="center_vertical"
-          android:text="@string/prompt.edit"
-          android:textColor="@android:color/white"
-          android:textSize="18sp"
-          />
+            <View
+                android:layout_width="0.5dp"
+                android:layout_height="match_parent"
+                android:layout_margin="4dp"
+                android:background="#BBFFFFFF"
+                />
 
-      <TextView
-          android:id="@+id/btn_save"
-          android:layout_width="wrap_content"
-          android:layout_height="match_parent"
-          android:background="?attr/selectableItemBackgroundBorderless"
-          android:gravity="center"
-          android:padding="8dp"
-          android:layout_marginRight="8dp"
-          android:text="@string/prompt.save"
-          android:textColor="@android:color/white"
-          />
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_marginLeft="8dp"
+                android:layout_weight="1"
+                android:gravity="center_vertical"
+                android:text="@string/prompt.edit"
+                android:textColor="@android:color/white"
+                android:textSize="18sp"
+                />
 
-    </LinearLayout>
+            <TextView
+                android:id="@+id/btn_save"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:gravity="center"
+                android:padding="8dp"
+                android:layout_marginRight="8dp"
+                android:text="@string/prompt.save"
+                android:textColor="@android:color/white"
+                />
 
-  </android.support.design.widget.AppBarLayout>
+        </LinearLayout>
 
-  <include layout="@layout/content_process"/>
+    </android.support.design.widget.AppBarLayout>
 
-  <android.support.design.widget.FloatingActionButton
-      android:id="@+id/fab"
-      android:layout_width="wrap_content"
-      android:layout_height="wrap_content"
-      android:layout_gravity="bottom|end"
-      android:layout_margin="@dimen/fab_margin"
-      app:elevation="8dp"
-      app:rippleColor="@android:color/black"
-      app:srcCompat="@drawable/ic_share_black_24dp"
-      app:useCompatPadding="true"
-      />
+    <include layout="@layout/content_process"/>
+
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/fab"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|end"
+        android:layout_margin="@dimen/fab_margin"
+        app:elevation="8dp"
+        app:rippleColor="@android:color/black"
+        app:srcCompat="@drawable/ic_share_black_24dp"
+        app:useCompatPadding="true"
+        />
 
 </android.support.design.widget.CoordinatorLayout>

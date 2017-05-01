@@ -1,4 +1,4 @@
-package com.xiaopo.flying.puzzle.base;
+package com.xiaopo.flying.puzzle;
 
 import android.animation.ValueAnimator;
 import android.graphics.Canvas;
@@ -40,7 +40,7 @@ public class PuzzlePiece {
     this.drawableBounds = new Rect(0, 0, getWidth(), getHeight());
 
     this.mappedBounds = new RectF();
-    this.centerPoint = new PointF();
+    this.centerPoint = new PointF(area.centerX(), area.centerY());
     this.mappedCenterPoint = new PointF();
 
     this.animator = ValueAnimator.ofFloat(0f, 1f);
@@ -78,14 +78,6 @@ public class PuzzlePiece {
   public void setDrawable(Drawable drawable) {
     this.drawable = drawable;
     this.drawableBounds = new Rect(0, 0, getWidth(), getHeight());
-  }
-
-  public Matrix getMatrix() {
-    return matrix;
-  }
-
-  public Matrix getPreviousMatrix() {
-    return previousMatrix;
   }
 
   public Drawable getDrawable() {
@@ -164,7 +156,7 @@ public class PuzzlePiece {
     return scale >= minScale;
   }
 
-  public void prepare() {
+  public void record() {
     previousMatrix.set(matrix);
   }
 
@@ -197,6 +189,18 @@ public class PuzzlePiece {
     this.matrix.postScale(scaleX, scaleY, midPoint.x, midPoint.y);
   }
 
+  public void postFlipVertically() {
+    this.matrix.postScale(1, -1, area.centerX(), area.centerY());
+  }
+
+  public void postFlipHorizontally() {
+    this.matrix.postScale(-1, 1, area.centerX(), area.centerY());
+  }
+
+  public void postRotate(float degree) {
+    this.matrix.postRotate(degree, area.centerX(), area.centerY());
+  }
+
   public void animateTranslate(final View view, final float translateX, final float translateY,
       int duration) {
     animator.end();
@@ -214,11 +218,47 @@ public class PuzzlePiece {
     animator.start();
   }
 
-  public void fillArea(final View view, boolean quick, int duration) {
+  public void moveToFillArea(final View view) {
+    if (isFilledArea()) return;
+    record();
+
+    RectF rectF = getCurrentDrawableBounds();
+    float offsetX = 0f;
+    float offsetY = 0f;
+
+    if (rectF.left > area.left()) {
+      offsetX = area.left() - rectF.left;
+    }
+
+    if (rectF.top > area.top()) {
+      offsetY = area.top() - rectF.top;
+    }
+
+    if (rectF.right < area.right()) {
+      offsetX = area.right() - rectF.right;
+    }
+
+    if (rectF.bottom < area.bottom()) {
+      offsetY = area.bottom() - rectF.bottom;
+    }
+
+    animateTranslate(view, offsetX, offsetY, 300);
+
+    if (!isFilledArea()) {
+      fillArea(view, true, 300);
+    }
+  }
+
+  public void fillArea(final View view, int duration) {
+    fillArea(view, duration == 0, duration);
+  }
+
+  private void fillArea(final View view, boolean quick, int duration) {
+    if (isFilledArea()) return;
     if (quick) {
       set(AreaUtils.generateMatrix(this, 0f));
     } else {
-      prepare();
+      record();
 
       final float startScale = getMatrixScale();
       final float endScale = AreaUtils.getMinMatrixScale(this);
@@ -274,7 +314,7 @@ public class PuzzlePiece {
     }
   }
 
-  public boolean isAnimateRunning(){
+  public boolean isAnimateRunning() {
     return animator.isRunning();
   }
 }

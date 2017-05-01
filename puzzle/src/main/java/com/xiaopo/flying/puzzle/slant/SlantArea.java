@@ -3,8 +3,8 @@ package com.xiaopo.flying.puzzle.slant;
 import android.graphics.Path;
 import android.graphics.PointF;
 import android.graphics.RectF;
-import com.xiaopo.flying.puzzle.base.Area;
-import com.xiaopo.flying.puzzle.base.Line;
+import com.xiaopo.flying.puzzle.Area;
+import com.xiaopo.flying.puzzle.Line;
 import java.util.Arrays;
 import java.util.List;
 

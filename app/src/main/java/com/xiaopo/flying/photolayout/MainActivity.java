@@ -32,7 +32,7 @@ import com.xiaopo.flying.poiphoto.PhotoManager;
 import com.xiaopo.flying.poiphoto.datatype.Photo;
 import com.xiaopo.flying.poiphoto.ui.adapter.PhotoAdapter;
 import com.xiaopo.flying.puzzle.PuzzleLayout;
-import com.xiaopo.flying.puzzle.layout.PuzzleLayoutHelper;
+import com.xiaopo.flying.photolayout.layout.PuzzleLayoutHelper;
 
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;

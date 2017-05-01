@@ -3,7 +3,7 @@ package com.xiaopo.flying.puzzle.square;
 import android.graphics.PointF;
 import android.graphics.RectF;
 import android.util.Log;
-import com.xiaopo.flying.puzzle.base.Line;
+import com.xiaopo.flying.puzzle.Line;
 
 import static java.lang.Math.max;
 import static java.lang.Math.min;
@@ -82,6 +82,14 @@ public class StraightLine implements Line {
 
   @Override public void setUpperLine(Line upperLine) {
     this.upperLine = upperLine;
+  }
+
+  public void setAttachLineStart(StraightLine attachLineStart) {
+    this.attachLineStart = attachLineStart;
+  }
+
+  public void setAttachLineEnd(StraightLine attachLineEnd) {
+    this.attachLineEnd = attachLineEnd;
   }
 
   @Override public Direction direction() {

@@ -1,16 +1,16 @@
 package com.xiaopo.flying.photolayout;
 
 import com.xiaopo.flying.puzzle.PuzzleLayout;
-import com.xiaopo.flying.puzzle.layout.EightPieceLayout;
-import com.xiaopo.flying.puzzle.layout.FivePieceLayout;
-import com.xiaopo.flying.puzzle.layout.FourPieceLayout;
-import com.xiaopo.flying.puzzle.layout.NinePieceLayout;
-import com.xiaopo.flying.puzzle.layout.OnePieceLayout;
-import com.xiaopo.flying.puzzle.layout.PuzzleLayoutHelper;
-import com.xiaopo.flying.puzzle.layout.SevenPieceLayout;
-import com.xiaopo.flying.puzzle.layout.SixPieceLayout;
-import com.xiaopo.flying.puzzle.layout.ThreePieceLayout;
-import com.xiaopo.flying.puzzle.layout.TwoPieceLayout;
+import com.xiaopo.flying.photolayout.layout.EightPieceLayout;
+import com.xiaopo.flying.photolayout.layout.FivePieceLayout;
+import com.xiaopo.flying.photolayout.layout.FourPieceLayout;
+import com.xiaopo.flying.photolayout.layout.NinePieceLayout;
+import com.xiaopo.flying.photolayout.layout.OnePieceLayout;
+import com.xiaopo.flying.photolayout.layout.PuzzleLayoutHelper;
+import com.xiaopo.flying.photolayout.layout.SevenPieceLayout;
+import com.xiaopo.flying.photolayout.layout.SixPieceLayout;
+import com.xiaopo.flying.photolayout.layout.ThreePieceLayout;
+import com.xiaopo.flying.photolayout.layout.TwoPieceLayout;
 
 import java.util.ArrayList;
 import java.util.List;

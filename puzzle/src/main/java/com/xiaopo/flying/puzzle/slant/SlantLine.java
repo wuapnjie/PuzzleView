@@ -1,7 +1,7 @@
 package com.xiaopo.flying.puzzle.slant;
 
 import android.graphics.PointF;
-import com.xiaopo.flying.puzzle.base.Line;
+import com.xiaopo.flying.puzzle.Line;
 
 import static com.xiaopo.flying.puzzle.slant.SlantUtils.crossProduct;
 import static com.xiaopo.flying.puzzle.slant.SlantUtils.intersectionOfLines;

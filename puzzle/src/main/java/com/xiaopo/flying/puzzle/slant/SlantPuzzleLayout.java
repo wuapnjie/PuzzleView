@@ -2,18 +2,17 @@ package com.xiaopo.flying.puzzle.slant;
 
 import android.graphics.PointF;
 import android.graphics.RectF;
-import com.xiaopo.flying.puzzle.base.Line;
-import com.xiaopo.flying.puzzle.base.PuzzleLayout;
+import com.xiaopo.flying.puzzle.Line;
+import com.xiaopo.flying.puzzle.PuzzleLayout;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
-import static com.xiaopo.flying.puzzle.slant.SlantUtils.createSlantLine;
+import static com.xiaopo.flying.puzzle.slant.SlantUtils.createLine;
 import static com.xiaopo.flying.puzzle.slant.SlantUtils.cutArea;
 
 /**
- * TODO 考虑和PuzzleLayout合并
  * 斜线布局，外围区域为一矩形
  *
  * @author wupanjie
@@ -36,7 +35,7 @@ public abstract class SlantPuzzleLayout implements PuzzleLayout {
     setOuterBounds(outerRect);
   }
 
-  @Override  public void setOuterBounds(RectF baseRect) {
+  @Override public void setOuterBounds(RectF baseRect) {
     reset();
 
     PointF leftTop = new PointF(baseRect.left, baseRect.top);
@@ -166,10 +165,15 @@ public abstract class SlantPuzzleLayout implements PuzzleLayout {
     return lines;
   }
 
-  protected List<SlantArea> addLine(int position, Line.Direction direction, float startRadio, float endRadio) {
+  protected List<SlantArea> addLine(int position, Line.Direction direction, float radio) {
+    return addLine(position, direction, radio, radio);
+  }
+
+  protected List<SlantArea> addLine(int position, Line.Direction direction, float startRadio,
+      float endRadio) {
     SlantArea area = areas.get(position);
     areas.remove(area);
-    SlantLine line = createSlantLine(area, direction, startRadio, endRadio);
+    SlantLine line = createLine(area, direction, startRadio, endRadio);
     lines.add(line);
 
     List<SlantArea> increasedAreas = cutArea(area, line);
@@ -177,9 +181,9 @@ public abstract class SlantPuzzleLayout implements PuzzleLayout {
     areas.addAll(increasedAreas);
 
     updateLineLimit();
-
     sortAreas();
 
     return increasedAreas;
   }
+
 }

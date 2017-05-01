@@ -54,7 +54,7 @@ public class PlaygroundActivity extends AppCompatActivity {
     puzzleAdapter.setOnItemClickListener(new PuzzleAdapter.OnItemClickListener() {
       @Override public void onItemClick(PuzzleLayout puzzleLayout, int themeId) {
         Intent intent = new Intent(PlaygroundActivity.this, ProcessActivity.class);
-        intent.putExtra("piece_size", puzzleLayout.getBorderSize());
+        intent.putExtra("piece_size", puzzleLayout.getAreaCount());
         intent.putExtra("theme_id", themeId);
 
         startActivity(intent);

@@ -1,7 +1,7 @@
 package com.xiaopo.flying.puzzle.slant;
 
 import android.graphics.PointF;
-import com.xiaopo.flying.puzzle.base.Line;
+import com.xiaopo.flying.puzzle.Line;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -43,8 +43,8 @@ public class SlantUtils {
     return areas;
   }
 
-  public static SlantLine createSlantLine(SlantArea area, Line.Direction direction,
-      float startRadio, float endRadio) {
+  public static SlantLine createLine(SlantArea area, Line.Direction direction, float startRadio,
+      float endRadio) {
     SlantLine line = new SlantLine(direction);
 
     if (direction == Line.Direction.HORIZONTAL) {

@@ -3,8 +3,8 @@ package com.xiaopo.flying.puzzle.square;
 import android.graphics.Path;
 import android.graphics.PointF;
 import android.graphics.RectF;
-import com.xiaopo.flying.puzzle.base.Area;
-import com.xiaopo.flying.puzzle.base.Line;
+import com.xiaopo.flying.puzzle.Area;
+import com.xiaopo.flying.puzzle.Line;
 import java.util.Arrays;
 import java.util.List;
 
@@ -12,7 +12,7 @@ import java.util.List;
  * @author wupanjie
  */
 
-public class SquareArea implements Area {
+public class StraightArea implements Area {
   StraightLine lineLeft;
   StraightLine lineTop;
   StraightLine lineRight;
@@ -20,15 +20,16 @@ public class SquareArea implements Area {
 
   private Path areaPath = new Path();
   private RectF areaRect = new RectF();
+  private PointF[] handleBarPoints = new PointF[2];
 
-  public SquareArea(RectF baseRect) {
+  public StraightArea(RectF baseRect) {
     setBaseRect(baseRect);
+
+    handleBarPoints[0] = new PointF();
+    handleBarPoints[1] = new PointF();
   }
 
   private void setBaseRect(RectF baseRect) {
-    float width = baseRect.width();
-    float height = baseRect.height();
-
     PointF one = new PointF(baseRect.left, baseRect.top);
     PointF two = new PointF(baseRect.right, baseRect.top);
     PointF three = new PointF(baseRect.left, baseRect.bottom);
@@ -40,11 +41,14 @@ public class SquareArea implements Area {
     lineBottom = new StraightLine(three, four);
   }
 
-  public SquareArea(SquareArea src) {
+  public StraightArea(StraightArea src) {
     this.lineLeft = src.lineLeft;
     this.lineTop = src.lineTop;
     this.lineRight = src.lineRight;
     this.lineBottom = src.lineBottom;
+
+    handleBarPoints[0] = new PointF();
+    handleBarPoints[1] = new PointF();
   }
 
   @Override public float left() {
@@ -110,11 +114,28 @@ public class SquareArea implements Area {
     return Arrays.asList((Line) lineLeft, lineTop, lineRight, lineBottom);
   }
 
-  // TODO
   @Override public PointF[] getHandleBarPoints(Line line) {
-    PointF[] points = new PointF[2];
-    points[0] = new PointF();
-    points[1] = new PointF();
-    return points;
+    if (line == lineLeft) {
+      handleBarPoints[0].x = left();
+      handleBarPoints[0].y = top() + height() / 4;
+      handleBarPoints[1].x = left();
+      handleBarPoints[1].y = top() + height() / 4 * 3;
+    } else if (line == lineTop) {
+      handleBarPoints[0].x = left() + width() / 4;
+      handleBarPoints[0].y = top();
+      handleBarPoints[1].x = left() + width() / 4 * 3;
+      handleBarPoints[1].y = top();
+    } else if (line == lineRight) {
+      handleBarPoints[0].x = right();
+      handleBarPoints[0].y = top() + height() / 4;
+      handleBarPoints[1].x = right();
+      handleBarPoints[1].y = top() + height() / 4 * 3;
+    } else if (line == lineBottom) {
+      handleBarPoints[0].x = left() + width() / 4;
+      handleBarPoints[0].y = bottom();
+      handleBarPoints[1].x = left() + width() / 4 * 3;
+      handleBarPoints[1].y = bottom();
+    }
+    return handleBarPoints;
   }
 }

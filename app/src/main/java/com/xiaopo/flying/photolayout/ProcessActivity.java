@@ -12,43 +12,44 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
-
-import android.widget.Toast;
 import com.squareup.picasso.Picasso;
 import com.squareup.picasso.Target;
 import com.xiaopo.flying.poiphoto.Define;
 import com.xiaopo.flying.poiphoto.PhotoPicker;
 import com.xiaopo.flying.puzzle.PuzzleLayout;
-import com.xiaopo.flying.puzzle.BeePuzzlePiece;
-import com.xiaopo.flying.puzzle.BeePuzzleView;
-
+import com.xiaopo.flying.puzzle.PuzzleView;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
 public class ProcessActivity extends AppCompatActivity implements View.OnClickListener {
 
-  private PuzzleLayout mPuzzleLayout;
-  private List<String> mBitmapPaths;
-  private BeePuzzleView mBeePuzzleView;
+  private PuzzleLayout puzzleLayout;
+  private List<String> bitmapPaint;
+  private PuzzleView puzzleView;
+  private DegreeSeekBar degreeSeekBar;
 
-  private List<Target> mTargets = new ArrayList<>();
-  private int mDeviceWidth = 0;
+  private List<Target> targets = new ArrayList<>();
+  private int deviceWidth = 0;
 
   @Override protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.activity_process);
 
-    mDeviceWidth = getResources().getDisplayMetrics().widthPixels;
+    deviceWidth = getResources().getDisplayMetrics().widthPixels;
 
     int pieceSize = getIntent().getIntExtra("piece_size", 0);
     int themeId = getIntent().getIntExtra("theme_id", 0);
-    mBitmapPaths = getIntent().getStringArrayListExtra("photo_path");
-    mPuzzleLayout = PuzzleUtil.getPuzzleLayout(pieceSize, themeId);
+    bitmapPaint = getIntent().getStringArrayListExtra("photo_path");
+    puzzleLayout = PuzzleUtil.getPuzzleLayout(pieceSize, themeId);
 
     initView();
 
-    loadPhoto();
+    puzzleView.post(new Runnable() {
+      @Override public void run() {
+        loadPhoto();
+      }
+    });
   }
 
   @Override protected void onResume() {
@@ -56,31 +57,30 @@ public class ProcessActivity extends AppCompatActivity implements View.OnClickLi
   }
 
   private void loadPhoto() {
-    if (mBitmapPaths == null) {
+    if (bitmapPaint == null) {
       loadPhotoFromRes();
       return;
     }
 
     final List<Bitmap> pieces = new ArrayList<>();
 
-    final int count =
-        mBitmapPaths.size() > mPuzzleLayout.getBorderSize() ? mPuzzleLayout.getBorderSize()
-            : mBitmapPaths.size();
+    final int count = bitmapPaint.size() > puzzleLayout.getAreaCount() ? puzzleLayout.getAreaCount()
+        : bitmapPaint.size();
 
     for (int i = 0; i < count; i++) {
       final Target target = new Target() {
         @Override public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from) {
           pieces.add(bitmap);
           if (pieces.size() == count) {
-            if (mBitmapPaths.size() < mPuzzleLayout.getBorderSize()) {
-              for (int i = 0; i < mPuzzleLayout.getBorderSize(); i++) {
-                mBeePuzzleView.addPiece(pieces.get(i % count));
+            if (bitmapPaint.size() < puzzleLayout.getAreaCount()) {
+              for (int i = 0; i < puzzleLayout.getAreaCount(); i++) {
+                puzzleView.addPiece(pieces.get(i % count));
               }
             } else {
-              mBeePuzzleView.addPieces(pieces);
+              puzzleView.addPieces(pieces);
             }
           }
-          mTargets.remove(this);
+          targets.remove(this);
         }
 
         @Override public void onBitmapFailed(Drawable errorDrawable) {
@@ -93,13 +93,13 @@ public class ProcessActivity extends AppCompatActivity implements View.OnClickLi
       };
 
       Picasso.with(this)
-          .load("file:///" + mBitmapPaths.get(i))
-          .resize(mDeviceWidth, mDeviceWidth)
+          .load("file:///" + bitmapPaint.get(i))
+          .resize(deviceWidth, deviceWidth)
           .centerInside()
           .config(Bitmap.Config.RGB_565)
           .into(target);
 
-      mTargets.add(target);
+      targets.add(target);
     }
   }
 
@@ -111,23 +111,23 @@ public class ProcessActivity extends AppCompatActivity implements View.OnClickLi
         R.drawable.demo6, R.drawable.demo7, R.drawable.demo8, R.drawable.demo9,
     };
 
-    final int count = resIds.length > mPuzzleLayout.getBorderSize() ? mPuzzleLayout.getBorderSize()
-        : resIds.length;
+    final int count =
+        resIds.length > puzzleLayout.getAreaCount() ? puzzleLayout.getAreaCount() : resIds.length;
 
     for (int i = 0; i < count; i++) {
       final Target target = new Target() {
         @Override public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from) {
           pieces.add(bitmap);
           if (pieces.size() == count) {
-            if (resIds.length < mPuzzleLayout.getBorderSize()) {
-              for (int i = 0; i < mPuzzleLayout.getBorderSize(); i++) {
-                mBeePuzzleView.addPiece(pieces.get(i % count));
+            if (resIds.length < puzzleLayout.getAreaCount()) {
+              for (int i = 0; i < puzzleLayout.getAreaCount(); i++) {
+                puzzleView.addPiece(pieces.get(i % count));
               }
             } else {
-              mBeePuzzleView.addPieces(pieces);
+              puzzleView.addPieces(pieces);
             }
           }
-          mTargets.remove(this);
+          targets.remove(this);
         }
 
         @Override public void onBitmapFailed(Drawable errorDrawable) {
@@ -141,7 +141,7 @@ public class ProcessActivity extends AppCompatActivity implements View.OnClickLi
 
       Picasso.with(this).load(resIds[i]).config(Bitmap.Config.RGB_565).into(target);
 
-      mTargets.add(target);
+      targets.add(target);
     }
   }
 
@@ -160,24 +160,25 @@ public class ProcessActivity extends AppCompatActivity implements View.OnClickLi
       }
     });
 
-    mBeePuzzleView = (BeePuzzleView) findViewById(R.id.puzzle_view);
+    puzzleView = (PuzzleView) findViewById(R.id.puzzle_view);
+    degreeSeekBar = (DegreeSeekBar) findViewById(R.id.degree_seek_bar);
 
     //TODO the method we can use to change the puzzle view's properties
-    mBeePuzzleView.setPuzzleLayout(mPuzzleLayout);
-    mBeePuzzleView.setMoveLineEnable(true);
-    mBeePuzzleView.setNeedDrawBorder(false);
-    mBeePuzzleView.setNeedDrawOuterBorder(false);
-    mBeePuzzleView.setExtraSize(100);
-    mBeePuzzleView.setBorderWidth(4);
-    mBeePuzzleView.setBorderColor(Color.WHITE);
-    mBeePuzzleView.setSelectedBorderColor(Color.parseColor("#99BBFB"));
-    mBeePuzzleView.setOnPieceSelectedListener(new BeePuzzleView.OnPieceSelectedListener() {
-      @Override public void onPieceSelected(BeePuzzlePiece piece) {
-        Toast.makeText(ProcessActivity.this, "Piece selected", Toast.LENGTH_SHORT).show();
-      }
-    });
-    //mPuzzleView.setDefaultPiecePadding(30);
-    //mPuzzleView.setPadding(30, 30, 30, 30);
+    puzzleView.setPuzzleLayout(puzzleLayout);
+    puzzleView.setTouchEnable(true);
+    puzzleView.setNeedDrawLine(false);
+    puzzleView.setNeedDrawOuterLine(false);
+    puzzleView.setLineSize(4);
+    puzzleView.setLineColor(Color.WHITE);
+    puzzleView.setSelectedLineColor(Color.parseColor("#99BBFB"));
+    puzzleView.setHandleBarColor(Color.parseColor("#99BBFB"));
+    //puzzleView.setOnPieceSelectedListener(new BeePuzzleView.OnPieceSelectedListener() {
+    //  @Override public void onPieceSelected(BeePuzzlePiece piece) {
+    //    Toast.makeText(ProcessActivity.this, "Piece selected", Toast.LENGTH_SHORT).show();
+    //  }
+    //});
+    //puzzleView.setDefaultPiecePadding(30);
+    //puzzleView.setPadding(30, 30, 30, 30);
 
     ImageView btnReplace = (ImageView) findViewById(R.id.btn_replace);
     ImageView btnRotate = (ImageView) findViewById(R.id.btn_rotate);
@@ -195,7 +196,7 @@ public class ProcessActivity extends AppCompatActivity implements View.OnClickLi
     btnSave.setOnClickListener(new View.OnClickListener() {
       @Override public void onClick(final View view) {
         File file = FileUtil.getNewFile(ProcessActivity.this, "Puzzle");
-        mBeePuzzleView.save(file, new BeePuzzleView.Callback() {
+        FileUtil.savePuzzle(puzzleView, file, 100, new Callback() {
           @Override public void onSuccess() {
             Snackbar.make(view, R.string.prompt_save_success, Snackbar.LENGTH_SHORT).show();
           }
@@ -206,12 +207,28 @@ public class ProcessActivity extends AppCompatActivity implements View.OnClickLi
         });
       }
     });
+
+    degreeSeekBar.setCurrentDegrees(puzzleView.getLineSize());
+    degreeSeekBar.setDegreeRange(0, 30);
+    degreeSeekBar.setScrollingListener(new DegreeSeekBar.ScrollingListener() {
+      @Override public void onScrollStart() {
+
+      }
+
+      @Override public void onScroll(int currentDegrees) {
+        puzzleView.setLineSize(currentDegrees);
+      }
+
+      @Override public void onScrollEnd() {
+
+      }
+    });
   }
 
   private void share() {
     final File file = FileUtil.getNewFile(this, "Puzzle");
 
-    mBeePuzzleView.save(file, new BeePuzzleView.Callback() {
+    FileUtil.savePuzzle(puzzleView, file, 100, new Callback() {
       @Override public void onSuccess() {
         Intent shareIntent = new Intent(Intent.ACTION_SEND);
         Uri uri = Uri.fromFile(file);
@@ -224,7 +241,7 @@ public class ProcessActivity extends AppCompatActivity implements View.OnClickLi
       }
 
       @Override public void onFailed() {
-        Snackbar.make(mBeePuzzleView, R.string.prompt_share_failed, Snackbar.LENGTH_SHORT).show();
+        Snackbar.make(puzzleView, R.string.prompt_share_failed, Snackbar.LENGTH_SHORT).show();
       }
     });
   }
@@ -235,16 +252,21 @@ public class ProcessActivity extends AppCompatActivity implements View.OnClickLi
         showSelectedPhotoDialog();
         break;
       case R.id.btn_rotate:
-        mBeePuzzleView.rotate(90f);
+        puzzleView.rotate(90f);
         break;
       case R.id.btn_flip_horizontal:
-        mBeePuzzleView.flipHorizontally();
+        puzzleView.flipHorizontally();
         break;
       case R.id.btn_flip_vertical:
-        mBeePuzzleView.flipVertically();
+        puzzleView.flipVertically();
         break;
       case R.id.btn_border:
-        mBeePuzzleView.setNeedDrawBorder(!mBeePuzzleView.isNeedDrawBorder());
+        puzzleView.setNeedDrawLine(!puzzleView.isNeedDrawLine());
+        if (puzzleView.isNeedDrawLine()) {
+          degreeSeekBar.setVisibility(View.VISIBLE);
+        } else {
+          degreeSeekBar.setVisibility(View.INVISIBLE);
+        }
         break;
     }
   }
@@ -260,12 +282,12 @@ public class ProcessActivity extends AppCompatActivity implements View.OnClickLi
       String path = paths.get(0);
 
       final Target target = new Target() {
-        @Override public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from) {
-          mBeePuzzleView.replace(bitmap);
+        @Override public void onBitmapLoaded(final Bitmap bitmap, Picasso.LoadedFrom from) {
+          puzzleView.replace(bitmap);
         }
 
         @Override public void onBitmapFailed(Drawable errorDrawable) {
-          Snackbar.make(mBeePuzzleView, "Replace Failed!", Snackbar.LENGTH_SHORT).show();
+          Snackbar.make(puzzleView, "Replace Failed!", Snackbar.LENGTH_SHORT).show();
         }
 
         @Override public void onPrepareLoad(Drawable placeHolderDrawable) {
@@ -275,7 +297,7 @@ public class ProcessActivity extends AppCompatActivity implements View.OnClickLi
 
       Picasso.with(this)
           .load("file:///" + path)
-          .resize(mDeviceWidth, mDeviceWidth)
+          .resize(deviceWidth, deviceWidth)
           .centerInside()
           .config(Bitmap.Config.RGB_565)
           .into(target);

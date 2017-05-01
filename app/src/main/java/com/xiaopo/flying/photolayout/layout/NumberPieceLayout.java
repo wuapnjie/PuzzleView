@@ -1,13 +1,15 @@
-package com.xiaopo.flying.puzzle.layout;
+package com.xiaopo.flying.photolayout.layout;
 
 import android.util.Log;
-
-import com.xiaopo.flying.puzzle.PuzzleLayout;
+import com.xiaopo.flying.puzzle.square.StraightPuzzleLayout;
 
 /**
  * Created by snowbean on 16-8-17.
  */
-public abstract class NumberPieceLayout extends PuzzleLayout {
+public abstract class NumberPieceLayout extends StraightPuzzleLayout {
+  protected static final String TAG = "NumberPieceLayout";
+  protected int mTheme;
+
   public NumberPieceLayout(int theme) {
     if (theme >= getThemeCount()) {
       Log.e(TAG, "NumberPieceLayout: the most theme count is "
@@ -16,8 +18,12 @@ public abstract class NumberPieceLayout extends PuzzleLayout {
           + (getThemeCount() - 1)
           + " .");
     }
-    mTheme = theme;
+    this.mTheme = theme;
   }
 
   public abstract int getThemeCount();
+
+  public int getTheme() {
+    return mTheme;
+  }
 }

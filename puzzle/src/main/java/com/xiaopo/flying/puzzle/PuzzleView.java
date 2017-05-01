@@ -1,4 +1,4 @@
-package com.xiaopo.flying.puzzle.widget;
+package com.xiaopo.flying.puzzle;
 
 import android.content.Context;
 import android.graphics.Bitmap;
@@ -14,11 +14,6 @@ import android.util.AttributeSet;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
-import com.xiaopo.flying.puzzle.base.Area;
-import com.xiaopo.flying.puzzle.base.AreaUtils;
-import com.xiaopo.flying.puzzle.base.Line;
-import com.xiaopo.flying.puzzle.base.PuzzleLayout;
-import com.xiaopo.flying.puzzle.base.PuzzlePiece;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -46,6 +41,7 @@ public class PuzzleView extends View {
   private Line handlingLine;
   private PuzzlePiece handlingPiece;
   private PuzzlePiece replacePiece;
+  private PuzzlePiece previousHandlingPiece;
 
   private Paint linePaint;
   private Paint selectedAreaPaint;
@@ -58,6 +54,7 @@ public class PuzzleView extends View {
 
   private boolean needDrawLine;
   private boolean needDrawOuterLine;
+  private boolean touchEnable = true;
 
   private int lineColor = Color.WHITE;
   private int selectedLineColor = Color.parseColor("#99BBFB");
@@ -128,6 +125,10 @@ public class PuzzleView extends View {
       return;
     }
 
+    linePaint.setStrokeWidth(lineSize);
+    selectedAreaPaint.setStrokeWidth(lineSize);
+    handleBarPaint.setStrokeWidth(lineSize);
+
     // draw pieces
     for (int i = 0; i < puzzleLayout.getAreaCount(); i++) {
       if (i >= puzzlePieces.size()) {
@@ -181,7 +182,6 @@ public class PuzzleView extends View {
     // draw handle bar
     for (Line line : area.getLines()) {
       if (puzzleLayout.getLines().contains(line)) {
-        handleBarPaint.setStrokeWidth(lineSize * 3);
         PointF[] handleBarPoints = area.getHandleBarPoints(line);
         canvas.drawLine(handleBarPoints[0].x, handleBarPoints[0].y, handleBarPoints[1].x,
             handleBarPoints[1].y, handleBarPaint);
@@ -208,6 +208,9 @@ public class PuzzleView extends View {
   }
 
   @Override public boolean onTouchEvent(MotionEvent event) {
+    if (!touchEnable) {
+      return super.onTouchEvent(event);
+    }
     switch (event.getAction() & MotionEvent.ACTION_MASK) {
       case MotionEvent.ACTION_DOWN:
         downX = event.getX();
@@ -282,17 +285,17 @@ public class PuzzleView extends View {
       case NONE:
         break;
       case DRAG:
-        handlingPiece.prepare();
+        handlingPiece.record();
         break;
       case ZOOM:
-        handlingPiece.prepare();
+        handlingPiece.record();
         break;
       case MOVE:
         handlingLine.prepareMove();
         needChangePieces.clear();
         needChangePieces.addAll(findNeedChangedPieces());
         for (PuzzlePiece piece : puzzlePieces) {
-          piece.prepare();
+          piece.record();
           piece.setPreviousMoveX(downX);
           piece.setPreviousMoveY(downY);
         }
@@ -328,17 +331,27 @@ public class PuzzleView extends View {
         break;
       case DRAG:
         if (handlingPiece != null && !handlingPiece.isFilledArea()) {
-          moveToFillArea(handlingPiece);
+          handlingPiece.moveToFillArea(this);
         }
+
+        if (previousHandlingPiece == handlingPiece
+            && Math.abs(downX - event.getX()) < 3
+            && Math.abs(downY - event.getY()) < 3) {
+          handlingPiece = null;
+        }
+
+        previousHandlingPiece = handlingPiece;
         break;
       case ZOOM:
         if (handlingPiece != null && !handlingPiece.isFilledArea()) {
           if (handlingPiece.canFilledArea()) {
-            moveToFillArea(handlingPiece);
+            handlingPiece.moveToFillArea(this);
           } else {
-            handlingPiece.fillArea(this, false, 300);
+            handlingPiece.fillArea(this, 300);
           }
         }
+
+        previousHandlingPiece = handlingPiece;
         break;
       case MOVE:
         break;
@@ -349,47 +362,18 @@ public class PuzzleView extends View {
           handlingPiece.setDrawable(replacePiece.getDrawable());
           replacePiece.setDrawable(temp);
 
-          handlingPiece.fillArea(this, true, 300);
-          handlingPiece.fillArea(this, true, 300);
+          handlingPiece.fillArea(this, 0);
+          handlingPiece.fillArea(this, 0);
+
+          handlingPiece = null;
+          replacePiece = null;
+          previousHandlingPiece = null;
         }
         break;
     }
 
     handlingLine = null;
-    handlingPiece = null;
-    replacePiece = null;
     needChangePieces.clear();
-  }
-
-  private void moveToFillArea(PuzzlePiece piece) {
-    piece.prepare();
-
-    Area area = piece.getArea();
-    RectF rectF = piece.getCurrentDrawableBounds();
-    float offsetX = 0f;
-    float offsetY = 0f;
-
-    if (rectF.left > area.left()) {
-      offsetX = area.left() - rectF.left;
-    }
-
-    if (rectF.top > area.top()) {
-      offsetY = area.top() - rectF.top;
-    }
-
-    if (rectF.right < area.right()) {
-      offsetX = area.right() - rectF.right;
-    }
-
-    if (rectF.bottom < area.bottom()) {
-      offsetY = area.bottom() - rectF.bottom;
-    }
-
-    piece.animateTranslate(this, offsetX, offsetY, 300);
-
-    if (!piece.isFilledArea()) {
-      piece.fillArea(this, true, 300);
-    }
   }
 
   private void moveLine(Line line, MotionEvent event) {
@@ -407,18 +391,16 @@ public class PuzzleView extends View {
 
   // TODO simplify
   private void updatePiecesInArea(Line line, MotionEvent event) {
-    int i = 0;
     for (PuzzlePiece piece : needChangePieces) {
 
       float offsetX = (event.getX() - piece.getPreviousMoveX()) / 2;
       float offsetY = (event.getY() - piece.getPreviousMoveY()) / 2;
 
-
       if (!piece.canFilledArea()) {
         final Area area = piece.getArea();
         float deltaScale = AreaUtils.getMinMatrixScale(piece) / piece.getMatrixScale();
         piece.postScale(deltaScale, deltaScale, area.getCenterPoint());
-        piece.prepare();
+        piece.record();
 
         piece.setPreviousMoveY(event.getY());
         piece.setPreviousMoveX(event.getX());
@@ -426,47 +408,43 @@ public class PuzzleView extends View {
 
       if (line.direction() == Line.Direction.HORIZONTAL) {
         piece.translate(0, offsetY);
-        final RectF rectF = piece.getCurrentDrawableBounds();
-        final Area area = piece.getArea();
-        float moveY = 0f;
-
-        if (rectF.top > area.top()) {
-          moveY = area.top() - rectF.top;
-        }
-
-        if (rectF.bottom < area.bottom()) {
-          moveY = area.bottom() - rectF.bottom;
-        }
-
-        if (moveY != 0){
-          piece.setPreviousMoveY(event.getY());
-          piece.setPreviousMoveX(event.getX());
-        }
-
-        piece.postTranslate(0, moveY);
       } else if (line.direction() == Line.Direction.VERTICAL) {
         piece.translate(offsetX, 0);
-        final RectF rectF = piece.getCurrentDrawableBounds();
-        final Area area = piece.getArea();
-        float moveX = 0f;
-
-        if (rectF.left > area.left()) {
-          moveX = area.left() - rectF.left;
-        }
-
-        if (rectF.right < area.right()) {
-          moveX = area.right() - rectF.right;
-        }
-
-        if (moveX != 0){
-          piece.setPreviousMoveY(event.getY());
-          piece.setPreviousMoveX(event.getX());
-        }
-
-        piece.postTranslate(moveX, 0);
       }
 
-      i++;
+      final RectF rectF = piece.getCurrentDrawableBounds();
+      final Area area = piece.getArea();
+      float moveY = 0f;
+
+      if (rectF.top > area.top()) {
+        moveY = area.top() - rectF.top;
+      }
+
+      if (rectF.bottom < area.bottom()) {
+        moveY = area.bottom() - rectF.bottom;
+      }
+
+      float moveX = 0f;
+
+      if (rectF.left > area.left()) {
+        moveX = area.left() - rectF.left;
+      }
+
+      if (rectF.right < area.right()) {
+        moveX = area.right() - rectF.right;
+      }
+
+      if (moveX != 0 || moveY != 0) {
+        piece.setPreviousMoveY(event.getY());
+        piece.setPreviousMoveX(event.getX());
+      }
+
+      if (moveY != 0) {
+        piece.setPreviousMoveY(event.getY());
+        piece.setPreviousMoveX(event.getX());
+      }
+
+      piece.postTranslate(moveX, moveY);
     }
   }
 
@@ -479,6 +457,59 @@ public class PuzzleView extends View {
   private void dragPiece(PuzzlePiece piece, MotionEvent event) {
     if (piece == null || event == null) return;
     piece.translate(event.getX() - downX, event.getY() - downY);
+  }
+
+  public void replace(Bitmap bitmap) {
+    replace(new BitmapDrawable(getResources(), bitmap));
+  }
+
+  public void replace(final Drawable bitmapDrawable) {
+    post(new Runnable() {
+      @Override public void run() {
+        if (handlingPiece == null) {
+          return;
+        }
+
+        handlingPiece.setDrawable(bitmapDrawable);
+        handlingPiece.set(AreaUtils.generateMatrix(handlingPiece, 0f));
+
+        postInvalidate();
+      }
+    });
+  }
+
+  public void flipVertically() {
+    if (handlingPiece == null) {
+      return;
+    }
+
+    handlingPiece.postFlipVertically();
+    handlingPiece.record();
+
+    invalidate();
+  }
+
+  public void flipHorizontally() {
+    if (handlingPiece == null) {
+      return;
+    }
+
+    handlingPiece.postFlipHorizontally();
+    handlingPiece.record();
+
+    invalidate();
+  }
+
+  public void rotate(float degree) {
+    if (handlingPiece == null) {
+      return;
+    }
+
+    handlingPiece.postRotate(degree);
+    handlingPiece.fillArea(this, 0);
+    handlingPiece.record();
+
+    invalidate();
   }
 
   private PuzzlePiece findHandlingPiece() {
@@ -572,7 +603,7 @@ public class PuzzleView extends View {
 
     final Area area = puzzleLayout.getArea(position);
 
-    final Matrix matrix = AreaUtils.generateMatrix(area, drawable, 100f);
+    final Matrix matrix = AreaUtils.generateMatrix(area, drawable, 0f);
 
     PuzzlePiece piece = new PuzzlePiece(drawable, area, matrix);
 
@@ -581,9 +612,19 @@ public class PuzzleView extends View {
     invalidate();
   }
 
+  public boolean isNeedDrawLine() {
+    return needDrawLine;
+  }
+
   public void setNeedDrawLine(boolean needDrawLine) {
     this.needDrawLine = needDrawLine;
+    handlingPiece = null;
+    previousHandlingPiece = null;
     invalidate();
+  }
+
+  public boolean isNeedDrawOuterLine() {
+    return needDrawOuterLine;
   }
 
   public void setNeedDrawOuterLine(boolean needDrawOuterLine) {
@@ -591,9 +632,26 @@ public class PuzzleView extends View {
     invalidate();
   }
 
+  public int getLineColor() {
+    return lineColor;
+  }
+
   public void setLineColor(int lineColor) {
     this.lineColor = lineColor;
     invalidate();
+  }
+
+  public int getLineSize() {
+    return lineSize;
+  }
+
+  public void setLineSize(int lineSize) {
+    this.lineSize = lineSize;
+    invalidate();
+  }
+
+  public int getSelectedLineColor() {
+    return selectedLineColor;
   }
 
   public void setSelectedLineColor(int selectedLineColor) {
@@ -601,8 +659,28 @@ public class PuzzleView extends View {
     invalidate();
   }
 
+  public int getHandleBarColor() {
+    return handleBarColor;
+  }
+
   public void setHandleBarColor(int handleBarColor) {
     this.handleBarColor = handleBarColor;
     invalidate();
+  }
+
+  public boolean isTouchEnable() {
+    return touchEnable;
+  }
+
+  public void setTouchEnable(boolean touchEnable) {
+    this.touchEnable = touchEnable;
+  }
+
+  public void clearHandling(){
+    handlingPiece = null;
+    handlingLine = null;
+    replacePiece = null;
+    previousHandlingPiece = null;
+    needChangePieces.clear();
   }
 }

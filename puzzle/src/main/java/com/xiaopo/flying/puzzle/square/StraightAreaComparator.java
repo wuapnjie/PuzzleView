@@ -6,8 +6,8 @@ import java.util.Comparator;
  * @author wupanjie
  */
 
-public class StraightAreaComparator implements Comparator<SquareArea> {
-  @Override public int compare(SquareArea lhs, SquareArea rhs) {
+public class StraightAreaComparator implements Comparator<StraightArea> {
+  @Override public int compare(StraightArea lhs, StraightArea rhs) {
     if (lhs.top() < rhs.top()) {
       return -1;
     } else if (lhs.top() == rhs.top()) {

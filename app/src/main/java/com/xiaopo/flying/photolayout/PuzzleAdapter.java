@@ -5,10 +5,9 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-
 import com.xiaopo.flying.puzzle.PuzzleLayout;
-import com.xiaopo.flying.puzzle.SquareBeePuzzleView;
-
+import com.xiaopo.flying.photolayout.layout.NumberPieceLayout;
+import com.xiaopo.flying.puzzle.SquarePuzzleView;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -33,16 +32,16 @@ public class PuzzleAdapter extends RecyclerView.Adapter<PuzzleAdapter.PuzzleView
   @Override public void onBindViewHolder(PuzzleViewHolder holder, int position) {
     final PuzzleLayout puzzleLayout = mLayoutData.get(position);
 
-    holder.mPuzzleView.setNeedDrawBorder(mNeedDrawBorder);
-    holder.mPuzzleView.setNeedDrawOuterBorder(mNeedDrawOuterBorder);
-    holder.mPuzzleView.setMoveLineEnable(false);
+    holder.mPuzzleView.setNeedDrawLine(mNeedDrawBorder);
+    holder.mPuzzleView.setNeedDrawOuterLine(mNeedDrawOuterBorder);
+    holder.mPuzzleView.setTouchEnable(false);
 
     holder.mPuzzleView.setPuzzleLayout(puzzleLayout);
 
     holder.itemView.setOnClickListener(new View.OnClickListener() {
       @Override public void onClick(View v) {
         if (mOnItemClickListener != null) {
-          mOnItemClickListener.onItemClick(puzzleLayout, puzzleLayout.getTheme());
+          mOnItemClickListener.onItemClick(puzzleLayout, ((NumberPieceLayout) puzzleLayout).getTheme());
         }
       }
     });
@@ -51,8 +50,8 @@ public class PuzzleAdapter extends RecyclerView.Adapter<PuzzleAdapter.PuzzleView
 
     final int bitmapSize = mBitmapData.size();
 
-    if (puzzleLayout.getBorderSize() > bitmapSize) {
-      for (int i = 0; i < puzzleLayout.getBorderSize(); i++) {
+    if (puzzleLayout.getAreaCount() > bitmapSize) {
+      for (int i = 0; i < puzzleLayout.getAreaCount(); i++) {
         holder.mPuzzleView.addPiece(mBitmapData.get(i % bitmapSize));
       }
     } else {
@@ -93,11 +92,11 @@ public class PuzzleAdapter extends RecyclerView.Adapter<PuzzleAdapter.PuzzleView
 
   public static class PuzzleViewHolder extends RecyclerView.ViewHolder {
 
-    SquareBeePuzzleView mPuzzleView;
+    SquarePuzzleView mPuzzleView;
 
     public PuzzleViewHolder(View itemView) {
       super(itemView);
-      mPuzzleView = (SquareBeePuzzleView) itemView.findViewById(R.id.puzzle);
+      mPuzzleView = (SquarePuzzleView) itemView.findViewById(R.id.puzzle);
     }
   }
 
