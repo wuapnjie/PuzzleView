@@ -317,7 +317,7 @@ public class PuzzleView extends View {
         handlingLine.prepareMove();
         needChangePieces.clear();
         needChangePieces.addAll(findNeedChangedPieces());
-        for (PuzzlePiece piece : puzzlePieces) {
+        for (PuzzlePiece piece : needChangePieces) {
           piece.record();
           piece.setPreviousMoveX(downX);
           piece.setPreviousMoveY(downY);
@@ -463,14 +463,10 @@ public class PuzzleView extends View {
       if (moveX != 0 || moveY != 0) {
         piece.setPreviousMoveY(event.getY());
         piece.setPreviousMoveX(event.getX());
+        Log.d(TAG, "updatePiecesInArea: 3");
+        piece.postTranslate(moveX, moveY);
+        piece.record();
       }
-
-      if (moveY != 0) {
-        piece.setPreviousMoveY(event.getY());
-        piece.setPreviousMoveX(event.getX());
-      }
-
-      piece.postTranslate(moveX, moveY);
     }
   }
 
