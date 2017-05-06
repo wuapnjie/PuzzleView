@@ -175,7 +175,7 @@ public class SlantUtils {
       A.x = start.x;
       A.y = start.y - extra;
       B.x = end.x;
-      B.y = end.y + extra;
+      B.y = end.y - extra;
       C.x = end.x;
       C.y = end.y + extra;
       D.x = start.x;
