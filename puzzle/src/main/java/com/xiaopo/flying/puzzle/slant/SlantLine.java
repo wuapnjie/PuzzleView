@@ -153,6 +153,11 @@ public class SlantLine implements Line {
     return max(start.y, end.y);
   }
 
+  @Override public void offset(float x, float y) {
+    start.offset(x, y);
+    end.offset(x, y);
+  }
+
   @Override public String toString() {
     return "start --> " + start.toString() + ",end --> " + end.toString();
   }

@@ -24,6 +24,11 @@ public class SlantArea implements Area {
   PointF rightTop;
   PointF rightBottom;
 
+  private float paddingLeft;
+  private float paddingTop;
+  private float paddingRight;
+  private float paddingBottom;
+
   private Path areaPath = new Path();
   private RectF areaRect = new RectF();
   private PointF[] handleBarPoints = new PointF[2];
@@ -129,6 +134,34 @@ public class SlantArea implements Area {
       SlantUtils.getPoint(handleBarPoints[1], leftBottom, rightBottom, line.direction(), 0.75f);
     }
     return handleBarPoints;
+  }
+
+  // currently not support padding
+  @Override public float getPaddingLeft() {
+    return paddingLeft;
+  }
+
+  @Override public float getPaddingTop() {
+    return paddingTop;
+  }
+
+  @Override public float getPaddingRight() {
+    return paddingRight;
+  }
+
+  @Override public float getPaddingBottom() {
+    return paddingBottom;
+  }
+
+  @Override public void setPadding(float padding) {
+  }
+
+  @Override public void setPadding(float paddingLeft, float paddingTop, float paddingRight,
+      float paddingBottom) {
+    this.paddingLeft = paddingLeft;
+    this.paddingTop = paddingTop;
+    this.paddingRight = paddingRight;
+    this.paddingBottom = paddingBottom;
   }
 
   public static class AreaComparator implements Comparator<SlantArea> {

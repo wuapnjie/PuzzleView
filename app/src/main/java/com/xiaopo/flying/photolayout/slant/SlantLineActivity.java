@@ -44,8 +44,8 @@ public class SlantLineActivity extends AppCompatActivity {
     puzzleLayout = new SlantSampleLayout();
     puzzleView.reset();
     puzzleView.setPuzzleLayout(puzzleLayout);
-    puzzleView.setNeedDrawLine(true);
-    puzzleView.setNeedDrawOuterLine(true);
+    puzzleView.setNeedDrawLine(false);
+    puzzleView.setNeedDrawOuterLine(false);
     puzzleView.setAnimateDuration(300);
     puzzleView.setOnPieceSelectedListener(new PuzzleView.OnPieceSelectedListener() {
       @Override public void onPieceSelected(PuzzlePiece piece, int position) {
@@ -53,6 +53,8 @@ public class SlantLineActivity extends AppCompatActivity {
             Toast.LENGTH_SHORT).show();
       }
     });
+
+    puzzleView.setPiecePadding(20);
 
     btnMore = findViewById(R.id.btn_more);
     btnMore.setOnClickListener(new View.OnClickListener() {

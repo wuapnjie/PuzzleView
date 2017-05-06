@@ -48,4 +48,6 @@ public interface Line {
   float minY();
 
   float maxY();
+
+  void offset(float x,float y);
 }

@@ -171,9 +171,9 @@ public class ProcessActivity extends AppCompatActivity implements View.OnClickLi
     puzzleView.setNeedDrawLine(false);
     puzzleView.setNeedDrawOuterLine(false);
     puzzleView.setLineSize(4);
-    puzzleView.setLineColor(Color.WHITE);
-    puzzleView.setSelectedLineColor(Color.parseColor("#99BBFB"));
-    puzzleView.setHandleBarColor(Color.parseColor("#99BBFB"));
+    puzzleView.setLineColor(Color.BLACK);
+    puzzleView.setSelectedLineColor(Color.BLACK);
+    puzzleView.setHandleBarColor(Color.BLACK);
     puzzleView.setAnimateDuration(300);
     puzzleView.setOnPieceSelectedListener(new PuzzleView.OnPieceSelectedListener() {
       @Override public void onPieceSelected(PuzzlePiece piece, int position) {
@@ -181,8 +181,7 @@ public class ProcessActivity extends AppCompatActivity implements View.OnClickLi
             Toast.LENGTH_SHORT).show();
       }
     });
-    //puzzleView.setDefaultPiecePadding(30);
-    //puzzleView.setPadding(30, 30, 30, 30);
+    puzzleView.setPiecePadding(10);
 
     ImageView btnReplace = (ImageView) findViewById(R.id.btn_replace);
     ImageView btnRotate = (ImageView) findViewById(R.id.btn_rotate);

@@ -23,6 +23,11 @@ public class StraightArea implements Area {
   private RectF areaRect = new RectF();
   private PointF[] handleBarPoints = new PointF[2];
 
+  private float paddingLeft;
+  private float paddingTop;
+  private float paddingRight;
+  private float paddingBottom;
+
   public StraightArea(RectF baseRect) {
     setBaseRect(baseRect);
 
@@ -53,19 +58,19 @@ public class StraightArea implements Area {
   }
 
   @Override public float left() {
-    return lineLeft.minX();
+    return lineLeft.minX() + paddingLeft;
   }
 
   @Override public float top() {
-    return lineTop.minY();
+    return lineTop.minY() + paddingTop;
   }
 
   @Override public float right() {
-    return lineRight.maxX();
+    return lineRight.maxX() - paddingRight;
   }
 
   @Override public float bottom() {
-    return lineBottom.maxY();
+    return lineBottom.maxY() - paddingBottom;
   }
 
   @Override public float centerX() {
@@ -138,6 +143,39 @@ public class StraightArea implements Area {
       handleBarPoints[1].y = bottom();
     }
     return handleBarPoints;
+  }
+
+  @Override public float getPaddingLeft() {
+    return paddingLeft;
+  }
+
+  @Override public float getPaddingTop() {
+    return paddingTop;
+  }
+
+  @Override public float getPaddingRight() {
+    return paddingRight;
+  }
+
+  @Override public float getPaddingBottom() {
+    return paddingBottom;
+  }
+
+  @Override public void setPadding(float padding) {
+    setPadding(padding, padding, padding, padding);
+  }
+
+  @Override public void setPadding(float paddingLeft, float paddingTop, float paddingRight,
+      float paddingBottom) {
+    this.paddingLeft = paddingLeft;
+    this.paddingTop = paddingTop;
+    this.paddingRight = paddingRight;
+    this.paddingBottom = paddingBottom;
+
+    this.paddingLeft = paddingLeft;
+    this.paddingTop = paddingTop;
+    this.paddingRight = paddingRight;
+    this.paddingBottom = paddingBottom;
   }
 
   public static class AreaComparator implements Comparator<StraightArea> {

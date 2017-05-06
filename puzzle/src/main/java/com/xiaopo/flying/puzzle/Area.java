@@ -41,4 +41,21 @@ public interface Area {
   List<Line> getLines();
 
   PointF[] getHandleBarPoints(Line line);
+
+  float getPaddingLeft();
+
+  float getPaddingTop();
+
+  float getPaddingRight();
+
+  float getPaddingBottom();
+
+  void setPadding(float padding);
+
+  void setPadding(float paddingLeft, float paddingTop, float paddingRight, float paddingBottom);
 }
+
+
+
+
+

@@ -60,6 +60,7 @@ public class PuzzleView extends View {
   private int lineColor = Color.WHITE;
   private int selectedLineColor = Color.parseColor("#99BBFB");
   private int handleBarColor = selectedLineColor;
+  private float piecePadding;
 
   private OnPieceSelectedListener onPieceSelectedListener;
 
@@ -109,10 +110,10 @@ public class PuzzleView extends View {
 
   @Override protected void onSizeChanged(int w, int h, int oldw, int oldh) {
     super.onSizeChanged(w, h, oldw, oldh);
-    bounds.left = getPaddingLeft();
-    bounds.top = getPaddingTop();
-    bounds.right = w - getPaddingRight();
-    bounds.bottom = h - getPaddingBottom();
+    bounds.left = getPaddingLeft() + piecePadding;
+    bounds.top = getPaddingTop() + piecePadding;
+    bounds.right = w - getPaddingRight() - piecePadding;
+    bounds.bottom = h - getPaddingBottom() - piecePadding;
 
     if (puzzleLayout != null) {
       puzzleLayout.reset();
@@ -267,6 +268,12 @@ public class PuzzleView extends View {
         currentMode = ActionMode.MOVE;
       } else {
         handlingPiece = findHandlingPiece();
+        // trigger listener
+        if (handlingPiece != null && onPieceSelectedListener != null) {
+          onPieceSelectedListener.onPieceSelected(handlingPiece,
+              puzzlePieces.indexOf(handlingPiece));
+        }
+
         if (handlingPiece != null) {
           currentMode = ActionMode.DRAG;
 
@@ -344,12 +351,6 @@ public class PuzzleView extends View {
         }
 
         previousHandlingPiece = handlingPiece;
-
-        // trigger listener
-        if (previousHandlingPiece != null && onPieceSelectedListener != null) {
-          onPieceSelectedListener.onPieceSelected(previousHandlingPiece,
-              puzzlePieces.indexOf(previousHandlingPiece));
-        }
         break;
       case ZOOM:
         if (handlingPiece != null && !handlingPiece.isFilledArea()) {
@@ -602,7 +603,6 @@ public class PuzzleView extends View {
     addPiece(new BitmapDrawable(getResources(), bitmap));
   }
 
-  // TODO 增加Padding，Bitmap等
   public void addPiece(Drawable drawable) {
     int position = puzzlePieces.size();
 
@@ -614,6 +614,7 @@ public class PuzzleView extends View {
     }
 
     final Area area = puzzleLayout.getArea(position);
+    area.setPadding(piecePadding);
 
     final Matrix matrix = MatrixUtils.generateMatrix(area, drawable, 0f);
 
@@ -658,6 +659,7 @@ public class PuzzleView extends View {
 
   public void setLineColor(int lineColor) {
     this.lineColor = lineColor;
+    this.linePaint.setColor(lineColor);
     invalidate();
   }
 
@@ -676,6 +678,7 @@ public class PuzzleView extends View {
 
   public void setSelectedLineColor(int selectedLineColor) {
     this.selectedLineColor = selectedLineColor;
+    this.selectedAreaPaint.setColor(selectedLineColor);
     invalidate();
   }
 
@@ -685,6 +688,7 @@ public class PuzzleView extends View {
 
   public void setHandleBarColor(int handleBarColor) {
     this.handleBarColor = handleBarColor;
+    this.handleBarPaint.setColor(handleBarColor);
     invalidate();
   }
 
@@ -702,6 +706,13 @@ public class PuzzleView extends View {
     replacePiece = null;
     previousHandlingPiece = null;
     needChangePieces.clear();
+  }
+
+  public void setPiecePadding(float padding) {
+    this.piecePadding = padding;
+    for (PuzzlePiece piece : puzzlePieces) {
+      piece.getArea().setPadding(padding);
+    }
   }
 
   public void setOnPieceSelectedListener(OnPieceSelectedListener onPieceSelectedListener) {
