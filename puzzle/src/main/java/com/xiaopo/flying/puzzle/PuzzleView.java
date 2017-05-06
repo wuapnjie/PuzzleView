@@ -1,5 +1,6 @@
 package com.xiaopo.flying.puzzle;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
@@ -222,7 +223,8 @@ public class PuzzleView extends View {
     invalidate();
   }
 
-  @Override public boolean onTouchEvent(MotionEvent event) {
+  @SuppressLint("ClickableViewAccessibility") @Override
+  public boolean onTouchEvent(MotionEvent event) {
     if (!touchEnable) {
       return super.onTouchEvent(event);
     }
@@ -301,7 +303,7 @@ public class PuzzleView extends View {
   }
 
   // 执行Action前的准备工作
-  private void prepareAction(MotionEvent event) {
+  @SuppressWarnings("unused") private void prepareAction(MotionEvent event) {
     switch (currentMode) {
       case NONE:
         break;
@@ -399,7 +401,7 @@ public class PuzzleView extends View {
   private void moveLine(Line line, MotionEvent event) {
     if (line == null || event == null) return;
 
-    boolean needUpdate = true;
+    boolean needUpdate;
     if (line.direction() == Line.Direction.HORIZONTAL) {
       needUpdate = line.move(event.getY() - downY, 80);
     } else {

@@ -8,6 +8,7 @@ import java.util.Arrays;
 import static java.lang.Math.round;
 
 /**
+ * some useful matrix operation methods
  * @author wupanjie
  */
 

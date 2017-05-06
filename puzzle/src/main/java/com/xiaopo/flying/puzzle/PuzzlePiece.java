@@ -10,7 +10,9 @@ import android.graphics.drawable.Drawable;
 import android.view.View;
 import android.view.animation.DecelerateInterpolator;
 
-import static com.xiaopo.flying.puzzle.MatrixUtils.*;
+import static com.xiaopo.flying.puzzle.MatrixUtils.calculateImageIndents;
+import static com.xiaopo.flying.puzzle.MatrixUtils.getMinMatrixScale;
+import static com.xiaopo.flying.puzzle.MatrixUtils.judgeIsImageContainsBorder;
 
 /**
  * @author wupanjie

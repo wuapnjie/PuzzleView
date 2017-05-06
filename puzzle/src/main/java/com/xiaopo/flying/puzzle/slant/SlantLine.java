@@ -18,8 +18,6 @@ import static java.lang.Math.sqrt;
  */
 
 public class SlantLine implements Line {
-  private static final String TAG = "SlantLine";
-
   public PointF start;
   public PointF end;
 

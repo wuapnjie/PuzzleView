@@ -13,8 +13,6 @@ import static java.lang.Math.min;
  */
 
 public class StraightLine implements Line {
-  private static final String TAG = "StraightLine";
-
   public PointF start;
   public PointF end;
 
@@ -30,10 +28,6 @@ public class StraightLine implements Line {
   public Line lowerLine;
 
   private RectF bounds = new RectF();
-
-  public StraightLine(Line.Direction direction) {
-    this.direction = direction;
-  }
 
   public StraightLine(PointF start, PointF end) {
     this.start = start;

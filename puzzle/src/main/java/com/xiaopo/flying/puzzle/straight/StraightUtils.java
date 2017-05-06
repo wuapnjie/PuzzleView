@@ -6,7 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Created by snowbean on 16-8-13.
+ * @author wupanjie
  */
 class StraightUtils {
   private static final String TAG = "SquareAreaUtils";
