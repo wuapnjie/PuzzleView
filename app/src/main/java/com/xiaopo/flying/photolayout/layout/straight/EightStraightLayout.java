@@ -1,12 +1,12 @@
-package com.xiaopo.flying.photolayout.layout;
+package com.xiaopo.flying.photolayout.layout.straight;
 
 import com.xiaopo.flying.puzzle.Line;
 
 /**
- * Created by snowbean on 16-8-17.
+ * @author wupanjie
  */
-public class EightPieceLayout extends NumberPieceLayout {
-  public EightPieceLayout(int theme) {
+public class EightStraightLayout extends NumberStraightLayout {
+  public EightStraightLayout(int theme) {
     super(theme);
   }
 
@@ -15,7 +15,7 @@ public class EightPieceLayout extends NumberPieceLayout {
   }
 
   @Override public void layout() {
-    switch (mTheme) {
+    switch (theme) {
       case 0:
         cutBorderEqualPart(0, 3, 1);
         break;
@@ -72,7 +72,7 @@ public class EightPieceLayout extends NumberPieceLayout {
         cutBorderEqualPart(0, 3, Line.Direction.HORIZONTAL);
         cutBorderEqualPart(2, 2, Line.Direction.VERTICAL);
         cutBorderEqualPart(1, 3, Line.Direction.VERTICAL);
-        addLine(0, Line.Direction.VERTICAL, 3f / 5);
+        addLine(0, Line.Direction.VERTICAL, 3f / 4);
         addLine(0, Line.Direction.VERTICAL, 1f / 3);
         break;
       case 10:

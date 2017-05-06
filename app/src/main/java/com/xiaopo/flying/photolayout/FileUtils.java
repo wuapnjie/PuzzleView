@@ -21,8 +21,8 @@ import java.util.Locale;
 /**
  * Created by snowbean on 16-8-5.
  */
-public class FileUtil {
-  private static final String TAG = "FileUtil";
+public class FileUtils {
+  private static final String TAG = "FileUtils";
 
   public static String getFolderName(String name) {
     File mediaStorageDir =

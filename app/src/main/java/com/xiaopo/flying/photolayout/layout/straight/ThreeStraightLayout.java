@@ -1,13 +1,13 @@
-package com.xiaopo.flying.photolayout.layout;
+package com.xiaopo.flying.photolayout.layout.straight;
 
 import com.xiaopo.flying.puzzle.Line;
 
 /**
- * Created by snowbean on 16-8-17.
+ * @author wupanjie
  */
-public class ThreePieceLayout extends NumberPieceLayout {
+public class ThreeStraightLayout extends NumberStraightLayout {
 
-  public ThreePieceLayout(int theme) {
+  public ThreeStraightLayout(int theme) {
     super(theme);
   }
 
@@ -16,7 +16,7 @@ public class ThreePieceLayout extends NumberPieceLayout {
   }
 
   @Override public void layout() {
-    switch (mTheme) {
+    switch (theme) {
       case 0:
         cutBorderEqualPart(0, 3, Line.Direction.HORIZONTAL);
         break;

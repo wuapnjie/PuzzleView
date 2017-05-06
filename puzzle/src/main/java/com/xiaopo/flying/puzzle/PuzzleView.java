@@ -120,6 +120,15 @@ public class PuzzleView extends View {
       puzzleLayout.setOuterBounds(bounds);
       puzzleLayout.layout();
     }
+
+    if (puzzlePieces.size() != 0) {
+      for (int i = 0; i < puzzlePieces.size(); i++) {
+        PuzzlePiece piece = puzzlePieces.get(i);
+        piece.setArea(puzzleLayout.getArea(i));
+        piece.set(MatrixUtils.generateMatrix(piece, 0f));
+      }
+    }
+    invalidate();
   }
 
   @Override protected void onDraw(Canvas canvas) {
@@ -203,6 +212,8 @@ public class PuzzleView extends View {
   }
 
   public void setPuzzleLayout(PuzzleLayout puzzleLayout) {
+    clearPieces();
+
     this.puzzleLayout = puzzleLayout;
 
     this.puzzleLayout.setOuterBounds(bounds);
@@ -579,15 +590,17 @@ public class PuzzleView extends View {
   }
 
   public void reset() {
+    clearPieces();
+    if (puzzleLayout != null) {
+      puzzleLayout.reset();
+    }
+  }
+
+  public void clearPieces() {
     handlingLine = null;
     handlingPiece = null;
     replacePiece = null;
     needChangePieces.clear();
-
-    if (puzzleLayout != null) {
-      puzzleLayout.reset();
-    }
-
     puzzlePieces.clear();
   }
 
@@ -596,7 +609,7 @@ public class PuzzleView extends View {
       addPiece(bitmap);
     }
 
-    invalidate();
+    postInvalidate();
   }
 
   public void addPiece(Bitmap bitmap) {
@@ -623,7 +636,7 @@ public class PuzzleView extends View {
 
     puzzlePieces.add(piece);
 
-    invalidate();
+    postInvalidate();
   }
 
   public void setAnimateDuration(int duration) {

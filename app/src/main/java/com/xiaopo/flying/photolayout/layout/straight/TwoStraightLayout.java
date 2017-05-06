@@ -1,19 +1,19 @@
-package com.xiaopo.flying.photolayout.layout;
+package com.xiaopo.flying.photolayout.layout.straight;
 
 import android.util.Log;
 import com.xiaopo.flying.puzzle.Line;
 
 /**
- * Created by snowbean on 16-8-17.
+ * @author wupanjie
  */
-public class TwoPieceLayout extends NumberPieceLayout {
+public class TwoStraightLayout extends NumberStraightLayout {
   private float mRadio = 1f / 2;
 
-  public TwoPieceLayout(int theme) {
+  public TwoStraightLayout(int theme) {
     super(theme);
   }
 
-  public TwoPieceLayout(float radio, int theme) {
+  public TwoStraightLayout(float radio, int theme) {
     super(theme);
     if (mRadio > 1) {
       Log.e(TAG, "CrossLayout: the radio can not greater than 1f");
@@ -27,7 +27,7 @@ public class TwoPieceLayout extends NumberPieceLayout {
   }
 
   @Override public void layout() {
-    switch (mTheme) {
+    switch (theme) {
       case 0:
         addLine(0, Line.Direction.HORIZONTAL, mRadio);
         break;

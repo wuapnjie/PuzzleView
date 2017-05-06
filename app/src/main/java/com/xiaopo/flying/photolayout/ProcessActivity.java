@@ -12,7 +12,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 import com.squareup.picasso.Picasso;
 import com.squareup.picasso.Target;
 import com.xiaopo.flying.poiphoto.Define;
@@ -20,10 +19,14 @@ import com.xiaopo.flying.poiphoto.PhotoPicker;
 import com.xiaopo.flying.puzzle.PuzzleLayout;
 import com.xiaopo.flying.puzzle.PuzzlePiece;
 import com.xiaopo.flying.puzzle.PuzzleView;
+import com.xiaopo.flying.puzzle.straight.StraightPuzzleLayout;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * @author wupanjie
+ */
 public class ProcessActivity extends AppCompatActivity implements View.OnClickListener {
 
   private PuzzleLayout puzzleLayout;
@@ -40,10 +43,11 @@ public class ProcessActivity extends AppCompatActivity implements View.OnClickLi
 
     deviceWidth = getResources().getDisplayMetrics().widthPixels;
 
+    int type = getIntent().getIntExtra("type", 0);
     int pieceSize = getIntent().getIntExtra("piece_size", 0);
     int themeId = getIntent().getIntExtra("theme_id", 0);
     bitmapPaint = getIntent().getStringArrayListExtra("photo_path");
-    puzzleLayout = PuzzleUtil.getPuzzleLayout(pieceSize, themeId);
+    puzzleLayout = PuzzleUtils.getPuzzleLayout(type, pieceSize, themeId);
 
     initView();
 
@@ -177,11 +181,14 @@ public class ProcessActivity extends AppCompatActivity implements View.OnClickLi
     puzzleView.setAnimateDuration(300);
     puzzleView.setOnPieceSelectedListener(new PuzzleView.OnPieceSelectedListener() {
       @Override public void onPieceSelected(PuzzlePiece piece, int position) {
-        Toast.makeText(ProcessActivity.this, "Piece " + position + " selected",
-            Toast.LENGTH_SHORT).show();
+        Snackbar.make(puzzleView, "Piece " + position + " selected", Snackbar.LENGTH_SHORT).show();
       }
     });
-    puzzleView.setPiecePadding(10);
+
+    // currently the SlantPuzzleLayout do not support padding
+    if (puzzleLayout instanceof StraightPuzzleLayout) {
+      puzzleView.setPiecePadding(10);
+    }
 
     ImageView btnReplace = (ImageView) findViewById(R.id.btn_replace);
     ImageView btnRotate = (ImageView) findViewById(R.id.btn_rotate);
@@ -198,8 +205,8 @@ public class ProcessActivity extends AppCompatActivity implements View.OnClickLi
     TextView btnSave = (TextView) findViewById(R.id.btn_save);
     btnSave.setOnClickListener(new View.OnClickListener() {
       @Override public void onClick(final View view) {
-        File file = FileUtil.getNewFile(ProcessActivity.this, "Puzzle");
-        FileUtil.savePuzzle(puzzleView, file, 100, new Callback() {
+        File file = FileUtils.getNewFile(ProcessActivity.this, "Puzzle");
+        FileUtils.savePuzzle(puzzleView, file, 100, new Callback() {
           @Override public void onSuccess() {
             Snackbar.make(view, R.string.prompt_save_success, Snackbar.LENGTH_SHORT).show();
           }
@@ -229,9 +236,9 @@ public class ProcessActivity extends AppCompatActivity implements View.OnClickLi
   }
 
   private void share() {
-    final File file = FileUtil.getNewFile(this, "Puzzle");
+    final File file = FileUtils.getNewFile(this, "Puzzle");
 
-    FileUtil.savePuzzle(puzzleView, file, 100, new Callback() {
+    FileUtils.savePuzzle(puzzleView, file, 100, new Callback() {
       @Override public void onSuccess() {
         Intent shareIntent = new Intent(Intent.ACTION_SEND);
         Uri uri = Uri.fromFile(file);

@@ -8,10 +8,10 @@ import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.ImageView;
-
 import com.squareup.picasso.MemoryPolicy;
 import com.squareup.picasso.Picasso;
 import com.xiaopo.flying.puzzle.PuzzleLayout;
+import com.xiaopo.flying.puzzle.slant.SlantPuzzleLayout;
 
 public class PlaygroundActivity extends AppCompatActivity {
 
@@ -40,20 +40,23 @@ public class PlaygroundActivity extends AppCompatActivity {
   }
 
   private void initView() {
-    RecyclerView puzzleList = (RecyclerView) findViewById(R.id.puzzle_list);
+    final RecyclerView puzzleList = (RecyclerView) findViewById(R.id.puzzle_list);
     puzzleList.setLayoutManager(new GridLayoutManager(this, 2));
 
     PuzzleAdapter puzzleAdapter = new PuzzleAdapter();
-    puzzleAdapter.setNeedDrawBorder(true);
-    puzzleAdapter.setNeedDrawOuterBorder(true);
 
     puzzleList.setAdapter(puzzleAdapter);
 
-    puzzleAdapter.refreshData(PuzzleUtil.getAllPuzzleLayout(), null);
+    puzzleAdapter.refreshData(PuzzleUtils.getAllPuzzleLayouts(), null);
 
     puzzleAdapter.setOnItemClickListener(new PuzzleAdapter.OnItemClickListener() {
       @Override public void onItemClick(PuzzleLayout puzzleLayout, int themeId) {
         Intent intent = new Intent(PlaygroundActivity.this, ProcessActivity.class);
+        if (puzzleLayout instanceof SlantPuzzleLayout) {
+          intent.putExtra("type", 0);
+        } else {
+          intent.putExtra("type", 1);
+        }
         intent.putExtra("piece_size", puzzleLayout.getAreaCount());
         intent.putExtra("theme_id", themeId);
 

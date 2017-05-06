@@ -23,17 +23,16 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.Toast;
-
 import com.squareup.picasso.MemoryPolicy;
 import com.squareup.picasso.Picasso;
 import com.squareup.picasso.Target;
+import com.xiaopo.flying.photolayout.layout.straight.StraightLayoutHelper;
 import com.xiaopo.flying.poiphoto.GetAllPhotoTask;
 import com.xiaopo.flying.poiphoto.PhotoManager;
 import com.xiaopo.flying.poiphoto.datatype.Photo;
 import com.xiaopo.flying.poiphoto.ui.adapter.PhotoAdapter;
 import com.xiaopo.flying.puzzle.PuzzleLayout;
-import com.xiaopo.flying.photolayout.layout.PuzzleLayoutHelper;
-
+import com.xiaopo.flying.puzzle.slant.SlantPuzzleLayout;
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.List;
@@ -111,6 +110,11 @@ public class MainActivity extends AppCompatActivity {
       @Override public void onItemClick(PuzzleLayout puzzleLayout, int themeId) {
         Intent intent = new Intent(MainActivity.this, ProcessActivity.class);
         intent.putStringArrayListExtra("photo_path", selectedPath);
+        if (puzzleLayout instanceof SlantPuzzleLayout) {
+          intent.putExtra("type", 0);
+        } else {
+          intent.putExtra("type", 1);
+        }
         intent.putExtra("piece_size", selectedPath.size());
         intent.putExtra("theme_id", themeId);
 
@@ -141,7 +145,7 @@ public class MainActivity extends AppCompatActivity {
         bitmaps.remove(bitmap);
         selectedPath.remove(photo.getPath());
 
-        puzzleAdapter.refreshData(PuzzleLayoutHelper.getAllThemeLayout(bitmaps.size()), bitmaps);
+        puzzleAdapter.refreshData(StraightLayoutHelper.getAllThemeLayout(bitmaps.size()), bitmaps);
       }
     });
 
@@ -225,7 +229,7 @@ public class MainActivity extends AppCompatActivity {
   private void refreshLayout() {
     puzzleList.post(new Runnable() {
       @Override public void run() {
-        puzzleAdapter.refreshData(PuzzleLayoutHelper.getAllThemeLayout(bitmaps.size()), bitmaps);
+        puzzleAdapter.refreshData(PuzzleUtils.getPuzzleLayouts(bitmaps.size()), bitmaps);
       }
     });
   }

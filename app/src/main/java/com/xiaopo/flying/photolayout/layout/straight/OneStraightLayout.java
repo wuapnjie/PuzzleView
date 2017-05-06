@@ -1,17 +1,13 @@
-package com.xiaopo.flying.photolayout.layout;
+package com.xiaopo.flying.photolayout.layout.straight;
 
 import com.xiaopo.flying.puzzle.Line;
 
 /**
- * Created by snowbean on 16-8-17.
+ * @author wupanjie
  */
-public class OnePieceLayout extends NumberPieceLayout {
+public class OneStraightLayout extends NumberStraightLayout {
 
-  public OnePieceLayout(int theme) {
-    super(theme);
-  }
-
-  public OnePieceLayout(float radio, int theme) {
+  public OneStraightLayout(int theme) {
     super(theme);
   }
 
@@ -20,7 +16,7 @@ public class OnePieceLayout extends NumberPieceLayout {
   }
 
   @Override public void layout() {
-    switch (mTheme) {
+    switch (theme) {
       case 0:
         addLine(0, Line.Direction.HORIZONTAL, 1f / 2);
         break;

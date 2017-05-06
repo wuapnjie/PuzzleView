@@ -1,14 +1,14 @@
-package com.xiaopo.flying.photolayout.layout;
+package com.xiaopo.flying.photolayout.layout.straight;
 
 import com.xiaopo.flying.puzzle.Line;
 
 /**
- * Created by snowbean on 16-8-17.
+ * @author wupanjie
  */
-public class FourPieceLayout extends NumberPieceLayout {
-  private static final String TAG = "FourPieceLayout";
+public class FourStraightLayout extends NumberStraightLayout {
+  private static final String TAG = "FourStraightLayout";
 
-  public FourPieceLayout(int theme) {
+  public FourStraightLayout(int theme) {
     super(theme);
   }
 
@@ -17,7 +17,7 @@ public class FourPieceLayout extends NumberPieceLayout {
   }
 
   @Override public void layout() {
-    switch (mTheme) {
+    switch (theme) {
       case 0:
         cutBorderEqualPart(0, 4, Line.Direction.HORIZONTAL);
         break;

@@ -343,6 +343,10 @@ public class PuzzlePiece {
     }
   }
 
+  public void setArea(Area area) {
+    this.area = area;
+  }
+
   public boolean isAnimateRunning() {
     return animator.isRunning();
   }

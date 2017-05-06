@@ -5,23 +5,21 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import com.xiaopo.flying.photolayout.layout.slant.NumberSlantLayout;
+import com.xiaopo.flying.photolayout.layout.straight.NumberStraightLayout;
 import com.xiaopo.flying.puzzle.PuzzleLayout;
-import com.xiaopo.flying.photolayout.layout.NumberPieceLayout;
 import com.xiaopo.flying.puzzle.SquarePuzzleView;
 import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Created by snowbean on 16-8-17.
+ * @author wupanjie
  */
 public class PuzzleAdapter extends RecyclerView.Adapter<PuzzleAdapter.PuzzleViewHolder> {
 
-  private List<PuzzleLayout> mLayoutData = new ArrayList<>();
-  private List<Bitmap> mBitmapData = new ArrayList<>();
-  private OnItemClickListener mOnItemClickListener;
-
-  private boolean mNeedDrawBorder = false;
-  private boolean mNeedDrawOuterBorder = false;
+  private List<PuzzleLayout> layoutData = new ArrayList<>();
+  private List<Bitmap> bitmapData = new ArrayList<>();
+  private OnItemClickListener onItemClickListener;
 
   @Override public PuzzleViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
     View itemView =
@@ -30,73 +28,64 @@ public class PuzzleAdapter extends RecyclerView.Adapter<PuzzleAdapter.PuzzleView
   }
 
   @Override public void onBindViewHolder(PuzzleViewHolder holder, int position) {
-    final PuzzleLayout puzzleLayout = mLayoutData.get(position);
+    final PuzzleLayout puzzleLayout = layoutData.get(position);
 
-    holder.mPuzzleView.setNeedDrawLine(mNeedDrawBorder);
-    holder.mPuzzleView.setNeedDrawOuterLine(mNeedDrawOuterBorder);
-    holder.mPuzzleView.setTouchEnable(false);
+    holder.puzzleView.setNeedDrawLine(true);
+    holder.puzzleView.setNeedDrawOuterLine(true);
+    holder.puzzleView.setTouchEnable(false);
 
-    holder.mPuzzleView.setPuzzleLayout(puzzleLayout);
+
+    holder.puzzleView.setPuzzleLayout(puzzleLayout);
 
     holder.itemView.setOnClickListener(new View.OnClickListener() {
       @Override public void onClick(View v) {
-        if (mOnItemClickListener != null) {
-          mOnItemClickListener.onItemClick(puzzleLayout, ((NumberPieceLayout) puzzleLayout).getTheme());
+        if (onItemClickListener != null) {
+          int theme = 0;
+          if (puzzleLayout instanceof NumberSlantLayout){
+            theme = ((NumberSlantLayout) puzzleLayout).getTheme();
+          }else if (puzzleLayout instanceof NumberStraightLayout){
+            theme = ((NumberStraightLayout) puzzleLayout).getTheme();
+          }
+          onItemClickListener.onItemClick(puzzleLayout, theme);
         }
       }
     });
 
-    if (mBitmapData == null) return;
+    if (bitmapData == null) return;
 
-    final int bitmapSize = mBitmapData.size();
+    final int bitmapSize = bitmapData.size();
 
     if (puzzleLayout.getAreaCount() > bitmapSize) {
       for (int i = 0; i < puzzleLayout.getAreaCount(); i++) {
-        holder.mPuzzleView.addPiece(mBitmapData.get(i % bitmapSize));
+        holder.puzzleView.addPiece(bitmapData.get(i % bitmapSize));
       }
     } else {
-      holder.mPuzzleView.addPieces(mBitmapData);
+      holder.puzzleView.addPieces(bitmapData);
     }
   }
 
   @Override public int getItemCount() {
-    return mLayoutData == null ? 0 : mLayoutData.size();
+    return layoutData == null ? 0 : layoutData.size();
   }
 
   public void refreshData(List<PuzzleLayout> layoutData, List<Bitmap> bitmapData) {
-    mLayoutData = layoutData;
-    mBitmapData = bitmapData;
+    this.layoutData = layoutData;
+    this.bitmapData = bitmapData;
 
     notifyDataSetChanged();
   }
 
   public void setOnItemClickListener(OnItemClickListener onItemClickListener) {
-    mOnItemClickListener = onItemClickListener;
-  }
-
-  public boolean isNeedDrawBorder() {
-    return mNeedDrawBorder;
-  }
-
-  public void setNeedDrawBorder(boolean needDrawBorder) {
-    mNeedDrawBorder = needDrawBorder;
-  }
-
-  public boolean isNeedDrawOuterBorder() {
-    return mNeedDrawOuterBorder;
-  }
-
-  public void setNeedDrawOuterBorder(boolean needDrawOuterBorder) {
-    mNeedDrawOuterBorder = needDrawOuterBorder;
+    this.onItemClickListener = onItemClickListener;
   }
 
   public static class PuzzleViewHolder extends RecyclerView.ViewHolder {
 
-    SquarePuzzleView mPuzzleView;
+    SquarePuzzleView puzzleView;
 
     public PuzzleViewHolder(View itemView) {
       super(itemView);
-      mPuzzleView = (SquarePuzzleView) itemView.findViewById(R.id.puzzle);
+      puzzleView = (SquarePuzzleView) itemView.findViewById(R.id.puzzle);
     }
   }
 
