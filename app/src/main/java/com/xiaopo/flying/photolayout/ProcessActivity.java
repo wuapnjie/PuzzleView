@@ -12,11 +12,13 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 import com.squareup.picasso.Picasso;
 import com.squareup.picasso.Target;
 import com.xiaopo.flying.poiphoto.Define;
 import com.xiaopo.flying.poiphoto.PhotoPicker;
 import com.xiaopo.flying.puzzle.PuzzleLayout;
+import com.xiaopo.flying.puzzle.PuzzlePiece;
 import com.xiaopo.flying.puzzle.PuzzleView;
 import java.io.File;
 import java.util.ArrayList;
@@ -173,11 +175,12 @@ public class ProcessActivity extends AppCompatActivity implements View.OnClickLi
     puzzleView.setSelectedLineColor(Color.parseColor("#99BBFB"));
     puzzleView.setHandleBarColor(Color.parseColor("#99BBFB"));
     puzzleView.setAnimateDuration(300);
-    //puzzleView.setOnPieceSelectedListener(new BeePuzzleView.OnPieceSelectedListener() {
-    //  @Override public void onPieceSelected(BeePuzzlePiece piece) {
-    //    Toast.makeText(ProcessActivity.this, "Piece selected", Toast.LENGTH_SHORT).show();
-    //  }
-    //});
+    puzzleView.setOnPieceSelectedListener(new PuzzleView.OnPieceSelectedListener() {
+      @Override public void onPieceSelected(PuzzlePiece piece, int position) {
+        Toast.makeText(ProcessActivity.this, "Piece " + position + " selected",
+            Toast.LENGTH_SHORT).show();
+      }
+    });
     //puzzleView.setDefaultPiecePadding(30);
     //puzzleView.setPadding(30, 30, 30, 30);
 

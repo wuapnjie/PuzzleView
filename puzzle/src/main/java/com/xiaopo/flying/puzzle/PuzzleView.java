@@ -61,6 +61,8 @@ public class PuzzleView extends View {
   private int selectedLineColor = Color.parseColor("#99BBFB");
   private int handleBarColor = selectedLineColor;
 
+  private OnPieceSelectedListener onPieceSelectedListener;
+
   private Runnable switchToSwapAction = new Runnable() {
     @Override public void run() {
       currentMode = ActionMode.SWAP;
@@ -342,6 +344,12 @@ public class PuzzleView extends View {
         }
 
         previousHandlingPiece = handlingPiece;
+
+        // trigger listener
+        if (previousHandlingPiece != null && onPieceSelectedListener != null) {
+          onPieceSelectedListener.onPieceSelected(previousHandlingPiece,
+              puzzlePieces.indexOf(previousHandlingPiece));
+        }
         break;
       case ZOOM:
         if (handlingPiece != null && !handlingPiece.isFilledArea()) {
@@ -351,7 +359,6 @@ public class PuzzleView extends View {
             handlingPiece.fillArea(this, false);
           }
         }
-
         previousHandlingPiece = handlingPiece;
         break;
       case MOVE:
@@ -380,14 +387,18 @@ public class PuzzleView extends View {
   private void moveLine(Line line, MotionEvent event) {
     if (line == null || event == null) return;
 
+    boolean needUpdate = true;
     if (line.direction() == Line.Direction.HORIZONTAL) {
-      line.move(event.getY() - downY, 80);
+      needUpdate = line.move(event.getY() - downY, 80);
     } else {
-      line.move(event.getX() - downX, 80);
+      needUpdate = line.move(event.getX() - downX, 80);
     }
 
     puzzleLayout.update();
-    updatePiecesInArea(line, event);
+
+    if (needUpdate) {
+      updatePiecesInArea(line, event);
+    }
   }
 
   // TODO simplify
@@ -691,5 +702,13 @@ public class PuzzleView extends View {
     replacePiece = null;
     previousHandlingPiece = null;
     needChangePieces.clear();
+  }
+
+  public void setOnPieceSelectedListener(OnPieceSelectedListener onPieceSelectedListener) {
+    this.onPieceSelectedListener = onPieceSelectedListener;
+  }
+
+  public interface OnPieceSelectedListener {
+    void onPieceSelected(PuzzlePiece piece, int position);
   }
 }

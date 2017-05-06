@@ -279,7 +279,6 @@ public class PuzzlePiece {
     }
 
     animateTranslate(view, offsetX, offsetY);
-
   }
 
 

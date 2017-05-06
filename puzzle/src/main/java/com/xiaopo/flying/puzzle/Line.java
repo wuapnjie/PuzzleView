@@ -37,7 +37,7 @@ public interface Line {
 
   void prepareMove();
 
-  void move(float offset, float extra);
+  boolean move(float offset, float extra);
 
   void update(float layoutWidth ,float layoutHeight);
 

@@ -12,11 +12,14 @@ import android.util.Log;
 import android.view.Gravity;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Toast;
 import com.squareup.picasso.Picasso;
 import com.squareup.picasso.Target;
 import com.xiaopo.flying.photolayout.PlaygroundActivity;
 import com.xiaopo.flying.photolayout.R;
 import com.xiaopo.flying.puzzle.PuzzleLayout;
+import com.xiaopo.flying.puzzle.PuzzlePiece;
+import com.xiaopo.flying.puzzle.PuzzleView;
 import com.xiaopo.flying.puzzle.SquarePuzzleView;
 import java.util.ArrayList;
 import java.util.List;
@@ -44,6 +47,12 @@ public class SlantLineActivity extends AppCompatActivity {
     puzzleView.setNeedDrawLine(true);
     puzzleView.setNeedDrawOuterLine(true);
     puzzleView.setAnimateDuration(300);
+    puzzleView.setOnPieceSelectedListener(new PuzzleView.OnPieceSelectedListener() {
+      @Override public void onPieceSelected(PuzzlePiece piece, int position) {
+        Toast.makeText(SlantLineActivity.this, "Piece " + position + " selected",
+            Toast.LENGTH_SHORT).show();
+      }
+    });
 
     btnMore = findViewById(R.id.btn_more);
     btnMore.setOnClickListener(new View.OnClickListener() {
@@ -68,8 +77,8 @@ public class SlantLineActivity extends AppCompatActivity {
         R.drawable.demo6, R.drawable.demo7, R.drawable.demo8, R.drawable.demo9,
     };
 
-    final int count = resIds.length > puzzleLayout.getAreaCount() ? puzzleLayout.getAreaCount()
-        : resIds.length;
+    final int count =
+        resIds.length > puzzleLayout.getAreaCount() ? puzzleLayout.getAreaCount() : resIds.length;
 
     for (int i = 0; i < count; i++) {
       final Target target = new Target() {

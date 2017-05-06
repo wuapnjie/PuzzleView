@@ -93,13 +93,13 @@ public class SlantLine implements Line {
     return SlantUtils.contains(this, x, y, extra);
   }
 
-  @Override public void move(float offset, float extra) {
+  @Override public boolean move(float offset, float extra) {
     if (direction == Line.Direction.HORIZONTAL) {
       if (previousStart.y + offset < lowerLine.maxY() + extra
           || previousStart.y + offset > upperLine.minY() - extra
           || previousEnd.y + offset < lowerLine.maxY() + extra
           || previousEnd.y + offset > upperLine.minY() - extra) {
-        return;
+        return false;
       }
 
       start.y = previousStart.y + offset;
@@ -109,12 +109,14 @@ public class SlantLine implements Line {
           || previousStart.x + offset > upperLine.minX() - extra
           || previousEnd.x + offset < lowerLine.maxX() + extra
           || previousEnd.x + offset > upperLine.minX() - extra) {
-        return;
+        return false;
       }
 
       start.x = previousStart.x + offset;
       end.x = previousEnd.x + offset;
     }
+
+    return true;
   }
 
   @Override public void prepareMove() {
