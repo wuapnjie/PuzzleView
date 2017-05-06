@@ -3,7 +3,6 @@ package com.xiaopo.flying.puzzle.slant;
 import android.graphics.PointF;
 import com.xiaopo.flying.puzzle.Line;
 
-import static com.xiaopo.flying.puzzle.slant.SlantUtils.crossProduct;
 import static com.xiaopo.flying.puzzle.slant.SlantUtils.intersectionOfLines;
 import static java.lang.Math.max;
 import static java.lang.Math.min;
@@ -91,38 +90,10 @@ public class SlantLine implements Line {
   }
 
   public boolean contains(float x, float y, float extra) {
-    PointF A, B, C, D;
-    if (direction == Line.Direction.VERTICAL) {
-      A = new PointF(start.x - extra, start.y);
-      B = new PointF(start.x + extra, start.y);
-      C = new PointF(end.x + extra, end.y);
-      D = new PointF(end.x - extra, end.y);
-    } else {
-      A = new PointF(start.x, start.y - extra);
-      B = new PointF(end.x, end.y - extra);
-      C = new PointF(end.x, end.y + extra);
-      D = new PointF(start.x, start.y + extra);
-    }
-
-    PointF AB = new PointF(B.x - A.x, B.y - A.y);
-    PointF AM = new PointF(x - A.x, y - A.y);
-
-    PointF BC = new PointF(C.x - B.x, C.y - B.y);
-    PointF BM = new PointF(x - B.x, y - B.y);
-
-    PointF CD = new PointF(D.x - C.x, D.y - C.y);
-    PointF CM = new PointF(x - C.x, y - C.y);
-
-    PointF DA = new PointF(A.x - D.x, A.y - D.y);
-    PointF DM = new PointF(x - D.x, y - D.y);
-
-    return crossProduct(AB, AM) > 0
-        && crossProduct(BC, BM) > 0
-        && crossProduct(CD, CM) > 0
-        && crossProduct(DA, DM) > 0;
+    return SlantUtils.contains(this, x, y, extra);
   }
 
-  public void move(float offset, float extra) {
+  @Override public void move(float offset, float extra) {
     if (direction == Line.Direction.HORIZONTAL) {
       if (previousStart.y + offset < lowerLine.maxY() + extra
           || previousStart.y + offset > upperLine.minY() - extra
@@ -146,15 +117,22 @@ public class SlantLine implements Line {
     }
   }
 
-  public void prepareMove() {
+  @Override public void prepareMove() {
     previousStart.set(start);
     previousEnd.set(end);
   }
 
-  // TODO 需要判断点是否超出总范围
-  public void update() {
+  @Override public void update(float layoutWidth, float layoutHeight) {
     intersectionOfLines(start, this, attachLineStart);
+    start.x = max(start.x, 0);
+    start.x = min(start.x, layoutWidth);
+    start.y = max(start.y, 0);
+    start.y = min(start.y, layoutHeight);
     intersectionOfLines(end, this, attachLineEnd);
+    end.x = max(end.x, 0);
+    end.x = min(end.x, layoutWidth);
+    end.y = max(end.y, 0);
+    end.y = min(end.y, layoutHeight);
   }
 
   @Override public float minX() {

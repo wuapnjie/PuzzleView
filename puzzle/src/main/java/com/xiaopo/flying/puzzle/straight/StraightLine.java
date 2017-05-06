@@ -146,7 +146,7 @@ public class StraightLine implements Line {
     }
   }
 
-  @Override public void update() {
+  @Override public void update(float layoutWidth, float layoutHeight) {
     if (direction == Line.Direction.HORIZONTAL) {
       if (attachLineStart != null) {
         start.x = attachLineStart.getPosition();

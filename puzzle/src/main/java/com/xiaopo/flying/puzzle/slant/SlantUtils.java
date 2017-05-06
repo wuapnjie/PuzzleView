@@ -10,6 +10,10 @@ import java.util.List;
  */
 
 public class SlantUtils {
+  private static final PointF A = new PointF();
+  private static final PointF B = new PointF();
+  private static final PointF C = new PointF();
+  private static final PointF D = new PointF();
   private static final PointF AB = new PointF();
   private static final PointF AM = new PointF();
   private static final PointF BC = new PointF();
@@ -116,6 +120,14 @@ public class SlantUtils {
     return a.x * b.y - b.x * a.y;
   }
 
+  /**
+   * 判断一个斜线区域是否包含(x,y)点
+   *
+   * @param area 斜线区域
+   * @param x x
+   * @param y y
+   * @return 是否包含
+   */
   public static boolean contains(SlantArea area, float x, float y) {
     AB.x = area.rightTop.x - area.leftTop.x;
     AB.y = area.rightTop.y - area.leftTop.y;
@@ -147,12 +159,65 @@ public class SlantUtils {
         && crossProduct(DA, DM) > 0;
   }
 
+  public static boolean contains(SlantLine line, float x, float y, float extra) {
+    PointF start = line.start;
+    PointF end = line.end;
+    if (line.direction == Line.Direction.VERTICAL) {
+      A.x = start.x - extra;
+      A.y = start.y;
+      B.x = start.x + extra;
+      B.y = start.y;
+      C.x = end.x + extra;
+      C.y = end.y;
+      D.x = end.x - extra;
+      D.y = end.y;
+    } else {
+      A.x = start.x;
+      A.y = start.y - extra;
+      B.x = end.x;
+      B.y = end.y + extra;
+      C.x = end.x;
+      C.y = end.y + extra;
+      D.x = start.x;
+      D.y = start.y + extra;
+    }
+
+    AB.x = B.x - A.x;
+    AB.y = B.y - A.y;
+
+    AM.x = x - A.x;
+    AM.y = y - A.y;
+
+    BC.x = C.x - B.x;
+    BC.y = C.y - B.y;
+
+    BM.x = x - B.x;
+    BM.y = y - B.y;
+
+    CD.x = D.x - C.x;
+    CD.y = D.y - C.y;
+
+    CM.x = x - C.x;
+    CM.y = y - C.y;
+
+    DA.x = A.x - D.x;
+    DA.y = A.y - D.y;
+
+    DM.x = x - D.x;
+    DM.y = y - D.y;
+
+    return crossProduct(AB, AM) > 0
+        && crossProduct(BC, BM) > 0
+        && crossProduct(CD, CM) > 0
+        && crossProduct(DA, DM) > 0;
+  }
+
   /**
    * 计算两线的交点
    *
+   * @param dst 计算出的交点
    * @param lineOne 线一
    * @param lineTwo 线二
-   * @return 两条线的交点, 如果两线平行，则返回（0，0）
    */
   public static void intersectionOfLines(final PointF dst, final SlantLine lineOne,
       final SlantLine lineTwo) {

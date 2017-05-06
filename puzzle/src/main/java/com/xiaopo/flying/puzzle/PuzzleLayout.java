@@ -25,4 +25,8 @@ public interface PuzzleLayout {
   void reset();
 
   Area getArea(int position);
+
+  float width();
+
+  float height();
 }

@@ -77,8 +77,16 @@ public abstract class StraightPuzzleLayout implements PuzzleLayout {
 
   @Override public void update() {
     for (Line line : lines) {
-      line.update();
+      line.update(width(), height());
     }
+  }
+
+  @Override public float width() {
+    return outerArea == null ? 0 : outerArea.width();
+  }
+
+  @Override public float height() {
+    return outerArea == null ? 0 : outerArea.height();
   }
 
   @Override public void reset() {

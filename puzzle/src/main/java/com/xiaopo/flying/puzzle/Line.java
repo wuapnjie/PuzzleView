@@ -39,7 +39,7 @@ public interface Line {
 
   void move(float offset, float extra);
 
-  void update();
+  void update(float layoutWidth ,float layoutHeight);
 
   float minX();
 
