@@ -202,6 +202,7 @@ public class PuzzlePiece {
 
   public void set(Matrix matrix) {
     this.matrix.set(matrix);
+    moveToFillArea(null);
   }
 
   public void postTranslate(float x, float y) {
@@ -280,9 +281,12 @@ public class PuzzlePiece {
       offsetY = area.bottom() - rectF.bottom;
     }
 
-    animateTranslate(view, offsetX, offsetY);
+    if (view == null) {
+      postTranslate(offsetX, offsetY);
+    } else {
+      animateTranslate(view, offsetX, offsetY);
+    }
   }
-
 
   public void fillArea(final View view, boolean quick) {
     if (isFilledArea()) return;

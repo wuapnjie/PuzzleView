@@ -627,9 +627,11 @@ public class PuzzleView extends View {
     final Area area = puzzleLayout.getArea(position);
     area.setPadding(piecePadding);
 
-    final Matrix matrix = MatrixUtils.generateMatrix(area, drawable, 0f);
+    PuzzlePiece piece = new PuzzlePiece(drawable, area, new Matrix());
 
-    PuzzlePiece piece = new PuzzlePiece(drawable, area, matrix);
+    final Matrix matrix = MatrixUtils.generateMatrix(area, drawable, 0f);
+    piece.set(matrix);
+
     piece.setAnimateDuration(duration);
 
     puzzlePieces.add(piece);
