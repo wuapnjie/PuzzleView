@@ -12,6 +12,7 @@ import java.util.List;
 
 import static com.xiaopo.flying.puzzle.slant.SlantUtils.createLine;
 import static com.xiaopo.flying.puzzle.slant.SlantUtils.cutArea;
+import static com.xiaopo.flying.puzzle.slant.SlantUtils.cutAreaCross;
 
 /**
  * 斜线布局，外围区域为一矩形
@@ -25,6 +26,7 @@ public abstract class SlantPuzzleLayout implements PuzzleLayout {
   private List<Line> outerLines = new ArrayList<>(4);
   private List<SlantArea> areas = new ArrayList<>();
   private List<Line> lines = new ArrayList<>();
+  private List<CrossoverPointF> crossoverPoints = new ArrayList<>();
 
   private Comparator<SlantArea> areaComparator = new SlantArea.AreaComparator();
 
@@ -134,11 +136,17 @@ public abstract class SlantPuzzleLayout implements PuzzleLayout {
     lines.clear();
     areas.clear();
     areas.add(outerArea);
+    crossoverPoints.clear();
   }
 
   @Override public void update() {
     for (Line line : lines) {
       line.update(width(), height());
+    }
+
+    // after line update
+    for (CrossoverPointF point : crossoverPoints) {
+      point.update();
     }
   }
 
@@ -190,6 +198,24 @@ public abstract class SlantPuzzleLayout implements PuzzleLayout {
     areas.addAll(increasedAreas);
 
     updateLineLimit();
+    sortAreas();
+
+    return increasedAreas;
+  }
+
+  protected List<SlantArea> addCross(int position, float startRadio1, float endRadio1,
+      float startRadio2, float endRadio2) {
+    SlantArea area = areas.get(position);
+    areas.remove(area);
+
+    SlantLine horizontal = createLine(area, Line.Direction.HORIZONTAL, startRadio1, endRadio1);
+    SlantLine vertical = createLine(area, Line.Direction.VERTICAL, startRadio2, endRadio2);
+    lines.add(horizontal);
+    lines.add(vertical);
+
+    List<SlantArea> increasedAreas = cutAreaCross(area, horizontal, vertical, crossoverPoints);
+
+    areas.addAll(increasedAreas);
     sortAreas();
 
     return increasedAreas;

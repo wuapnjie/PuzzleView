@@ -27,7 +27,7 @@ public class SlantUtils {
     //no instance
   }
 
-  public static List<SlantArea> cutArea(SlantArea area, SlantLine line) {
+  static List<SlantArea> cutArea(SlantArea area, SlantLine line) {
     List<SlantArea> areas = new ArrayList<>();
     SlantArea area1 = new SlantArea(area);
     SlantArea area2 = new SlantArea(area);
@@ -56,7 +56,7 @@ public class SlantUtils {
     return areas;
   }
 
-  public static SlantLine createLine(SlantArea area, Line.Direction direction, float startRadio,
+  static SlantLine createLine(SlantArea area, Line.Direction direction, float startRadio,
       float endRadio) {
     SlantLine line = new SlantLine(direction);
 
@@ -81,6 +81,53 @@ public class SlantUtils {
     }
 
     return line;
+  }
+
+  static List<SlantArea> cutAreaCross(final SlantArea area, final SlantLine horizontal,
+      final SlantLine vertical, final List<CrossoverPointF> crossoverPoints) {
+    List<SlantArea> list = new ArrayList<>();
+
+    CrossoverPointF crossoverPoint = new CrossoverPointF(horizontal, vertical);
+    intersectionOfLines(crossoverPoint, horizontal, vertical);
+    crossoverPoints.add(crossoverPoint);
+
+    SlantArea one = new SlantArea(area);
+    one.lineBottom = horizontal;
+    one.lineRight = vertical;
+
+    one.rightTop = vertical.start;
+    one.rightBottom = crossoverPoint;
+    one.leftBottom = horizontal.start;
+    list.add(one);
+
+    SlantArea two = new SlantArea(area);
+    two.lineBottom = horizontal;
+    two.lineLeft = vertical;
+
+    two.leftTop = vertical.start;
+    two.rightBottom = horizontal.end;
+    two.leftBottom = crossoverPoint;
+    list.add(two);
+
+    SlantArea three = new SlantArea(area);
+    three.lineTop = horizontal;
+    three.lineRight = vertical;
+
+    three.leftTop = horizontal.start;
+    three.rightTop = crossoverPoint;
+    three.rightBottom = vertical.end;
+    list.add(three);
+
+    SlantArea four = new SlantArea(area);
+    four.lineTop = horizontal;
+    four.lineLeft = vertical;
+
+    four.leftTop = crossoverPoint;
+    four.rightTop = horizontal.end;
+    four.leftBottom = vertical.end;
+    list.add(four);
+
+    return list;
   }
 
   public static PointF getPoint(final PointF start, final PointF end,
