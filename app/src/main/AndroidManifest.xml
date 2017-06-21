@@ -11,6 +11,17 @@
       android:label="@string/app_name"
       android:supportsRtl="true"
       android:theme="@style/AppTheme">
+
+    <provider
+        android:name="android.support.v4.content.FileProvider"
+        android:authorities="${applicationId}.provider"
+        android:exported="false"
+        android:grantUriPermissions="true">
+      <meta-data
+          android:name="android.support.FILE_PROVIDER_PATHS"
+          android:resource="@xml/provider_paths"/>
+    </provider>
+
     <activity android:name=".MainActivity">
       <intent-filter>
         <action android:name="android.intent.action.MAIN"/>
@@ -24,14 +35,6 @@
         android:theme="@style/AppTheme"/>
     <activity android:name=".PlaygroundActivity">
 
-    </activity>
-
-    <activity android:name=".slant.SlantLineActivity">
-      <!--<intent-filter>-->
-        <!--<action android:name="android.intent.action.MAIN"/>-->
-
-        <!--<category android:name="android.intent.category.LAUNCHER"/>-->
-      <!--</intent-filter>-->
     </activity>
   </application>
 

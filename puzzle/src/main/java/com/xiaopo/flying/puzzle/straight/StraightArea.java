@@ -94,7 +94,7 @@ public class StraightArea implements Area {
   }
 
   @Override public boolean contains(PointF point) {
-    return false;
+    return contains(point.x, point.y);
   }
 
   @Override public boolean contains(float x, float y) {

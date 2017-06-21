@@ -8,6 +8,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.support.v4.content.FileProvider;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.ImageView;
@@ -241,7 +242,9 @@ public class ProcessActivity extends AppCompatActivity implements View.OnClickLi
     FileUtils.savePuzzle(puzzleView, file, 100, new Callback() {
       @Override public void onSuccess() {
         Intent shareIntent = new Intent(Intent.ACTION_SEND);
-        Uri uri = Uri.fromFile(file);
+        //Uri uri = Uri.fromFile(file);
+        Uri uri = FileProvider.getUriForFile(ProcessActivity.this,
+            "com.xiaopo.flying.photolayout.fileprovider", file);
 
         if (uri != null) {
           shareIntent.putExtra(Intent.EXTRA_STREAM, uri);

@@ -130,6 +130,20 @@ public class SlantUtils {
     return list;
   }
 
+  static List<SlantArea> cutArea(final SlantArea area, final SlantLine l1, final SlantLine l2,
+      final SlantLine l3, final Line.Direction direction,
+      final List<CrossoverPointF> crossoverPoints) {
+    List<SlantArea> list = new ArrayList<>();
+
+    if (direction == Line.Direction.HORIZONTAL){
+
+    }else if (direction == Line.Direction.VERTICAL){
+
+    }
+
+    return list;
+  }
+
   public static PointF getPoint(final PointF start, final PointF end,
       final Line.Direction direction, float radio) {
     PointF point = new PointF();
