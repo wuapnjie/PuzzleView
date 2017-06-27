@@ -258,14 +258,17 @@ public abstract class StraightPuzzleLayout implements PuzzleLayout {
     float width = area.width();
     float height = area.height();
 
-    PointF one = new PointF(0, height / 3);
-    PointF two = new PointF(width / 3 * 2, 0);
-    PointF three = new PointF(width, height / 3 * 2);
-    PointF four = new PointF(width / 3, height);
-    PointF five = new PointF(width / 3, height / 3);
-    PointF six = new PointF(width / 3 * 2, height / 3);
-    PointF seven = new PointF(width / 3 * 2, height / 3 * 2);
-    PointF eight = new PointF(width / 3, height / 3 * 2);
+    float left = area.left();
+    float top = area.top();
+
+    PointF one = new PointF(left, top + height / 3);
+    PointF two = new PointF(left + width / 3 * 2, top);
+    PointF three = new PointF(left + width, top + height / 3 * 2);
+    PointF four = new PointF(left + width / 3, top + height);
+    PointF five = new PointF(left + width / 3, top + height / 3);
+    PointF six = new PointF(left + width / 3 * 2, top + height / 3);
+    PointF seven = new PointF(left + width / 3 * 2, top + height / 3 * 2);
+    PointF eight = new PointF(left + width / 3, top + height / 3 * 2);
 
     StraightLine l1 = new StraightLine(one, six);
     StraightLine l2 = new StraightLine(two, seven);
