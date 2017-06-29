@@ -18,46 +18,46 @@ public class FiveStraightLayout extends NumberStraightLayout {
   @Override public void layout() {
     switch (theme) {
       case 0:
-        cutBorderEqualPart(0, 5, Line.Direction.HORIZONTAL);
+        cutAreaEqualPart(0, 5, Line.Direction.HORIZONTAL);
         break;
       case 1:
-        cutBorderEqualPart(0, 5, Line.Direction.VERTICAL);
+        cutAreaEqualPart(0, 5, Line.Direction.VERTICAL);
         break;
       case 2:
         addLine(0, Line.Direction.HORIZONTAL, 2f / 5);
         addLine(0, Line.Direction.VERTICAL, 1f / 2);
-        cutBorderEqualPart(2, 3, Line.Direction.VERTICAL);
+        cutAreaEqualPart(2, 3, Line.Direction.VERTICAL);
         break;
       case 3:
         addLine(0, Line.Direction.HORIZONTAL, 3f / 5);
-        cutBorderEqualPart(0, 3, Line.Direction.VERTICAL);
+        cutAreaEqualPart(0, 3, Line.Direction.VERTICAL);
         addLine(3, Line.Direction.VERTICAL, 1f / 2);
         break;
       case 4:
         addLine(0, Line.Direction.VERTICAL, 2f / 5);
-        cutBorderEqualPart(0, 3, Line.Direction.HORIZONTAL);
+        cutAreaEqualPart(0, 3, Line.Direction.HORIZONTAL);
         addLine(1, Line.Direction.HORIZONTAL, 1f / 2);
         break;
       case 5:
         addLine(0, Line.Direction.VERTICAL, 2f / 5);
-        cutBorderEqualPart(1, 3, Line.Direction.HORIZONTAL);
+        cutAreaEqualPart(1, 3, Line.Direction.HORIZONTAL);
         addLine(0, Line.Direction.HORIZONTAL, 1f / 2);
         break;
       case 6:
         addLine(0, Line.Direction.HORIZONTAL, 3f / 4);
-        cutBorderEqualPart(1, 4, Line.Direction.VERTICAL);
+        cutAreaEqualPart(1, 4, Line.Direction.VERTICAL);
         break;
       case 7:
         addLine(0, Line.Direction.HORIZONTAL, 1f / 4);
-        cutBorderEqualPart(0, 4, Line.Direction.VERTICAL);
+        cutAreaEqualPart(0, 4, Line.Direction.VERTICAL);
         break;
       case 8:
         addLine(0, Line.Direction.VERTICAL, 3f / 4);
-        cutBorderEqualPart(1, 4, Line.Direction.HORIZONTAL);
+        cutAreaEqualPart(1, 4, Line.Direction.HORIZONTAL);
         break;
       case 9:
         addLine(0, Line.Direction.VERTICAL, 1f / 4);
-        cutBorderEqualPart(0, 4, Line.Direction.HORIZONTAL);
+        cutAreaEqualPart(0, 4, Line.Direction.HORIZONTAL);
         break;
       case 10:
         addLine(0, Line.Direction.HORIZONTAL, 1f / 4);
@@ -91,7 +91,7 @@ public class FiveStraightLayout extends NumberStraightLayout {
         cutSpiral(0);
         break;
       default:
-        cutBorderEqualPart(0, 5, Line.Direction.HORIZONTAL);
+        cutAreaEqualPart(0, 5, Line.Direction.HORIZONTAL);
         break;
     }
   }

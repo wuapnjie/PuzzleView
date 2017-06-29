@@ -3,6 +3,7 @@ package com.xiaopo.flying.puzzle.straight;
 import android.graphics.PointF;
 import android.graphics.RectF;
 import android.util.Log;
+import android.util.Pair;
 import com.xiaopo.flying.puzzle.Area;
 import com.xiaopo.flying.puzzle.Line;
 import com.xiaopo.flying.puzzle.PuzzleLayout;
@@ -122,7 +123,7 @@ public abstract class StraightPuzzleLayout implements PuzzleLayout {
     return increasedArea;
   }
 
-  protected void cutBorderEqualPart(int position, int part, Line.Direction direction) {
+  protected void cutAreaEqualPart(int position, int part, Line.Direction direction) {
     StraightArea temp = areas.get(position);
     for (int i = part; i > 1; i--) {
       temp = addLine(temp, direction, (float) (i - 1) / i).get(0);
@@ -150,98 +151,15 @@ public abstract class StraightPuzzleLayout implements PuzzleLayout {
     return newAreas;
   }
 
-  protected List<StraightArea> cutBorderEqualPart(int position, int hSize, int vSize) {
-    if ((hSize + 1) * (vSize + 1) > 9) {
-      Log.e(TAG, "cutBorderEqualPart: the size can not be so great");
-      return null;
-    }
-
+  protected List<StraightArea> cutAreaEqualPart(int position, int hSize, int vSize) {
     StraightArea area = areas.get(position);
     areas.remove(area);
-    List<StraightArea> newAreas = new ArrayList<>();
-    switch (hSize) {
-      case 1:
-        switch (vSize) {
-          case 1:
-            newAreas.addAll(addCross(position, 1f / 2));
-            break;
-          case 2:
-            StraightLine l1 = createLine(area, Line.Direction.VERTICAL, 1f / 3);
-            StraightLine l2 = createLine(area, Line.Direction.VERTICAL, 2f / 3);
-            StraightLine l3 = createLine(area, Line.Direction.HORIZONTAL, 1f / 2);
+    Pair<List<StraightLine>, List<StraightArea>> increased =
+        StraightUtils.cutArea(area, hSize, vSize);
+    List<StraightLine> newLines = increased.first;
+    List<StraightArea> newAreas = increased.second;
 
-            lines.add(l1);
-            lines.add(l2);
-            lines.add(l3);
-
-            newAreas.addAll(cutArea(area, l1, l2, l3, Line.Direction.VERTICAL));
-            break;
-
-          case 3:
-            StraightLine ll1 = createLine(area, Line.Direction.VERTICAL, 1f / 4);
-            StraightLine ll2 = createLine(area, Line.Direction.VERTICAL, 2f / 4);
-            StraightLine ll3 = createLine(area, Line.Direction.VERTICAL, 3f / 4);
-            StraightLine ll4 = createLine(area, Line.Direction.HORIZONTAL, 1f / 2);
-
-            lines.add(ll1);
-            lines.add(ll2);
-            lines.add(ll3);
-            lines.add(ll4);
-
-            newAreas.addAll(cutArea(area, ll1, ll2, ll3, ll4, Line.Direction.VERTICAL));
-
-            break;
-        }
-        break;
-
-      case 2:
-        switch (vSize) {
-          case 1:
-            StraightLine l1 = createLine(area, Line.Direction.HORIZONTAL, 1f / 3);
-            StraightLine l2 = createLine(area, Line.Direction.HORIZONTAL, 2f / 3);
-            StraightLine l3 = createLine(area, Line.Direction.VERTICAL, 1f / 2);
-
-            lines.add(l1);
-            lines.add(l2);
-            lines.add(l3);
-
-            newAreas.addAll(cutArea(area, l1, l2, l3, Line.Direction.HORIZONTAL));
-
-            break;
-          case 2:
-            StraightLine ll1 = createLine(area, Line.Direction.HORIZONTAL, 1f / 3);
-            StraightLine ll2 = createLine(area, Line.Direction.HORIZONTAL, 2f / 3);
-            StraightLine ll3 = createLine(area, Line.Direction.VERTICAL, 1f / 3);
-            StraightLine ll4 = createLine(area, Line.Direction.VERTICAL, 2f / 3);
-
-            lines.add(ll1);
-            lines.add(ll2);
-            lines.add(ll3);
-            lines.add(ll4);
-
-            newAreas.addAll(cutArea(area, ll1, ll2, ll3, ll4));
-            break;
-        }
-        break;
-
-      case 3:
-        switch (vSize) {
-          case 1:
-            StraightLine ll1 = createLine(area, Line.Direction.HORIZONTAL, 1f / 4);
-            StraightLine ll2 = createLine(area, Line.Direction.HORIZONTAL, 2f / 4);
-            StraightLine ll3 = createLine(area, Line.Direction.HORIZONTAL, 3f / 4);
-            StraightLine ll4 = createLine(area, Line.Direction.VERTICAL, 1f / 2);
-
-            lines.add(ll1);
-            lines.add(ll2);
-            lines.add(ll3);
-            lines.add(ll4);
-
-            newAreas.addAll(cutArea(area, ll1, ll2, ll3, ll4, Line.Direction.HORIZONTAL));
-            break;
-        }
-    }
-
+    lines.addAll(newLines);
     areas.addAll(newAreas);
 
     updateLineLimit();

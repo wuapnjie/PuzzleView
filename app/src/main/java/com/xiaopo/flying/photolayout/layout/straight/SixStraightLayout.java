@@ -18,11 +18,11 @@ public class SixStraightLayout extends NumberStraightLayout {
   @Override public void layout() {
     switch (theme) {
       case 0:
-        cutBorderEqualPart(0, 2, 1);
+        cutAreaEqualPart(0, 2, 1);
         break;
 
       case 1:
-        cutBorderEqualPart(0, 1, 2);
+        cutAreaEqualPart(0, 1, 2);
         break;
       case 2:
         addCross(0, 2f / 3, 1f / 2);
@@ -46,7 +46,7 @@ public class SixStraightLayout extends NumberStraightLayout {
         break;
       case 6:
         addLine(0, Line.Direction.HORIZONTAL, 4f / 5);
-        cutBorderEqualPart(1, 5, Line.Direction.VERTICAL);
+        cutAreaEqualPart(1, 5, Line.Direction.VERTICAL);
         break;
       case 7:
         addLine(0, Line.Direction.HORIZONTAL, 1f / 4);

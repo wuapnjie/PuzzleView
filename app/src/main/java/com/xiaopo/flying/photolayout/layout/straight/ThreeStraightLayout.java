@@ -18,10 +18,10 @@ public class ThreeStraightLayout extends NumberStraightLayout {
   @Override public void layout() {
     switch (theme) {
       case 0:
-        cutBorderEqualPart(0, 3, Line.Direction.HORIZONTAL);
+        cutAreaEqualPart(0, 3, Line.Direction.HORIZONTAL);
         break;
       case 1:
-        cutBorderEqualPart(0, 3, Line.Direction.VERTICAL);
+        cutAreaEqualPart(0, 3, Line.Direction.VERTICAL);
         break;
       case 2:
         addLine(0, Line.Direction.HORIZONTAL, 1f / 2);
@@ -40,7 +40,7 @@ public class ThreeStraightLayout extends NumberStraightLayout {
         addLine(1, Line.Direction.HORIZONTAL, 1f / 2);
         break;
       default:
-        cutBorderEqualPart(0, 3, Line.Direction.HORIZONTAL);
+        cutAreaEqualPart(0, 3, Line.Direction.HORIZONTAL);
         break;
     }
   }

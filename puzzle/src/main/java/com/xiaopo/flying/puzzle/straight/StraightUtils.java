@@ -1,6 +1,7 @@
 package com.xiaopo.flying.puzzle.straight;
 
 import android.graphics.PointF;
+import android.util.Pair;
 import com.xiaopo.flying.puzzle.Line;
 import java.util.ArrayList;
 import java.util.List;
@@ -69,234 +70,60 @@ class StraightUtils {
     return list;
   }
 
-  static List<StraightArea> cutArea(final StraightArea area, final StraightLine l1,
-      final StraightLine l2, final StraightLine l3, Line.Direction direction) {
-    List<StraightArea> list = new ArrayList<>();
-    if (direction == Line.Direction.HORIZONTAL) {
-      StraightArea one = new StraightArea(area);
-      one.lineRight = l3;
-      one.lineBottom = l1;
-      list.add(one);
+  static Pair<List<StraightLine>, List<StraightArea>> cutArea(final StraightArea area,
+      final int horizontalSize, final int verticalSize) {
+    List<StraightArea> areaList = new ArrayList<>();
+    List<StraightLine> horizontalLines = new ArrayList<>(horizontalSize);
 
-      StraightArea two = new StraightArea(area);
-      two.lineLeft = l3;
-      two.lineBottom = l1;
-      list.add(two);
+    StraightArea restArea = new StraightArea(area);
+    for (int i = horizontalSize + 1; i > 1; i--) {
+      StraightLine horizontalLine =
+          createLine(restArea, Line.Direction.HORIZONTAL, (float) (i - 1) / i);
+      horizontalLines.add(horizontalLine);
+      restArea.lineBottom = horizontalLine;
+    }
+    List<StraightLine> verticalLines = new ArrayList<>();
 
-      StraightArea three = new StraightArea(area);
-      three.lineRight = l3;
-      three.lineTop = l1;
-      three.lineBottom = l2;
-      list.add(three);
+    restArea = new StraightArea(area);
+    for (int i = verticalSize + 1; i > 1; i--) {
+      StraightLine verticalLine =
+          createLine(restArea, Line.Direction.VERTICAL, (float) (i - 1) / i);
+      verticalLines.add(verticalLine);
+      StraightArea spiltArea = new StraightArea(restArea);
+      spiltArea.lineLeft = verticalLine;
 
-      StraightArea four = new StraightArea(area);
-      four.lineLeft = l3;
-      four.lineTop = l1;
-      four.lineBottom = l2;
-      list.add(four);
-
-      StraightArea five = new StraightArea(area);
-      five.lineRight = l3;
-      five.lineTop = l2;
-      list.add(five);
-
-      StraightArea six = new StraightArea(area);
-      six.lineLeft = l3;
-      six.lineTop = l2;
-      list.add(six);
-    } else if (direction == Line.Direction.VERTICAL) {
-
-      StraightArea one = new StraightArea(area);
-      one.lineRight = l1;
-      one.lineBottom = l3;
-      list.add(one);
-
-      StraightArea two = new StraightArea(area);
-      two.lineLeft = l1;
-      two.lineBottom = l3;
-      two.lineRight = l2;
-      list.add(two);
-
-      StraightArea three = new StraightArea(area);
-      three.lineLeft = l2;
-      three.lineBottom = l3;
-      list.add(three);
-
-      StraightArea four = new StraightArea(area);
-      four.lineRight = l1;
-      four.lineTop = l3;
-      list.add(four);
-
-      StraightArea five = new StraightArea(area);
-      five.lineLeft = l1;
-      five.lineRight = l2;
-      five.lineTop = l3;
-      list.add(five);
-
-      StraightArea six = new StraightArea(area);
-      six.lineLeft = l2;
-      six.lineTop = l3;
-      list.add(six);
+      for (int j = 0; j <= horizontalLines.size(); j++) {
+        StraightArea blockArea = new StraightArea(spiltArea);
+        if (j == 0) {
+          blockArea.lineTop = horizontalLines.get(j);
+        } else if (j == horizontalLines.size()) {
+          blockArea.lineBottom = horizontalLines.get(j - 1);
+        } else {
+          blockArea.lineTop = horizontalLines.get(j);
+          blockArea.lineBottom = horizontalLines.get(j - 1);
+        }
+        areaList.add(blockArea);
+      }
+      restArea.lineRight = verticalLine;
     }
 
-    return list;
-  }
-
-  static List<StraightArea> cutArea(final StraightArea area, final StraightLine l1,
-      final StraightLine l2, final StraightLine l3, final StraightLine l4,
-      Line.Direction direction) {
-    List<StraightArea> list = new ArrayList<>();
-    if (direction == Line.Direction.HORIZONTAL) {
-
-      StraightArea one = new StraightArea(area);
-      one.lineRight = l4;
-      one.lineBottom = l1;
-      list.add(one);
-
-      StraightArea two = new StraightArea(area);
-      two.lineLeft = l4;
-      two.lineBottom = l1;
-      list.add(two);
-
-      StraightArea three = new StraightArea(area);
-      three.lineRight = l4;
-      three.lineTop = l1;
-      three.lineBottom = l2;
-      list.add(three);
-
-      StraightArea four = new StraightArea(area);
-      four.lineLeft = l4;
-      four.lineTop = l1;
-      four.lineBottom = l2;
-      list.add(four);
-
-      StraightArea five = new StraightArea(area);
-      five.lineRight = l4;
-      five.lineTop = l2;
-      five.lineBottom = l3;
-      list.add(five);
-
-      StraightArea six = new StraightArea(area);
-      six.lineLeft = l4;
-      six.lineTop = l2;
-      six.lineBottom = l3;
-      list.add(six);
-
-      StraightArea seven = new StraightArea(area);
-      seven.lineRight = l4;
-      seven.lineTop = l3;
-      list.add(seven);
-
-      StraightArea eight = new StraightArea(area);
-      eight.lineLeft = l4;
-      eight.lineTop = l3;
-      list.add(eight);
-    } else if (direction == Line.Direction.VERTICAL) {
-
-      StraightArea one = new StraightArea(area);
-      one.lineRight = l1;
-      one.lineBottom = l4;
-      list.add(one);
-
-      StraightArea two = new StraightArea(area);
-      two.lineLeft = l1;
-      two.lineBottom = l4;
-      two.lineRight = l2;
-      list.add(two);
-
-      StraightArea three = new StraightArea(area);
-      three.lineLeft = l2;
-      three.lineRight = l3;
-      three.lineBottom = l4;
-      list.add(three);
-
-      StraightArea four = new StraightArea(area);
-      four.lineLeft = l3;
-      four.lineBottom = l4;
-      list.add(four);
-
-      StraightArea five = new StraightArea(area);
-      five.lineRight = l1;
-      five.lineTop = l4;
-      list.add(five);
-
-      StraightArea six = new StraightArea(area);
-      six.lineLeft = l1;
-      six.lineRight = l2;
-      six.lineTop = l4;
-      list.add(six);
-
-      StraightArea seven = new StraightArea(area);
-      seven.lineLeft = l2;
-      seven.lineRight = l3;
-      seven.lineTop = l4;
-      list.add(seven);
-
-      StraightArea eight = new StraightArea(area);
-      eight.lineLeft = l3;
-      eight.lineTop = l4;
-      list.add(eight);
+    for (int j = 0; j <= horizontalLines.size(); j++) {
+      StraightArea blockArea = new StraightArea(restArea);
+      if (j == 0) {
+        blockArea.lineTop = horizontalLines.get(j);
+      } else if (j == horizontalLines.size()) {
+        blockArea.lineBottom = horizontalLines.get(j - 1);
+      } else {
+        blockArea.lineTop = horizontalLines.get(j);
+        blockArea.lineBottom = horizontalLines.get(j - 1);
+      }
+      areaList.add(blockArea);
     }
 
-    return list;
-  }
-
-  static List<StraightArea> cutArea(final StraightArea area, final StraightLine l1,
-      final StraightLine l2, final StraightLine l3, final StraightLine l4) {
-    List<StraightArea> list = new ArrayList<>();
-
-    StraightArea one = new StraightArea(area);
-    one.lineRight = l3;
-    one.lineBottom = l1;
-    list.add(one);
-
-    StraightArea two = new StraightArea(area);
-    two.lineLeft = l3;
-    two.lineRight = l4;
-    two.lineBottom = l1;
-    list.add(two);
-
-    StraightArea three = new StraightArea(area);
-    three.lineLeft = l4;
-    three.lineBottom = l1;
-    list.add(three);
-
-    StraightArea four = new StraightArea(area);
-    four.lineRight = l3;
-    four.lineTop = l1;
-    four.lineBottom = l2;
-    list.add(four);
-
-    StraightArea five = new StraightArea(area);
-    five.lineRight = l4;
-    five.lineLeft = l3;
-    five.lineTop = l1;
-    five.lineBottom = l2;
-    list.add(five);
-
-    StraightArea six = new StraightArea(area);
-    six.lineLeft = l4;
-    six.lineTop = l1;
-    six.lineBottom = l2;
-    list.add(six);
-
-    StraightArea seven = new StraightArea(area);
-    seven.lineRight = l3;
-    seven.lineTop = l2;
-    list.add(seven);
-
-    StraightArea eight = new StraightArea(area);
-    eight.lineRight = l4;
-    eight.lineLeft = l3;
-    eight.lineTop = l2;
-    list.add(eight);
-
-    StraightArea nine = new StraightArea(area);
-    nine.lineLeft = l4;
-    nine.lineTop = l2;
-    list.add(nine);
-
-    return list;
+    List<StraightLine> lines = new ArrayList<>();
+    lines.addAll(horizontalLines);
+    lines.addAll(verticalLines);
+    return new Pair<>(lines, areaList);
   }
 
   static List<StraightArea> cutAreaCross(final StraightArea area, final StraightLine horizontal,
@@ -325,5 +152,4 @@ class StraightUtils {
 
     return list;
   }
-
 }

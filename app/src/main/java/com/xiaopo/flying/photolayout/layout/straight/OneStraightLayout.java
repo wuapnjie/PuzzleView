@@ -27,13 +27,13 @@ public class OneStraightLayout extends NumberStraightLayout {
         addCross(0, 1f / 2);
         break;
       case 3:
-        cutBorderEqualPart(0, 2, 1);
+        cutAreaEqualPart(0, 2, 1);
         break;
       case 4:
-        cutBorderEqualPart(0, 1, 2);
+        cutAreaEqualPart(0, 1, 2);
         break;
       case 5:
-        cutBorderEqualPart(0, 2, 2);
+        cutAreaEqualPart(0, 2, 2);
         break;
       default:
         addLine(0, Line.Direction.HORIZONTAL, 1f / 2);
