@@ -6,7 +6,6 @@ import java.util.List;
 /**
  * @author wupanjie
  */
-
 public interface PuzzleLayout {
   void setOuterBounds(RectF bounds);
 

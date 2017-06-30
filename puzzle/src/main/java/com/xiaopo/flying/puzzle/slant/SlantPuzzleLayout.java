@@ -19,7 +19,6 @@ import static com.xiaopo.flying.puzzle.slant.SlantUtils.cutAreaCross;
  *
  * @author wupanjie
  */
-
 public abstract class SlantPuzzleLayout implements PuzzleLayout {
   private SlantArea outerArea;
 

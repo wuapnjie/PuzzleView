@@ -16,7 +16,6 @@ import static java.lang.Math.sqrt;
  *
  * @author wupanjie
  */
-
 public class SlantLine implements Line {
   public PointF start;
   public PointF end;

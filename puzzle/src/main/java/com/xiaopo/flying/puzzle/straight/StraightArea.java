@@ -12,7 +12,6 @@ import java.util.List;
 /**
  * @author wupanjie
  */
-
 public class StraightArea implements Area {
   StraightLine lineLeft;
   StraightLine lineTop;

@@ -11,7 +11,6 @@ import static java.lang.Math.min;
 /**
  * @author wupanjie
  */
-
 public class StraightLine implements Line {
   public PointF start;
   public PointF end;

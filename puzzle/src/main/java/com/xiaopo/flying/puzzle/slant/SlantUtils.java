@@ -8,7 +8,6 @@ import java.util.List;
 /**
  * @author wupanjie
  */
-
 public class SlantUtils {
   private static final PointF A = new PointF();
   private static final PointF B = new PointF();

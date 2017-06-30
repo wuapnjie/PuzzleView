@@ -5,7 +5,6 @@ import android.graphics.PointF;
 /**
  * @author wupanjie
  */
-
 public interface Line {
   enum Direction {
     HORIZONTAL, VERTICAL

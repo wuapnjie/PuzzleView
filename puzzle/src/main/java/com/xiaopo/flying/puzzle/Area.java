@@ -8,7 +8,6 @@ import java.util.List;
 /**
  * @author wupanjie
  */
-
 public interface Area {
   float left();
 

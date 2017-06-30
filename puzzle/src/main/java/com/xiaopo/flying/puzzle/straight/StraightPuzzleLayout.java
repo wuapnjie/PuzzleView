@@ -19,7 +19,6 @@ import static com.xiaopo.flying.puzzle.straight.StraightUtils.cutAreaCross;
 /**
  * @author wupanjie
  */
-
 public abstract class StraightPuzzleLayout implements PuzzleLayout {
   private static final String TAG = "StraightPuzzleLayout";
   private StraightArea outerArea;

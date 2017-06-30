@@ -21,7 +21,6 @@ import java.util.List;
 /**
  * @author wupanjie
  */
-
 public class PuzzleView extends View {
   private static final String TAG = "SlantPuzzleView";
 

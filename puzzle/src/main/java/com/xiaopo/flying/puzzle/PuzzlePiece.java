@@ -17,7 +17,6 @@ import static com.xiaopo.flying.puzzle.MatrixUtils.judgeIsImageContainsBorder;
 /**
  * @author wupanjie
  */
-
 public class PuzzlePiece {
   private static final String TAG = "PuzzlePiece";
   private Drawable drawable;

@@ -12,7 +12,6 @@ import java.util.List;
 /**
  * @author wupanjie
  */
-
 public class SlantArea implements Area {
   SlantLine lineLeft;
   SlantLine lineTop;

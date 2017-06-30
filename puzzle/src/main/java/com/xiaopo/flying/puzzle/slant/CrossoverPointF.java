@@ -5,7 +5,6 @@ import android.graphics.PointF;
 /**
  * @author wupanjie
  */
-
 public class CrossoverPointF extends PointF {
   private final SlantLine horizontal;
   private final SlantLine vertical;
