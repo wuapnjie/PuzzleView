@@ -233,6 +233,8 @@ public abstract class SlantPuzzleLayout implements PuzzleLayout {
 
     lines.addAll(spilt.first);
     areas.addAll(spilt.second);
+
+    updateLineLimit();
     sortAreas();
 
     return spilt.second;

@@ -116,6 +116,16 @@ public class SlantUtils {
           blockArea.lineTop = horizontalLines.get(j);
         } else if (j == horizontalLines.size()) {
           blockArea.lineBottom = horizontalLines.get(j - 1);
+
+          CrossoverPointF leftBottom = new CrossoverPointF(blockArea.lineBottom, blockArea.lineLeft);
+          intersectionOfLines(leftBottom, blockArea.lineBottom, blockArea.lineLeft);
+          CrossoverPointF rightBottom =
+              new CrossoverPointF(blockArea.lineBottom, blockArea.lineRight);
+          intersectionOfLines(rightBottom, blockArea.lineBottom, blockArea.lineRight);
+          blockArea.leftBottom = leftBottom;
+          blockArea.rightBottom = rightBottom;
+          crossoverPoints.add(leftBottom);
+          crossoverPoints.add(rightBottom);
         } else {
           blockArea.lineTop = horizontalLines.get(j);
           blockArea.lineBottom = horizontalLines.get(j - 1);
@@ -141,10 +151,6 @@ public class SlantUtils {
         blockArea.lineTop = horizontalLines.get(j);
       } else if (j == horizontalLines.size()) {
         blockArea.lineBottom = horizontalLines.get(j - 1);
-      } else {
-        blockArea.lineTop = horizontalLines.get(j);
-        blockArea.lineBottom = horizontalLines.get(j - 1);
-
         CrossoverPointF leftBottom = new CrossoverPointF(blockArea.lineBottom, blockArea.lineLeft);
         intersectionOfLines(leftBottom, blockArea.lineBottom, blockArea.lineLeft);
         CrossoverPointF rightBottom =
@@ -154,6 +160,9 @@ public class SlantUtils {
         blockArea.rightBottom = rightBottom;
         crossoverPoints.add(leftBottom);
         crossoverPoints.add(rightBottom);
+      } else {
+        blockArea.lineTop = horizontalLines.get(j);
+        blockArea.lineBottom = horizontalLines.get(j - 1);
       }
       CrossoverPointF leftTop = new CrossoverPointF(blockArea.lineTop, blockArea.lineLeft);
       intersectionOfLines(leftTop, blockArea.lineTop, blockArea.lineLeft);
