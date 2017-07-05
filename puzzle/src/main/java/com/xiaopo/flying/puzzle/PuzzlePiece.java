@@ -18,7 +18,6 @@ import static com.xiaopo.flying.puzzle.MatrixUtils.judgeIsImageContainsBorder;
  * @author wupanjie
  */
 public class PuzzlePiece {
-  private static final String TAG = "PuzzlePiece";
   private Drawable drawable;
   private Matrix matrix;
   private Matrix previousMatrix;
@@ -38,7 +37,7 @@ public class PuzzlePiece {
   private int duration = 300;
   private Matrix tempMatrix;
 
-  public PuzzlePiece(Drawable drawable, Area area, Matrix matrix) {
+  PuzzlePiece(Drawable drawable, Area area, Matrix matrix) {
     this.drawable = drawable;
     this.area = area;
     this.matrix = matrix;
@@ -59,15 +58,15 @@ public class PuzzlePiece {
     this.tempMatrix = new Matrix();
   }
 
-  public void draw(Canvas canvas) {
+  void draw(Canvas canvas) {
     draw(canvas, 255, true);
   }
 
-  public void draw(Canvas canvas, int alpha) {
+  void draw(Canvas canvas, int alpha) {
     draw(canvas, alpha, false);
   }
 
-  public void draw(Canvas canvas, int alpha, boolean needClip) {
+  private void draw(Canvas canvas, int alpha, boolean needClip) {
     canvas.save();
 
     if (needClip) {
@@ -117,12 +116,12 @@ public class PuzzlePiece {
     return drawableBounds;
   }
 
-  public RectF getCurrentDrawableBounds() {
+  RectF getCurrentDrawableBounds() {
     matrix.mapRect(mappedBounds, new RectF(drawableBounds));
     return mappedBounds;
   }
 
-  public PointF getCurrentDrawableCenterPoint() {
+  private PointF getCurrentDrawableCenterPoint() {
     getCurrentDrawableBounds();
     mappedCenterPoint.x = mappedBounds.centerX();
     mappedCenterPoint.y = mappedBounds.centerY();
@@ -135,36 +134,36 @@ public class PuzzlePiece {
     return centerPoint;
   }
 
-  public float getMatrixScale() {
+  float getMatrixScale() {
     return MatrixUtils.getMatrixScale(matrix);
   }
 
-  public float getMatrixAngle() {
+  float getMatrixAngle() {
     return MatrixUtils.getMatrixAngle(matrix);
   }
 
-  public float[] getCurrentDrawablePoints() {
+  float[] getCurrentDrawablePoints() {
     matrix.mapPoints(mappedDrawablePoints, drawablePoints);
     return mappedDrawablePoints;
   }
 
-  public void setPreviousMoveX(float previousMoveX) {
+  void setPreviousMoveX(float previousMoveX) {
     this.previousMoveX = previousMoveX;
   }
 
-  public void setPreviousMoveY(float previousMoveY) {
+  void setPreviousMoveY(float previousMoveY) {
     this.previousMoveY = previousMoveY;
   }
 
-  public float getPreviousMoveX() {
+  float getPreviousMoveX() {
     return previousMoveX;
   }
 
-  public float getPreviousMoveY() {
+  float getPreviousMoveY() {
     return previousMoveY;
   }
 
-  public boolean isFilledArea() {
+  boolean isFilledArea() {
     RectF bounds = getCurrentDrawableBounds();
     return !(bounds.left > area.left()
         || bounds.top > area.top()
@@ -172,55 +171,54 @@ public class PuzzlePiece {
         || bounds.bottom < area.bottom());
   }
 
-  public boolean canFilledArea() {
+  boolean canFilledArea() {
     float scale = MatrixUtils.getMatrixScale(matrix);
     float minScale = MatrixUtils.getMinMatrixScale(this);
     return scale >= minScale;
   }
 
-  public void record() {
+  void record() {
     previousMatrix.set(matrix);
   }
 
-  public void translate(float offsetX, float offsetY) {
+  void translate(float offsetX, float offsetY) {
     matrix.set(previousMatrix);
     postTranslate(offsetX, offsetY);
   }
 
-  public void zoom(float scaleX, float scaleY, PointF midPoint) {
+  private void zoom(float scaleX, float scaleY, PointF midPoint) {
     matrix.set(previousMatrix);
     postScale(scaleX, scaleY, midPoint);
   }
 
-  public void zoomAndTranslate(float scaleX, float scaleY, PointF midPoint, float offsetX,
-      float offsetY) {
+  void zoomAndTranslate(float scaleX, float scaleY, PointF midPoint, float offsetX, float offsetY) {
     matrix.set(previousMatrix);
     postTranslate(offsetX, offsetY);
     postScale(scaleX, scaleY, midPoint);
   }
 
-  public void set(Matrix matrix) {
+  void set(Matrix matrix) {
     this.matrix.set(matrix);
     moveToFillArea(null);
   }
 
-  public void postTranslate(float x, float y) {
+  void postTranslate(float x, float y) {
     this.matrix.postTranslate(x, y);
   }
 
-  public void postScale(float scaleX, float scaleY, PointF midPoint) {
+  void postScale(float scaleX, float scaleY, PointF midPoint) {
     this.matrix.postScale(scaleX, scaleY, midPoint.x, midPoint.y);
   }
 
-  public void postFlipVertically() {
+  void postFlipVertically() {
     this.matrix.postScale(1, -1, area.centerX(), area.centerY());
   }
 
-  public void postFlipHorizontally() {
+  void postFlipHorizontally() {
     this.matrix.postScale(-1, 1, area.centerX(), area.centerY());
   }
 
-  public void postRotate(float degree) {
+  void postRotate(float degree) {
     this.matrix.postRotate(degree, area.centerX(), area.centerY());
 
     float minScale = getMinMatrixScale(this);
@@ -240,7 +238,7 @@ public class PuzzlePiece {
     }
   }
 
-  public void animateTranslate(final View view, final float translateX, final float translateY) {
+  private void animateTranslate(final View view, final float translateX, final float translateY) {
     animator.end();
     animator.removeAllUpdateListeners();
     animator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
@@ -256,7 +254,7 @@ public class PuzzlePiece {
     animator.start();
   }
 
-  public void moveToFillArea(final View view) {
+  void moveToFillArea(final View view) {
     if (isFilledArea()) return;
     record();
 
@@ -287,7 +285,7 @@ public class PuzzlePiece {
     }
   }
 
-  public void fillArea(final View view, boolean quick) {
+  void fillArea(final View view, boolean quick) {
     if (isFilledArea()) return;
     if (quick) {
       set(MatrixUtils.generateMatrix(this, 0f));
@@ -352,11 +350,11 @@ public class PuzzlePiece {
     this.area = area;
   }
 
-  public boolean isAnimateRunning() {
+  boolean isAnimateRunning() {
     return animator.isRunning();
   }
 
-  public void setAnimateDuration(int duration) {
+  void setAnimateDuration(int duration) {
     this.duration = duration;
   }
 }

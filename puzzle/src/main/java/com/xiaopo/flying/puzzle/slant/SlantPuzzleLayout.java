@@ -1,6 +1,5 @@
 package com.xiaopo.flying.puzzle.slant;
 
-import android.graphics.PointF;
 import android.graphics.RectF;
 import android.util.Pair;
 import com.xiaopo.flying.puzzle.Area;
@@ -26,25 +25,20 @@ public abstract class SlantPuzzleLayout implements PuzzleLayout {
   private List<Line> outerLines = new ArrayList<>(4);
   private List<SlantArea> areas = new ArrayList<>();
   private List<Line> lines = new ArrayList<>();
-  private List<CrossoverPointF> crossoverPoints = new ArrayList<>();
 
   private Comparator<SlantArea> areaComparator = new SlantArea.AreaComparator();
 
-  public SlantPuzzleLayout() {
+  protected SlantPuzzleLayout() {
 
-  }
-
-  public SlantPuzzleLayout(RectF outerRect) {
-    setOuterBounds(outerRect);
   }
 
   @Override public void setOuterBounds(RectF baseRect) {
     reset();
 
-    PointF leftTop = new PointF(baseRect.left, baseRect.top);
-    PointF rightTop = new PointF(baseRect.right, baseRect.top);
-    PointF leftBottom = new PointF(baseRect.left, baseRect.bottom);
-    PointF rightBottom = new PointF(baseRect.right, baseRect.bottom);
+    CrossoverPointF leftTop = new CrossoverPointF(baseRect.left, baseRect.top);
+    CrossoverPointF rightTop = new CrossoverPointF(baseRect.right, baseRect.top);
+    CrossoverPointF leftBottom = new CrossoverPointF(baseRect.left, baseRect.bottom);
+    CrossoverPointF rightBottom = new CrossoverPointF(baseRect.right, baseRect.bottom);
 
     SlantLine lineLeft = new SlantLine(leftTop, leftBottom, Line.Direction.VERTICAL);
     SlantLine lineTop = new SlantLine(leftTop, rightTop, Line.Direction.HORIZONTAL);
@@ -64,10 +58,7 @@ public abstract class SlantPuzzleLayout implements PuzzleLayout {
     outerArea.lineRight = lineRight;
     outerArea.lineBottom = lineBottom;
 
-    outerArea.leftTop = leftTop;
-    outerArea.leftBottom = leftBottom;
-    outerArea.rightTop = rightTop;
-    outerArea.rightBottom = rightBottom;
+    outerArea.updateCornerPoints();
 
     areas.clear();
     areas.add(outerArea);
@@ -139,7 +130,6 @@ public abstract class SlantPuzzleLayout implements PuzzleLayout {
     lines.clear();
     areas.clear();
     areas.add(outerArea);
-    crossoverPoints.clear();
   }
 
   @Override public void update() {
@@ -147,9 +137,8 @@ public abstract class SlantPuzzleLayout implements PuzzleLayout {
       lines.get(i).update(width(), height());
     }
 
-    // after line update
-    for (int i = 0; i < crossoverPoints.size(); i++) {
-      crossoverPoints.get(i).update();
+    for (int i = 0; i < areas.size(); i++) {
+      areas.get(i).updateCornerPoints();
     }
   }
 
@@ -216,7 +205,7 @@ public abstract class SlantPuzzleLayout implements PuzzleLayout {
     lines.add(horizontal);
     lines.add(vertical);
 
-    List<SlantArea> increasedAreas = cutAreaCross(area, horizontal, vertical, crossoverPoints);
+    List<SlantArea> increasedAreas = cutAreaCross(area, horizontal, vertical);
 
     areas.addAll(increasedAreas);
     sortAreas();
@@ -229,7 +218,7 @@ public abstract class SlantPuzzleLayout implements PuzzleLayout {
     areas.remove(area);
 
     Pair<List<SlantLine>, List<SlantArea>> spilt =
-        SlantUtils.cutAreaWith(area, horizontalSize, verticalSize, crossoverPoints);
+        SlantUtils.cutAreaWith(area, horizontalSize, verticalSize);
 
     lines.addAll(spilt.first);
     areas.addAll(spilt.second);

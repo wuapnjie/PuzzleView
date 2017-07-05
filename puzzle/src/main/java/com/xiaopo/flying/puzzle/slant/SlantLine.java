@@ -16,27 +16,27 @@ import static java.lang.Math.sqrt;
  *
  * @author wupanjie
  */
-public class SlantLine implements Line {
-  public PointF start;
-  public PointF end;
+class SlantLine implements Line {
+  CrossoverPointF start;
+  CrossoverPointF end;
 
   // 移动前的点
-  public PointF previousStart = new PointF();
-  public PointF previousEnd = new PointF();
+  private PointF previousStart = new PointF();
+  private PointF previousEnd = new PointF();
 
   public final Line.Direction direction;
 
-  public SlantLine attachLineStart;
-  public SlantLine attachLineEnd;
+  SlantLine attachLineStart;
+  SlantLine attachLineEnd;
 
-  public Line upperLine;
-  public Line lowerLine;
+  Line upperLine;
+  Line lowerLine;
 
-  public SlantLine(Line.Direction direction) {
+  SlantLine(Line.Direction direction) {
     this.direction = direction;
   }
 
-  public SlantLine(PointF start, PointF end, Line.Direction direction) {
+  SlantLine(CrossoverPointF start, CrossoverPointF end, Line.Direction direction) {
     this.start = start;
     this.end = end;
     this.direction = direction;

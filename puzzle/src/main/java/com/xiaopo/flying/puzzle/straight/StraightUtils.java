@@ -10,8 +10,6 @@ import java.util.List;
  * @author wupanjie
  */
 class StraightUtils {
-  private static final String TAG = "SquareAreaUtils";
-
   static StraightLine createLine(final StraightArea area, final Line.Direction direction,
       final float ratio) {
     PointF one = new PointF();

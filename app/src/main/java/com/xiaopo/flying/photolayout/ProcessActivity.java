@@ -176,7 +176,7 @@ public class ProcessActivity extends AppCompatActivity implements View.OnClickLi
     puzzleView.setNeedDrawLine(false);
     puzzleView.setNeedDrawOuterLine(false);
     puzzleView.setLineSize(4);
-    puzzleView.setLineColor(Color.WHITE);
+    puzzleView.setLineColor(Color.BLACK);
     puzzleView.setSelectedLineColor(Color.BLACK);
     puzzleView.setHandleBarColor(Color.BLACK);
     puzzleView.setAnimateDuration(300);

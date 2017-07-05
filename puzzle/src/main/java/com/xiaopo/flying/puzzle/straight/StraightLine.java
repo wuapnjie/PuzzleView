@@ -11,24 +11,24 @@ import static java.lang.Math.min;
 /**
  * @author wupanjie
  */
-public class StraightLine implements Line {
-  public PointF start;
-  public PointF end;
+class StraightLine implements Line {
+  private PointF start;
+  private PointF end;
 
-  public PointF previousStart = new PointF();
-  public PointF previousEnd = new PointF();
+  private PointF previousStart = new PointF();
+  private PointF previousEnd = new PointF();
 
   public Line.Direction direction = Direction.HORIZONTAL;
 
-  public StraightLine attachLineStart;
-  public StraightLine attachLineEnd;
+  StraightLine attachLineStart;
+  StraightLine attachLineEnd;
 
-  public Line upperLine;
-  public Line lowerLine;
+  private Line upperLine;
+  private Line lowerLine;
 
   private RectF bounds = new RectF();
 
-  public StraightLine(PointF start, PointF end) {
+  StraightLine(PointF start, PointF end) {
     this.start = start;
     this.end = end;
 
@@ -77,11 +77,11 @@ public class StraightLine implements Line {
     this.upperLine = upperLine;
   }
 
-  public void setAttachLineStart(StraightLine attachLineStart) {
+  void setAttachLineStart(StraightLine attachLineStart) {
     this.attachLineStart = attachLineStart;
   }
 
-  public void setAttachLineEnd(StraightLine attachLineEnd) {
+  void setAttachLineEnd(StraightLine attachLineEnd) {
     this.attachLineEnd = attachLineEnd;
   }
 

@@ -2,7 +2,6 @@ package com.xiaopo.flying.puzzle.straight;
 
 import android.graphics.PointF;
 import android.graphics.RectF;
-import android.util.Log;
 import android.util.Pair;
 import com.xiaopo.flying.puzzle.Area;
 import com.xiaopo.flying.puzzle.Line;
@@ -13,14 +12,12 @@ import java.util.Comparator;
 import java.util.List;
 
 import static com.xiaopo.flying.puzzle.straight.StraightUtils.createLine;
-import static com.xiaopo.flying.puzzle.straight.StraightUtils.cutArea;
 import static com.xiaopo.flying.puzzle.straight.StraightUtils.cutAreaCross;
 
 /**
  * @author wupanjie
  */
 public abstract class StraightPuzzleLayout implements PuzzleLayout {
-  private static final String TAG = "StraightPuzzleLayout";
   private StraightArea outerArea;
 
   private List<StraightArea> areas = new ArrayList<>();
@@ -29,12 +26,8 @@ public abstract class StraightPuzzleLayout implements PuzzleLayout {
 
   private Comparator<StraightArea> areaComparator = new StraightArea.AreaComparator();
 
-  public StraightPuzzleLayout() {
+  protected StraightPuzzleLayout() {
 
-  }
-
-  public StraightPuzzleLayout(RectF baseRect) {
-    setOuterBounds(baseRect);
   }
 
   @Override public void setOuterBounds(RectF bounds) {

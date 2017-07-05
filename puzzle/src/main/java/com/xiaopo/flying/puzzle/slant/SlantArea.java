@@ -9,19 +9,22 @@ import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
 
+import static com.xiaopo.flying.puzzle.slant.SlantUtils.getPoint;
+import static com.xiaopo.flying.puzzle.slant.SlantUtils.intersectionOfLines;
+
 /**
  * @author wupanjie
  */
-public class SlantArea implements Area {
+class SlantArea implements Area {
   SlantLine lineLeft;
   SlantLine lineTop;
   SlantLine lineRight;
   SlantLine lineBottom;
 
-  PointF leftTop;
-  PointF leftBottom;
-  PointF rightTop;
-  PointF rightBottom;
+  CrossoverPointF leftTop;
+  CrossoverPointF leftBottom;
+  CrossoverPointF rightTop;
+  CrossoverPointF rightBottom;
 
   private float paddingLeft;
   private float paddingTop;
@@ -32,12 +35,17 @@ public class SlantArea implements Area {
   private RectF areaRect = new RectF();
   private PointF[] handleBarPoints = new PointF[2];
 
-  public SlantArea() {
+  SlantArea() {
     handleBarPoints[0] = new PointF();
     handleBarPoints[1] = new PointF();
+
+    leftTop = new CrossoverPointF();
+    leftBottom = new CrossoverPointF();
+    rightTop = new CrossoverPointF();
+    rightBottom = new CrossoverPointF();
   }
 
-  public SlantArea(SlantArea src) {
+  SlantArea(SlantArea src) {
     this();
     this.lineLeft = src.lineLeft;
     this.lineTop = src.lineTop;
@@ -48,6 +56,8 @@ public class SlantArea implements Area {
     this.leftBottom = src.leftBottom;
     this.rightTop = src.rightTop;
     this.rightBottom = src.rightBottom;
+
+    updateCornerPoints();
   }
 
   @Override public float left() {
@@ -120,17 +130,17 @@ public class SlantArea implements Area {
 
   @Override public PointF[] getHandleBarPoints(Line line) {
     if (line == lineLeft) {
-      SlantUtils.getPoint(handleBarPoints[0], leftTop, leftBottom, line.direction(), 0.25f);
-      SlantUtils.getPoint(handleBarPoints[1], leftTop, leftBottom, line.direction(), 0.75f);
+      getPoint(handleBarPoints[0], leftTop, leftBottom, line.direction(), 0.25f);
+      getPoint(handleBarPoints[1], leftTop, leftBottom, line.direction(), 0.75f);
     } else if (line == lineTop) {
-      SlantUtils.getPoint(handleBarPoints[0], leftTop, rightTop, line.direction(), 0.25f);
-      SlantUtils.getPoint(handleBarPoints[1], leftTop, rightTop, line.direction(), 0.75f);
+      getPoint(handleBarPoints[0], leftTop, rightTop, line.direction(), 0.25f);
+      getPoint(handleBarPoints[1], leftTop, rightTop, line.direction(), 0.75f);
     } else if (line == lineRight) {
-      SlantUtils.getPoint(handleBarPoints[0], rightTop, rightBottom, line.direction(), 0.25f);
-      SlantUtils.getPoint(handleBarPoints[1], rightTop, rightBottom, line.direction(), 0.75f);
+      getPoint(handleBarPoints[0], rightTop, rightBottom, line.direction(), 0.25f);
+      getPoint(handleBarPoints[1], rightTop, rightBottom, line.direction(), 0.75f);
     } else if (line == lineBottom) {
-      SlantUtils.getPoint(handleBarPoints[0], leftBottom, rightBottom, line.direction(), 0.25f);
-      SlantUtils.getPoint(handleBarPoints[1], leftBottom, rightBottom, line.direction(), 0.75f);
+      getPoint(handleBarPoints[0], leftBottom, rightBottom, line.direction(), 0.25f);
+      getPoint(handleBarPoints[1], leftBottom, rightBottom, line.direction(), 0.75f);
     }
     return handleBarPoints;
   }
@@ -163,7 +173,14 @@ public class SlantArea implements Area {
     this.paddingBottom = paddingBottom;
   }
 
-  public static class AreaComparator implements Comparator<SlantArea> {
+  void updateCornerPoints() {
+    intersectionOfLines(leftTop, lineLeft, lineTop);
+    intersectionOfLines(leftBottom, lineLeft, lineBottom);
+    intersectionOfLines(rightTop, lineRight, lineTop);
+    intersectionOfLines(rightBottom, lineRight, lineBottom);
+  }
+
+  static class AreaComparator implements Comparator<SlantArea> {
 
     @Override public int compare(SlantArea one, SlantArea two) {
       if (one.leftTop.y < two.leftTop.y) {

@@ -12,7 +12,7 @@ import java.util.List;
 /**
  * @author wupanjie
  */
-public class StraightArea implements Area {
+class StraightArea implements Area {
   StraightLine lineLeft;
   StraightLine lineTop;
   StraightLine lineRight;
@@ -27,7 +27,7 @@ public class StraightArea implements Area {
   private float paddingRight;
   private float paddingBottom;
 
-  public StraightArea(RectF baseRect) {
+  StraightArea(RectF baseRect) {
     setBaseRect(baseRect);
 
     handleBarPoints[0] = new PointF();
@@ -46,7 +46,7 @@ public class StraightArea implements Area {
     lineBottom = new StraightLine(three, four);
   }
 
-  public StraightArea(StraightArea src) {
+  StraightArea(StraightArea src) {
     this.lineLeft = src.lineLeft;
     this.lineTop = src.lineTop;
     this.lineRight = src.lineRight;
@@ -177,7 +177,7 @@ public class StraightArea implements Area {
     this.paddingBottom = paddingBottom;
   }
 
-  public static class AreaComparator implements Comparator<StraightArea> {
+  static class AreaComparator implements Comparator<StraightArea> {
     @Override public int compare(StraightArea lhs, StraightArea rhs) {
       if (lhs.top() < rhs.top()) {
         return -1;
