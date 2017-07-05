@@ -11,176 +11,176 @@
     tools:showIn="@layout/activity_process"
     >
 
-    <com.xiaopo.flying.puzzle.SquarePuzzleView
-        android:background="@android:color/white"
-        android:id="@+id/puzzle_view"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        />
+  <com.xiaopo.flying.puzzle.SquarePuzzleView
+      android:background="@android:color/white"
+      android:id="@+id/puzzle_view"
+      android:layout_width="match_parent"
+      android:layout_height="match_parent"
+      />
 
-    <com.xiaopo.flying.photolayout.DegreeSeekBar
-        android:id="@+id/degree_seek_bar"
-        android:visibility="invisible"
-        tools:visibility="visible"
-        android:layout_width="match_parent"
-        android:layout_height="50dp"
-        android:layout_marginLeft="16dp"
-        android:layout_marginRight="16dp"
-        android:layout_marginTop="16dp"
-        />
+  <com.xiaopo.flying.photolayout.DegreeSeekBar
+      android:id="@+id/degree_seek_bar"
+      android:visibility="invisible"
+      tools:visibility="visible"
+      android:layout_width="match_parent"
+      android:layout_height="50dp"
+      android:layout_marginLeft="16dp"
+      android:layout_marginRight="16dp"
+      android:layout_marginTop="16dp"
+      />
 
-    <HorizontalScrollView
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_marginTop="8dp"
-        android:layout_weight="1"
-        android:scrollbars="none"
+  <HorizontalScrollView
+      android:layout_width="match_parent"
+      android:layout_height="0dp"
+      android:layout_marginTop="8dp"
+      android:layout_weight="1"
+      android:scrollbars="none"
+      >
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
         >
 
-        <LinearLayout
-            android:layout_width="wrap_content"
+      <LinearLayout
+          android:layout_width="wrap_content"
+          android:layout_height="match_parent"
+          android:gravity="center"
+          android:orientation="vertical"
+          android:padding="4dp"
+          >
+
+        <ImageView
+            android:id="@+id/btn_replace"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:scaleType="centerInside"
+            android:src="@drawable/ic_content_white_24dp"
+            />
+
+        <TextView
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:gravity="center_vertical"
-            android:orientation="horizontal"
-            >
+            android:gravity="center"
+            android:text="@string/prompt.replace"
+            android:textColor="@android:color/white"
+            />
 
-            <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:gravity="center"
-                android:orientation="vertical"
-                android:padding="4dp"
-                >
+      </LinearLayout>
 
-                <ImageView
-                    android:id="@+id/btn_replace"
-                    android:layout_width="50dp"
-                    android:layout_height="50dp"
-                    android:background="?attr/selectableItemBackgroundBorderless"
-                    android:scaleType="centerInside"
-                    android:src="@drawable/ic_content_white_24dp"
-                    />
+      <LinearLayout
+          android:layout_width="wrap_content"
+          android:layout_height="match_parent"
+          android:gravity="center"
+          android:orientation="vertical"
+          android:padding="4dp"
+          >
 
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:gravity="center"
-                    android:text="@string/prompt.replace"
-                    android:textColor="@android:color/white"
-                    />
+        <ImageView
+            android:id="@+id/btn_rotate"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
 
-            </LinearLayout>
+            android:scaleType="centerInside"
+            android:src="@drawable/ic_rotate_right_white_24dp"
+            />
 
-            <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:gravity="center"
-                android:orientation="vertical"
-                android:padding="4dp"
-                >
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:text="@string/prompt.rotate"
+            android:textColor="@android:color/white"
+            />
 
-                <ImageView
-                    android:id="@+id/btn_rotate"
-                    android:layout_width="50dp"
-                    android:layout_height="50dp"
-                    android:background="?attr/selectableItemBackgroundBorderless"
+      </LinearLayout>
 
-                    android:scaleType="centerInside"
-                    android:src="@drawable/ic_rotate_right_white_24dp"
-                    />
+      <LinearLayout
+          android:layout_width="wrap_content"
+          android:layout_height="match_parent"
+          android:gravity="center"
+          android:orientation="vertical"
+          android:padding="4dp"
+          >
 
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:gravity="center"
-                    android:text="@string/prompt.rotate"
-                    android:textColor="@android:color/white"
-                    />
+        <ImageView
+            android:id="@+id/btn_flip_horizontal"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:scaleType="centerInside"
+            android:src="@drawable/ic_flip_horizontal_white_24dp"
+            />
 
-            </LinearLayout>
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:text="@string/prompt.flip.horizontal"
+            android:textColor="@android:color/white"
+            />
 
-            <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:gravity="center"
-                android:orientation="vertical"
-                android:padding="4dp"
-                >
+      </LinearLayout>
 
-                <ImageView
-                    android:id="@+id/btn_flip_horizontal"
-                    android:layout_width="50dp"
-                    android:layout_height="50dp"
-                    android:background="?attr/selectableItemBackgroundBorderless"
-                    android:scaleType="centerInside"
-                    android:src="@drawable/ic_flip_horizontal_white_24dp"
-                    />
+      <LinearLayout
+          android:layout_width="wrap_content"
+          android:layout_height="match_parent"
+          android:gravity="center"
+          android:orientation="vertical"
+          android:padding="4dp"
+          >
 
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:gravity="center"
-                    android:text="@string/prompt.flip.horizontal"
-                    android:textColor="@android:color/white"
-                    />
+        <ImageView
+            android:id="@+id/btn_flip_vertical"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:scaleType="centerInside"
+            android:src="@drawable/ic_flip_vertical_white_24dp"
+            />
 
-            </LinearLayout>
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:text="@string/prompt.flip.vertical"
+            android:textColor="@android:color/white"
+            />
 
-            <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:gravity="center"
-                android:orientation="vertical"
-                android:padding="4dp"
-                >
+      </LinearLayout>
 
-                <ImageView
-                    android:id="@+id/btn_flip_vertical"
-                    android:layout_width="50dp"
-                    android:layout_height="50dp"
-                    android:background="?attr/selectableItemBackgroundBorderless"
-                    android:scaleType="centerInside"
-                    android:src="@drawable/ic_flip_vertical_white_24dp"
-                    />
+      <LinearLayout
+          android:layout_width="wrap_content"
+          android:layout_height="match_parent"
+          android:gravity="center"
+          android:orientation="vertical"
+          android:padding="4dp"
+          >
 
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:gravity="center"
-                    android:text="@string/prompt.flip.vertical"
-                    android:textColor="@android:color/white"
-                    />
+        <ImageView
+            android:id="@+id/btn_border"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
 
-            </LinearLayout>
+            android:scaleType="centerInside"
+            android:src="@drawable/ic_border_all_white_24dp"
+            />
 
-            <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:gravity="center"
-                android:orientation="vertical"
-                android:padding="4dp"
-                >
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:text="@string/prompt.border"
+            android:textColor="@android:color/white"
+            />
+      </LinearLayout>
+    </LinearLayout>
 
-                <ImageView
-                    android:id="@+id/btn_border"
-                    android:layout_width="50dp"
-                    android:layout_height="50dp"
-                    android:background="?attr/selectableItemBackgroundBorderless"
-
-                    android:scaleType="centerInside"
-                    android:src="@drawable/ic_border_all_white_24dp"
-                    />
-
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:gravity="center"
-                    android:text="@string/prompt.border"
-                    android:textColor="@android:color/white"
-                    />
-            </LinearLayout>
-        </LinearLayout>
-
-    </HorizontalScrollView>
+  </HorizontalScrollView>
 
 </LinearLayout>

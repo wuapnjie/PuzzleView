@@ -38,7 +38,7 @@ public interface Line {
 
   boolean move(float offset, float extra);
 
-  void update(float layoutWidth ,float layoutHeight);
+  void update(float layoutWidth, float layoutHeight);
 
   float minX();
 
@@ -48,5 +48,5 @@ public interface Line {
 
   float maxY();
 
-  void offset(float x,float y);
+  void offset(float x, float y);
 }

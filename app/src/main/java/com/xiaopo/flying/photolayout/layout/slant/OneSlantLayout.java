@@ -12,7 +12,7 @@ public class OneSlantLayout extends NumberSlantLayout {
   }
 
   @Override public int getThemeCount() {
-    return 3;
+    return 4;
   }
 
   @Override public void layout() {
@@ -25,6 +25,9 @@ public class OneSlantLayout extends NumberSlantLayout {
         break;
       case 2:
         addCross(0, 0.56f, 0.44f, 0.56f, 0.44f);
+        break;
+      case 3:
+        cutArea(0, 1, 2);
         break;
     }
   }

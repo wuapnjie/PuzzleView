@@ -16,7 +16,7 @@ public class SlantLayoutHelper {
     List<PuzzleLayout> puzzleLayouts = new ArrayList<>();
     switch (pieceCount) {
       case 1:
-        for (int i = 0; i < 3; i++) {
+        for (int i = 0; i < 4; i++) {
           puzzleLayouts.add(new OneSlantLayout(i));
         }
         break;

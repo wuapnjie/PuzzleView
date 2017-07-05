@@ -9,6 +9,7 @@ import static java.lang.Math.round;
 
 /**
  * some useful matrix operation methods
+ *
  * @author wupanjie
  */
 public class MatrixUtils {

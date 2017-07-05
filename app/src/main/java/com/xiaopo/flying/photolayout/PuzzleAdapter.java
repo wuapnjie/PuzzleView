@@ -34,16 +34,15 @@ public class PuzzleAdapter extends RecyclerView.Adapter<PuzzleAdapter.PuzzleView
     holder.puzzleView.setNeedDrawOuterLine(true);
     holder.puzzleView.setTouchEnable(false);
 
-
     holder.puzzleView.setPuzzleLayout(puzzleLayout);
 
     holder.itemView.setOnClickListener(new View.OnClickListener() {
       @Override public void onClick(View v) {
         if (onItemClickListener != null) {
           int theme = 0;
-          if (puzzleLayout instanceof NumberSlantLayout){
+          if (puzzleLayout instanceof NumberSlantLayout) {
             theme = ((NumberSlantLayout) puzzleLayout).getTheme();
-          }else if (puzzleLayout instanceof NumberStraightLayout){
+          } else if (puzzleLayout instanceof NumberStraightLayout) {
             theme = ((NumberStraightLayout) puzzleLayout).getTheme();
           }
           onItemClickListener.onItemClick(puzzleLayout, theme);

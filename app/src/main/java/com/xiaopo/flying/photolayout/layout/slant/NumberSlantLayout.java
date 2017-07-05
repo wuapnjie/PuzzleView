@@ -7,7 +7,7 @@ import com.xiaopo.flying.puzzle.slant.SlantPuzzleLayout;
  * @author wupanjie
  */
 
-public abstract class NumberSlantLayout extends SlantPuzzleLayout{
+public abstract class NumberSlantLayout extends SlantPuzzleLayout {
 
   static final String TAG = "NumberSlantLayout";
   protected int theme;

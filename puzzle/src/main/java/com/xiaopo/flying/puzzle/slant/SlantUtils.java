@@ -1,6 +1,7 @@
 package com.xiaopo.flying.puzzle.slant;
 
 import android.graphics.PointF;
+import android.util.Pair;
 import com.xiaopo.flying.puzzle.Line;
 import java.util.ArrayList;
 import java.util.List;
@@ -26,7 +27,7 @@ public class SlantUtils {
     //no instance
   }
 
-  static List<SlantArea> cutArea(SlantArea area, SlantLine line) {
+  static List<SlantArea> cutAreaWith(SlantArea area, SlantLine line) {
     List<SlantArea> areas = new ArrayList<>();
     SlantArea area1 = new SlantArea(area);
     SlantArea area2 = new SlantArea(area);
@@ -82,6 +83,95 @@ public class SlantUtils {
     return line;
   }
 
+  static Pair<List<SlantLine>, List<SlantArea>> cutAreaWith(final SlantArea area,
+      final int horizontalSize, final int verticalSize,
+      final List<CrossoverPointF> crossoverPoints) {
+    List<SlantArea> areaList = new ArrayList<>();
+    List<SlantLine> horizontalLines = new ArrayList<>(horizontalSize);
+
+    SlantArea restArea = new SlantArea(area);
+    for (int i = horizontalSize + 1; i > 1; i--) {
+      SlantLine horizontalLine =
+          createLine(restArea, Line.Direction.HORIZONTAL, (float) (i - 1) / i, (float) (i - 1) / i);
+      horizontalLines.add(horizontalLine);
+      restArea.lineBottom = horizontalLine;
+      restArea.leftBottom = horizontalLine.start;
+      restArea.rightBottom = horizontalLine.end;
+    }
+    List<SlantLine> verticalLines = new ArrayList<>();
+
+    restArea = new SlantArea(area);
+    for (int i = verticalSize + 1; i > 1; i--) {
+      SlantLine verticalLine =
+          createLine(restArea, Line.Direction.VERTICAL, (float) (i - 1) / i, (float) (i - 1) / i);
+      verticalLines.add(verticalLine);
+      SlantArea spiltArea = new SlantArea(restArea);
+      spiltArea.lineLeft = verticalLine;
+      spiltArea.leftTop = verticalLine.start;
+      spiltArea.leftBottom = verticalLine.end;
+
+      for (int j = 0; j <= horizontalLines.size(); j++) {
+        SlantArea blockArea = new SlantArea(spiltArea);
+        if (j == 0) {
+          blockArea.lineTop = horizontalLines.get(j);
+        } else if (j == horizontalLines.size()) {
+          blockArea.lineBottom = horizontalLines.get(j - 1);
+        } else {
+          blockArea.lineTop = horizontalLines.get(j);
+          blockArea.lineBottom = horizontalLines.get(j - 1);
+        }
+        CrossoverPointF leftTop = new CrossoverPointF(blockArea.lineTop, blockArea.lineLeft);
+        intersectionOfLines(leftTop, blockArea.lineTop, blockArea.lineLeft);
+        CrossoverPointF rightTop = new CrossoverPointF(blockArea.lineTop, blockArea.lineRight);
+        intersectionOfLines(rightTop, blockArea.lineTop, blockArea.lineRight);
+        blockArea.leftTop = leftTop;
+        blockArea.rightTop = rightTop;
+        crossoverPoints.add(leftTop);
+        crossoverPoints.add(rightTop);
+        areaList.add(blockArea);
+      }
+      restArea.lineRight = verticalLine;
+      restArea.rightTop = verticalLine.start;
+      restArea.rightBottom = verticalLine.end;
+    }
+
+    for (int j = 0; j <= horizontalLines.size(); j++) {
+      SlantArea blockArea = new SlantArea(restArea);
+      if (j == 0) {
+        blockArea.lineTop = horizontalLines.get(j);
+      } else if (j == horizontalLines.size()) {
+        blockArea.lineBottom = horizontalLines.get(j - 1);
+      } else {
+        blockArea.lineTop = horizontalLines.get(j);
+        blockArea.lineBottom = horizontalLines.get(j - 1);
+
+        CrossoverPointF leftBottom = new CrossoverPointF(blockArea.lineBottom, blockArea.lineLeft);
+        intersectionOfLines(leftBottom, blockArea.lineBottom, blockArea.lineLeft);
+        CrossoverPointF rightBottom =
+            new CrossoverPointF(blockArea.lineBottom, blockArea.lineRight);
+        intersectionOfLines(rightBottom, blockArea.lineBottom, blockArea.lineRight);
+        blockArea.leftBottom = leftBottom;
+        blockArea.rightBottom = rightBottom;
+        crossoverPoints.add(leftBottom);
+        crossoverPoints.add(rightBottom);
+      }
+      CrossoverPointF leftTop = new CrossoverPointF(blockArea.lineTop, blockArea.lineLeft);
+      intersectionOfLines(leftTop, blockArea.lineTop, blockArea.lineLeft);
+      CrossoverPointF rightTop = new CrossoverPointF(blockArea.lineTop, blockArea.lineRight);
+      intersectionOfLines(rightTop, blockArea.lineTop, blockArea.lineRight);
+      blockArea.leftTop = leftTop;
+      blockArea.rightTop = rightTop;
+      crossoverPoints.add(leftTop);
+      crossoverPoints.add(rightTop);
+      areaList.add(blockArea);
+    }
+
+    List<SlantLine> lines = new ArrayList<>();
+    lines.addAll(horizontalLines);
+    lines.addAll(verticalLines);
+    return new Pair<>(lines, areaList);
+  }
+
   static List<SlantArea> cutAreaCross(final SlantArea area, final SlantLine horizontal,
       final SlantLine vertical, final List<CrossoverPointF> crossoverPoints) {
     List<SlantArea> list = new ArrayList<>();
@@ -125,20 +215,6 @@ public class SlantUtils {
     four.rightTop = horizontal.end;
     four.leftBottom = vertical.end;
     list.add(four);
-
-    return list;
-  }
-
-  static List<SlantArea> cutArea(final SlantArea area, final SlantLine l1, final SlantLine l2,
-      final SlantLine l3, final Line.Direction direction,
-      final List<CrossoverPointF> crossoverPoints) {
-    List<SlantArea> list = new ArrayList<>();
-
-    if (direction == Line.Direction.HORIZONTAL){
-
-    }else if (direction == Line.Direction.VERTICAL){
-
-    }
 
     return list;
   }
