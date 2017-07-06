@@ -198,16 +198,13 @@ public abstract class StraightPuzzleLayout implements PuzzleLayout {
         continue;
       }
 
-      if (l.attachStartLine() != line.attachStartLine()
-          || l.attachEndLine() != line.attachEndLine()) {
-        continue;
-      }
-
       if (l.direction() == Line.Direction.HORIZONTAL) {
+        if (l.maxX() <= line.minX() || line.maxX() <= l.minX()) continue;
         if (l.minY() > line.lowerLine().maxY() && l.maxY() < line.minY()) {
           line.setLowerLine(l);
         }
       } else {
+        if (l.maxY() <= line.minY() || line.maxY() <= l.minY()) continue;
         if (l.minX() > line.lowerLine().maxX() && l.maxX() < line.minX()) {
           line.setLowerLine(l);
         }
@@ -226,16 +223,13 @@ public abstract class StraightPuzzleLayout implements PuzzleLayout {
         continue;
       }
 
-      if (l.attachStartLine() != line.attachStartLine()
-          || l.attachEndLine() != line.attachEndLine()) {
-        continue;
-      }
-
       if (l.direction() == Line.Direction.HORIZONTAL) {
+        if (l.maxX() <= line.minX() || line.maxX() <= l.minX()) continue;
         if (l.maxY() < line.upperLine().minY() && l.minY() > line.maxY()) {
           line.setUpperLine(l);
         }
       } else {
+        if (l.maxY() <= line.minY() || line.maxY() <= l.minY()) continue;
         if (l.maxX() < line.upperLine().minX() && l.minX() > line.maxX()) {
           line.setUpperLine(l);
         }

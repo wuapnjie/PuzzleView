@@ -178,23 +178,23 @@ class StraightUtils {
 
     l1.setAttachLineStart(area.lineLeft);
     l1.setAttachLineEnd(l2);
-    l1.setUpperLine(area.lineTop);
-    l1.setLowerLine(l3);
+    l1.setLowerLine(area.lineTop);
+    l1.setUpperLine(l3);
 
     l2.setAttachLineStart(area.lineTop);
     l2.setAttachLineEnd(l3);
-    l2.setUpperLine(area.lineRight);
     l2.setLowerLine(l4);
+    l2.setUpperLine(area.lineRight);
 
     l3.setAttachLineStart(l4);
     l3.setAttachLineEnd(area.lineRight);
-    l3.setUpperLine(l1);
-    l3.setLowerLine(area.lineBottom);
+    l3.setLowerLine(l1);
+    l3.setUpperLine(area.lineBottom);
 
     l4.setAttachLineStart(l1);
     l4.setAttachLineEnd(area.lineBottom);
-    l4.setUpperLine(l2);
     l4.setLowerLine(area.lineLeft);
+    l4.setUpperLine(l2);
 
     lines.add(l1);
     lines.add(l2);
