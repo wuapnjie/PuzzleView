@@ -1,5 +1,6 @@
 package com.xiaopo.flying.puzzle.straight;
 
+import android.graphics.Path;
 import android.graphics.PointF;
 import android.util.Pair;
 import com.xiaopo.flying.puzzle.Line;
@@ -149,5 +150,84 @@ class StraightUtils {
     list.add(four);
 
     return list;
+  }
+
+  static Pair<List<StraightLine>,List<StraightArea>> cutAreaSpiral(final StraightArea area){
+    List<StraightLine> lines = new ArrayList<>();
+    List<StraightArea> areas = new ArrayList<>();
+
+    float width = area.width();
+    float height = area.height();
+
+    float left = area.left();
+    float top = area.top();
+
+    PointF one = new PointF(left, top + height / 3);
+    PointF two = new PointF(left + width / 3 * 2, top);
+    PointF three = new PointF(left + width, top + height / 3 * 2);
+    PointF four = new PointF(left + width / 3, top + height);
+    PointF five = new PointF(left + width / 3, top + height / 3);
+    PointF six = new PointF(left + width / 3 * 2, top + height / 3);
+    PointF seven = new PointF(left + width / 3 * 2, top + height / 3 * 2);
+    PointF eight = new PointF(left + width / 3, top + height / 3 * 2);
+
+    StraightLine l1 = new StraightLine(one, six);
+    StraightLine l2 = new StraightLine(two, seven);
+    StraightLine l3 = new StraightLine(eight, three);
+    StraightLine l4 = new StraightLine(five, four);
+
+    l1.setAttachLineStart(area.lineLeft);
+    l1.setAttachLineEnd(l2);
+    l1.setUpperLine(area.lineTop);
+    l1.setLowerLine(l3);
+
+    l2.setAttachLineStart(area.lineTop);
+    l2.setAttachLineEnd(l3);
+    l2.setUpperLine(area.lineRight);
+    l2.setLowerLine(l4);
+
+    l3.setAttachLineStart(l4);
+    l3.setAttachLineEnd(area.lineRight);
+    l3.setUpperLine(l1);
+    l3.setLowerLine(area.lineBottom);
+
+    l4.setAttachLineStart(l1);
+    l4.setAttachLineEnd(area.lineBottom);
+    l4.setUpperLine(l2);
+    l4.setLowerLine(area.lineLeft);
+
+    lines.add(l1);
+    lines.add(l2);
+    lines.add(l3);
+    lines.add(l4);
+
+    StraightArea b1 = new StraightArea(area);
+    b1.lineRight = l2;
+    b1.lineBottom = l1;
+    areas.add(b1);
+
+    StraightArea b2 = new StraightArea(area);
+    b2.lineLeft = l2;
+    b2.lineBottom = l3;
+    areas.add(b2);
+
+    StraightArea b3 = new StraightArea(area);
+    b3.lineRight = l4;
+    b3.lineTop = l1;
+    areas.add(b3);
+
+    StraightArea b4 = new StraightArea(area);
+    b4.lineTop = l1;
+    b4.lineRight = l2;
+    b4.lineLeft = l4;
+    b4.lineBottom = l3;
+    areas.add(b4);
+
+    StraightArea b5 = new StraightArea(area);
+    b5.lineLeft = l4;
+    b5.lineTop = l3;
+    areas.add(b5);
+
+    return new Pair<>(lines,areas);
   }
 }
