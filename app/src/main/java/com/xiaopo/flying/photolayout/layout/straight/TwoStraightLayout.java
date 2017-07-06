@@ -23,7 +23,7 @@ public class TwoStraightLayout extends NumberStraightLayout {
   }
 
   @Override public int getThemeCount() {
-    return 7;
+    return 6;
   }
 
   @Override public void layout() {
@@ -45,9 +45,6 @@ public class TwoStraightLayout extends NumberStraightLayout {
         break;
       case 5:
         addLine(0, Line.Direction.VERTICAL, 2f / 3);
-        break;
-      case 6:
-        addCross(0, 1f / 2);
         break;
       default:
         addLine(0, Line.Direction.HORIZONTAL, mRadio);

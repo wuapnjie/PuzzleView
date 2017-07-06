@@ -24,6 +24,11 @@ import java.util.List;
 public class PuzzleView extends View {
   private static final String TAG = "SlantPuzzleView";
 
+  public static final int MODE_JIGSAW_LAYOUT = 0;
+  public static final int MODE_WALL_STICKER = 1;
+
+  public int mode = MODE_JIGSAW_LAYOUT;
+
   private enum ActionMode {
     NONE, DRAG, ZOOM, MOVE, SWAP
   }
@@ -414,58 +419,9 @@ public class PuzzleView extends View {
     }
   }
 
-  // TODO simplify
   private void updatePiecesInArea(Line line, MotionEvent event) {
-    for (PuzzlePiece piece : needChangePieces) {
-
-      float offsetX = (event.getX() - piece.getPreviousMoveX()) / 2;
-      float offsetY = (event.getY() - piece.getPreviousMoveY()) / 2;
-
-      if (!piece.canFilledArea()) {
-        final Area area = piece.getArea();
-        float deltaScale = MatrixUtils.getMinMatrixScale(piece) / piece.getMatrixScale();
-        piece.postScale(deltaScale, deltaScale, area.getCenterPoint());
-        piece.record();
-
-        piece.setPreviousMoveY(event.getY());
-        piece.setPreviousMoveX(event.getX());
-      }
-
-      if (line.direction() == Line.Direction.HORIZONTAL) {
-        piece.translate(0, offsetY);
-      } else if (line.direction() == Line.Direction.VERTICAL) {
-        piece.translate(offsetX, 0);
-      }
-
-      final RectF rectF = piece.getCurrentDrawableBounds();
-      final Area area = piece.getArea();
-      float moveY = 0f;
-
-      if (rectF.top > area.top()) {
-        moveY = area.top() - rectF.top;
-      }
-
-      if (rectF.bottom < area.bottom()) {
-        moveY = area.bottom() - rectF.bottom;
-      }
-
-      float moveX = 0f;
-
-      if (rectF.left > area.left()) {
-        moveX = area.left() - rectF.left;
-      }
-
-      if (rectF.right < area.right()) {
-        moveX = area.right() - rectF.right;
-      }
-
-      if (moveX != 0 || moveY != 0) {
-        piece.setPreviousMoveY(event.getY());
-        piece.setPreviousMoveX(event.getX());
-        Log.d(TAG, "updatePiecesInArea: 3");
-        piece.postTranslate(moveX, moveY);
-        piece.record();
-      }
+    for (int i = 0; i < needChangePieces.size(); i++) {
+      needChangePieces.get(i).updateWith(event, line);
     }
   }
 
@@ -528,7 +484,6 @@ public class PuzzleView extends View {
 
     handlingPiece.postRotate(degree);
     handlingPiece.record();
-    //handlingPiece.fillArea(this, 0);
 
     invalidate();
   }

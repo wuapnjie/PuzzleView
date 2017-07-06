@@ -7,6 +7,7 @@ import android.graphics.PointF;
 import android.graphics.Rect;
 import android.graphics.RectF;
 import android.graphics.drawable.Drawable;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.animation.DecelerateInterpolator;
 
@@ -17,7 +18,7 @@ import static com.xiaopo.flying.puzzle.MatrixUtils.judgeIsImageContainsBorder;
 /**
  * @author wupanjie
  */
-public class PuzzlePiece {
+@SuppressWarnings("WeakerAccess") public class PuzzlePiece {
   private Drawable drawable;
   private Matrix matrix;
   private Matrix previousMatrix;
@@ -116,7 +117,15 @@ public class PuzzlePiece {
     return drawableBounds;
   }
 
-  RectF getCurrentDrawableBounds() {
+  void setPreviousMoveX(float previousMoveX) {
+    this.previousMoveX = previousMoveX;
+  }
+
+  void setPreviousMoveY(float previousMoveY) {
+    this.previousMoveY = previousMoveY;
+  }
+
+  private RectF getCurrentDrawableBounds() {
     matrix.mapRect(mappedBounds, new RectF(drawableBounds));
     return mappedBounds;
   }
@@ -134,7 +143,7 @@ public class PuzzlePiece {
     return centerPoint;
   }
 
-  float getMatrixScale() {
+  private float getMatrixScale() {
     return MatrixUtils.getMatrixScale(matrix);
   }
 
@@ -145,22 +154,6 @@ public class PuzzlePiece {
   float[] getCurrentDrawablePoints() {
     matrix.mapPoints(mappedDrawablePoints, drawablePoints);
     return mappedDrawablePoints;
-  }
-
-  void setPreviousMoveX(float previousMoveX) {
-    this.previousMoveX = previousMoveX;
-  }
-
-  void setPreviousMoveY(float previousMoveY) {
-    this.previousMoveY = previousMoveY;
-  }
-
-  float getPreviousMoveX() {
-    return previousMoveX;
-  }
-
-  float getPreviousMoveY() {
-    return previousMoveY;
   }
 
   boolean isFilledArea() {
@@ -343,6 +336,56 @@ public class PuzzlePiece {
 
       animator.setDuration(duration);
       animator.start();
+    }
+  }
+
+  void updateWith(final MotionEvent event, final Line line) {
+    float offsetX = (event.getX() - previousMoveX) / 2;
+    float offsetY = (event.getY() - previousMoveY) / 2;
+
+    if (!canFilledArea()) {
+      final Area area = getArea();
+      float deltaScale = MatrixUtils.getMinMatrixScale(this) / getMatrixScale();
+      postScale(deltaScale, deltaScale, area.getCenterPoint());
+      record();
+
+      previousMoveX = event.getX();
+      previousMoveY = event.getY();
+    }
+
+    if (line.direction() == Line.Direction.HORIZONTAL) {
+      translate(0, offsetY);
+    } else if (line.direction() == Line.Direction.VERTICAL) {
+      translate(offsetX, 0);
+    }
+
+    final RectF rectF = getCurrentDrawableBounds();
+    final Area area = getArea();
+    float moveY = 0f;
+
+    if (rectF.top > area.top()) {
+      moveY = area.top() - rectF.top;
+    }
+
+    if (rectF.bottom < area.bottom()) {
+      moveY = area.bottom() - rectF.bottom;
+    }
+
+    float moveX = 0f;
+
+    if (rectF.left > area.left()) {
+      moveX = area.left() - rectF.left;
+    }
+
+    if (rectF.right < area.right()) {
+      moveX = area.right() - rectF.right;
+    }
+
+    if (moveX != 0 || moveY != 0) {
+      previousMoveX = event.getX();
+      previousMoveY = event.getY();
+      postTranslate(moveX, moveY);
+      record();
     }
   }
 

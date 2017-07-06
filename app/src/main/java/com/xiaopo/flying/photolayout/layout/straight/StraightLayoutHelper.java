@@ -22,7 +22,7 @@ public class StraightLayoutHelper {
         }
         break;
       case 2:
-        for (int i = 0; i < 7; i++) {
+        for (int i = 0; i < 6; i++) {
           puzzleLayouts.add(new TwoStraightLayout(i));
         }
         break;
