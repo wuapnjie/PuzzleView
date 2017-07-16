@@ -9,7 +9,6 @@ import io.reactivex.schedulers.Schedulers;
 /**
  * @author wupanjie
  */
-
 public class SingleIOSwitch<T> implements SingleTransformer<T, T> {
   @Override
   public SingleSource<T> apply(Single<T> upstream) {

@@ -6,18 +6,22 @@ import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.Message;
+import android.support.annotation.NonNull;
 import android.support.design.widget.BottomSheetDialog;
+import android.support.design.widget.NavigationView;
 import android.support.v4.util.ArrayMap;
+import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.PopupMenu;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.ImageView;
 import android.widget.Toast;
 import com.squareup.picasso.MemoryPolicy;
 import com.squareup.picasso.Picasso;
@@ -38,7 +42,8 @@ import io.reactivex.disposables.Disposable;
 import java.util.ArrayList;
 import java.util.List;
 
-public class MainActivity extends AppCompatActivity implements WeakHandler.IHandler {
+public class MainActivity extends AppCompatActivity implements WeakHandler.IHandler,
+    NavigationView.OnNavigationItemSelectedListener {
 
   private static final String TAG = "MainActivity";
   public static final int CODE_REQUEST_PERMISSION = 110;
@@ -159,23 +164,45 @@ public class MainActivity extends AppCompatActivity implements WeakHandler.IHand
 
     photoAdapter.setOnSelectedMaxListener(() -> Toast.makeText(MainActivity.this, "装不下了～", Toast.LENGTH_SHORT).show());
 
-    ImageView btnCancel = (ImageView) findViewById(R.id.btn_cancel);
-    btnCancel.setOnClickListener(view -> {
-      if (bitmaps == null || bitmaps.size() == 0) {
-        onBackPressed();
-        return;
+    //ImageView btnCancel = (ImageView) findViewById(R.id.btn_cancel);
+    //btnCancel.setOnClickListener(view -> {
+    //  if (bitmaps == null || bitmaps.size() == 0) {
+    //    onBackPressed();
+    //    return;
+    //  }
+    //
+    //  arrayBitmaps.clear();
+    //  bitmaps.clear();
+    //  selectedPath.clear();
+    //
+    //  photoAdapter.reset();
+    //  puzzleHandler.sendEmptyMessage(119);
+    //});
+
+    Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+    //setSupportActionBar(toolbar);
+    toolbar.inflateMenu(R.menu.menu_main);
+    toolbar.setOnMenuItemClickListener(item -> {
+      switch (item.getItemId()) {
+        case R.id.action_playground:
+          Intent intent = new Intent(MainActivity.this, PlaygroundActivity.class);
+          startActivity(intent);
+          break;
+        case R.id.action_about:
+          showAboutInfo();
+          break;
       }
-
-      arrayBitmaps.clear();
-      bitmaps.clear();
-      selectedPath.clear();
-
-      photoAdapter.reset();
-      puzzleHandler.sendEmptyMessage(119);
+      return false;
     });
 
-    ImageView btnMore = (ImageView) findViewById(R.id.btn_more);
-    btnMore.setOnClickListener(this::showMoreDialog);
+    DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+    ActionBarDrawerToggle toggle =
+        new ActionBarDrawerToggle(this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
+    drawer.addDrawerListener(toggle);
+    toggle.syncState();
+
+    NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
+    navigationView.setNavigationItemSelectedListener(this);
   }
 
   private void showMoreDialog(View view) {
@@ -262,5 +289,9 @@ public class MainActivity extends AppCompatActivity implements WeakHandler.IHand
     } else if (msg.what == 120) {
       fetchBitmap((String) msg.obj);
     }
+  }
+
+  @Override public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+    return false;
   }
 }

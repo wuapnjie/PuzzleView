@@ -15,52 +15,15 @@
       android:theme="@style/AppTheme.AppBarOverlay"
       >
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="50dp"
-        android:orientation="horizontal"
-        >
+      <android.support.v7.widget.Toolbar
+          android:id="@+id/toolbar"
+          android:layout_width="match_parent"
+          android:layout_height="56dp"
+          app:navigationIcon="@drawable/ic_arrow_back_white_24dp"
+          app:title="@string/prompt.edit"
+          >
 
-      <ImageView
-          android:id="@+id/btn_back"
-          android:layout_width="50dp"
-          android:layout_height="50dp"
-          android:background="?attr/selectableItemBackgroundBorderless"
-          android:scaleType="center"
-          android:src="@drawable/ic_arrow_back_white_24dp"
-          />
-
-      <View
-          android:layout_width="0.5dp"
-          android:layout_height="match_parent"
-          android:layout_margin="4dp"
-          android:background="#BBFFFFFF"
-          />
-
-      <TextView
-          android:layout_width="0dp"
-          android:layout_height="match_parent"
-          android:layout_marginLeft="8dp"
-          android:layout_weight="1"
-          android:gravity="center_vertical"
-          android:text="@string/prompt.edit"
-          android:textColor="@android:color/white"
-          android:textSize="18sp"
-          />
-
-      <TextView
-          android:id="@+id/btn_save"
-          android:layout_width="wrap_content"
-          android:layout_height="match_parent"
-          android:background="?attr/selectableItemBackgroundBorderless"
-          android:gravity="center"
-          android:padding="8dp"
-          android:layout_marginRight="8dp"
-          android:text="@string/prompt.save"
-          android:textColor="@android:color/white"
-          />
-
-    </LinearLayout>
+      </android.support.v7.widget.Toolbar>
 
   </android.support.design.widget.AppBarLayout>
 

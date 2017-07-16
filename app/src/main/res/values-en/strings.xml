@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-  <string name="app_name">Puzzle</string>
+  <string name="app_name">AnotherLayout</string>
   <string name="about_link">Related links</string>
   <string name="about_me">About me</string>
   <string name="about_project">About this project</string>

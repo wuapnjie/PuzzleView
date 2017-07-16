@@ -8,7 +8,6 @@ import java.lang.ref.WeakReference;
 /**
  * @author wupanjie
  */
-
 public class WeakHandler extends Handler {
   private WeakReference<IHandler> ref;
 

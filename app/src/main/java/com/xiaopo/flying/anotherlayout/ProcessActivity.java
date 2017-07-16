@@ -10,15 +10,14 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.content.FileProvider;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.ImageView;
-import android.widget.TextView;
 import com.squareup.picasso.Picasso;
 import com.squareup.picasso.Target;
 import com.xiaopo.flying.poiphoto.Define;
 import com.xiaopo.flying.poiphoto.PhotoPicker;
 import com.xiaopo.flying.puzzle.PuzzleLayout;
-import com.xiaopo.flying.puzzle.PuzzlePiece;
 import com.xiaopo.flying.puzzle.PuzzleView;
 import com.xiaopo.flying.puzzle.straight.StraightPuzzleLayout;
 import java.io.File;
@@ -52,11 +51,7 @@ public class ProcessActivity extends AppCompatActivity implements View.OnClickLi
 
     initView();
 
-    puzzleView.post(new Runnable() {
-      @Override public void run() {
-        loadPhoto();
-      }
-    });
+    puzzleView.post(this::loadPhoto);
   }
 
   @Override protected void onResume() {
@@ -99,6 +94,7 @@ public class ProcessActivity extends AppCompatActivity implements View.OnClickLi
         }
       };
 
+      //noinspection SuspiciousNameCombination
       Picasso.with(this)
           .load("file:///" + bitmapPaint.get(i))
           .resize(deviceWidth, deviceWidth)
@@ -153,24 +149,15 @@ public class ProcessActivity extends AppCompatActivity implements View.OnClickLi
   }
 
   private void initView() {
-    ImageView btnBack = (ImageView) findViewById(R.id.btn_back);
-    btnBack.setOnClickListener(new View.OnClickListener() {
-      @Override public void onClick(View view) {
-        onBackPressed();
-      }
-    });
+    Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+    toolbar.setNavigationOnClickListener(v -> onBackPressed());
 
     FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-    fab.setOnClickListener(new View.OnClickListener() {
-      @Override public void onClick(View view) {
-        share();
-      }
-    });
+    fab.setOnClickListener(view -> share());
 
     puzzleView = (PuzzleView) findViewById(R.id.puzzle_view);
     degreeSeekBar = (DegreeSeekBar) findViewById(R.id.degree_seek_bar);
 
-    //TODO the method we can use to change the puzzle view's properties
     puzzleView.setPuzzleLayout(puzzleLayout);
     puzzleView.setTouchEnable(true);
     puzzleView.setNeedDrawLine(false);
@@ -180,11 +167,9 @@ public class ProcessActivity extends AppCompatActivity implements View.OnClickLi
     puzzleView.setSelectedLineColor(Color.BLACK);
     puzzleView.setHandleBarColor(Color.BLACK);
     puzzleView.setAnimateDuration(300);
-    puzzleView.setOnPieceSelectedListener(new PuzzleView.OnPieceSelectedListener() {
-      @Override public void onPieceSelected(PuzzlePiece piece, int position) {
-        Snackbar.make(puzzleView, "Piece " + position + " selected", Snackbar.LENGTH_SHORT).show();
-      }
-    });
+    //puzzleView.setOnPieceSelectedListener(
+    //    (piece, position) -> Snackbar.make(puzzleView, "Piece " + position + " selected",
+    //        Snackbar.LENGTH_SHORT).show());
 
     // currently the SlantPuzzleLayout do not support padding
     if (puzzleLayout instanceof StraightPuzzleLayout) {
@@ -202,22 +187,6 @@ public class ProcessActivity extends AppCompatActivity implements View.OnClickLi
     btnFlipHorizontal.setOnClickListener(this);
     btnFlipVertical.setOnClickListener(this);
     btnBorder.setOnClickListener(this);
-
-    TextView btnSave = (TextView) findViewById(R.id.btn_save);
-    btnSave.setOnClickListener(new View.OnClickListener() {
-      @Override public void onClick(final View view) {
-        File file = FileUtils.getNewFile(ProcessActivity.this, "Puzzle");
-        FileUtils.savePuzzle(puzzleView, file, 100, new Callback() {
-          @Override public void onSuccess() {
-            Snackbar.make(view, R.string.prompt_save_success, Snackbar.LENGTH_SHORT).show();
-          }
-
-          @Override public void onFailed() {
-            Snackbar.make(view, R.string.prompt_save_failed, Snackbar.LENGTH_SHORT).show();
-          }
-        });
-      }
-    });
 
     degreeSeekBar.setCurrentDegrees(puzzleView.getLineSize());
     degreeSeekBar.setDegreeRange(0, 30);
@@ -308,6 +277,7 @@ public class ProcessActivity extends AppCompatActivity implements View.OnClickLi
         }
       };
 
+      //noinspection SuspiciousNameCombination
       Picasso.with(this)
           .load("file:///" + path)
           .resize(deviceWidth, deviceWidth)

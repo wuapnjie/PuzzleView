@@ -1,48 +1,56 @@
 <resources>
-  <string name="app_name">Puzzle</string>
-  <string name="title_activity_process">ProcessActivity</string>
+    <string name="app_name">AnotherLayout</string>
+    <string name="title_activity_process">ProcessActivity</string>
 
-  <string name="about_me">关于我</string>
-  <string name="my_info">一名普通的大学生，喜欢Android，喜欢探索新鲜事物。希望以后可以找到一个好工作。恩，加油。有问题可以给我发邮件或者提issue，当然也欢迎PR，互相学习进步。\n\n
+    <string name="about_me">关于我</string>
+    <string name="my_info">一名普通的大学生，喜欢Android，喜欢探索新鲜事物。希望以后可以找到一个好工作。恩，加油。有问题可以给我发邮件或者提issue，当然也欢迎PR，互相学习进步。\n\n
         wupanjie0611@gmail.com
         \n\n
     Keep Calm and Carry on!</string>
-  <string name="about_project">关于本项目</string>
-  <string name="project_info">这个项目是看到Layout for instagram 后，觉得这个应用很神奇，于是就很想把它实现，就算不能100%实现，也想实现它的图片效果，想了很久应该怎么实现，后来看到一篇介绍View与Matrix的文章后，有了一点点想法，当时先利用Matrix自定义View实现了Android的贴纸效果的库，写完后发现实现方式有一些相似，又反复把玩了Layout，发现里面的线很关键，后来在纸上写下了最初的model，经过几天探索实践后制作了本项目，当然没有Layout做的好，但可以给大家提供一种思路，如果不需要太强大的要求，本项目应该也可以满足。具体使用方法在这个demo的源码中都可以找到。</string>
-  <string name="about_link">相关链接</string>
+    <string name="about_project">关于本项目</string>
+    <string name="project_info">这个项目是看到Layout for instagram 后，觉得这个应用很神奇，于是就很想把它实现，就算不能100%实现，也想实现它的图片效果，想了很久应该怎么实现，后来看到一篇介绍View与Matrix的文章后，有了一点点想法，当时先利用Matrix自定义View实现了Android的贴纸效果的库，写完后发现实现方式有一些相似，又反复把玩了Layout，发现里面的线很关键，后来在纸上写下了最初的model，经过几天探索实践后制作了本项目，当然没有Layout做的好，但可以给大家提供一种思路，如果不需要太强大的要求，本项目应该也可以满足。具体使用方法在这个demo的源码中都可以找到。</string>
+    <string name="about_link">相关链接</string>
 
-  <string name="link_one">此项目的地址\n
+    <string name="link_one">此项目的地址\n
         https://github.com/wuapnjie/PuzzleView</string>
-  <string name="link_two">实现思路比较相似的StickerView\n
+    <string name="link_two">实现思路比较相似的StickerView\n
         https://github.com/wuapnjie/StickerView</string>
-  <string name="link_three">此项目依赖的图片选择库\n
+    <string name="link_three">此项目依赖的图片选择库\n
         https://github.com/wuapnjie/PoiPhoto</string>
-  <string name="link_four">我的Github主页\n
+    <string name="link_four">我的Github主页\n
         https://github.com/wuapnjie</string>
 
-  <string name="about_thank">感谢</string>
-  <string name="thank_info">junyizhou的博客(从中得到了很多发散)\n
+    <string name="about_thank">感谢</string>
+    <string name="thank_info">junyizhou的博客(从中得到了很多发散)\n
         http://junyizhou.github.io/</string>
-  <string name="prompt.select.layout">选择布局</string>
-  <string name="prompt.playground">Playground</string>
-  <string name="prompt.save">保存</string>
-  <string name="prompt.edit">编辑</string>
-  <string name="prompt.replace">替换</string>
-  <string name="prompt.rotate">旋转</string>
-  <string name="prompt.flip.horizontal">镜像</string>
-  <string name="prompt.flip.vertical">翻转</string>
-  <string name="prompt.border">边框</string>
-  <string name="prompt_share_failed">分享失败</string>
-  <string name="prompt_share">分享</string>
-  <string name="prompt_save_success">保存成功</string>
-  <string name="prompt_save_failed">保存失败</string>
-  <string name="licence">LICENCE</string>
-  <string name="licence_info">Apache-2.0</string>
-  <string name="prompt.slant.test">斜线测试</string>
+    <string name="prompt.select.layout">选择布局</string>
+    <string name="prompt.playground">Playground</string>
+    <string name="prompt.save">保存</string>
+    <string name="prompt.edit">编辑</string>
+    <string name="prompt.replace">替换</string>
+    <string name="prompt.rotate">旋转</string>
+    <string name="prompt.flip.horizontal">镜像</string>
+    <string name="prompt.flip.vertical">翻转</string>
+    <string name="prompt.border">边框</string>
+    <string name="prompt_share_failed">分享失败</string>
+    <string name="prompt_share">分享</string>
+    <string name="prompt_save_success">保存成功</string>
+    <string name="prompt_save_failed">保存失败</string>
+    <string name="licence">LICENCE</string>
+    <string name="licence_info">Apache-2.0</string>
+    <string name="prompt.slant.test">斜线测试</string>
 
     <string name="action_done">完成</string>
     <string name="title_album">请选择一个相册</string>
     <string name="title_photo">请选择相片</string>
     <string name="btn_jump_to_photo">jump to display photos</string>
+    <string name="about">关于</string>
+    <string name="title_activity_main2">Main2Activity</string>
+
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+
+    <string name="action_settings">Settings</string>
+    <string name="another">Another</string>
 
 </resources>
