@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     android:background="@android:color/black"
     android:fitsSystemWindows="true"
-    tools:context="com.xiaopo.flying.photolayout.ProcessActivity"
+    tools:context="com.xiaopo.flying.anotherlayout.ProcessActivity"
     >
 
   <android.support.design.widget.AppBarLayout

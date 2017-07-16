@@ -7,7 +7,7 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
-    tools:context="com.xiaopo.flying.photolayout.ProcessActivity"
+    tools:context="com.xiaopo.flying.anotherlayout.ProcessActivity"
     tools:showIn="@layout/activity_process"
     >
 
@@ -18,7 +18,7 @@
       android:layout_height="match_parent"
       />
 
-  <com.xiaopo.flying.photolayout.DegreeSeekBar
+  <com.xiaopo.flying.anotherlayout.DegreeSeekBar
       android:id="@+id/degree_seek_bar"
       android:visibility="invisible"
       tools:visibility="visible"

@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     android:background="@android:color/black"
     android:orientation="vertical"
-    tools:context="com.xiaopo.flying.photolayout.MainActivity"
+    tools:context="com.xiaopo.flying.anotherlayout.MainActivity"
     >
 
   <LinearLayout

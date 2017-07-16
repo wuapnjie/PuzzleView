@@ -40,4 +40,9 @@
   <string name="licence_info">Apache-2.0</string>
   <string name="prompt.slant.test">斜线测试</string>
 
+    <string name="action_done">完成</string>
+    <string name="title_album">请选择一个相册</string>
+    <string name="title_photo">请选择相片</string>
+    <string name="btn_jump_to_photo">jump to display photos</string>
+
 </resources>

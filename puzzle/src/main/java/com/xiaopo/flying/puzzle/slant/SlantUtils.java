@@ -91,7 +91,7 @@ class SlantUtils {
     SlantArea restArea = new SlantArea(area);
     for (int i = horizontalSize + 1; i > 1; i--) {
       SlantLine horizontalLine =
-          createLine(restArea, Line.Direction.HORIZONTAL, (float) (i - 1) / i, (float) (i - 1) / i);
+          createLine(restArea, Line.Direction.HORIZONTAL, (float) (i - 1) / i - 0.025f, (float) (i - 1) / i + 0.025f);
       horizontalLines.add(horizontalLine);
       restArea.lineBottom = horizontalLine;
       restArea.leftBottom = horizontalLine.start;
@@ -102,7 +102,7 @@ class SlantUtils {
     restArea = new SlantArea(area);
     for (int i = verticalSize + 1; i > 1; i--) {
       SlantLine verticalLine =
-          createLine(restArea, Line.Direction.VERTICAL, (float) (i - 1) / i, (float) (i - 1) / i);
+          createLine(restArea, Line.Direction.VERTICAL, (float) (i - 1) / i - 0.025f, (float) (i - 1) / i + 0.025f);
       verticalLines.add(verticalLine);
       SlantArea spiltArea = new SlantArea(restArea);
       spiltArea.lineLeft = verticalLine;

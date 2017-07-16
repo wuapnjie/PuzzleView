@@ -1,4 +1,4 @@
-package com.xiaopo.flying.photolayout;
+package com.xiaopo.flying.anotherlayout;
 
 import android.content.Context;
 import android.support.test.InstrumentationRegistry;

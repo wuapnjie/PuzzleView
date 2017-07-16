@@ -1,4 +1,4 @@
-package com.xiaopo.flying.photolayout;
+package com.xiaopo.flying.anotherlayout;
 
 import org.junit.Test;
 
