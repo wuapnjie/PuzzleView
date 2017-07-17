@@ -39,5 +39,6 @@
   <string name="licence">LICENCE</string>
   <string name="licence_info">Apache-2.0</string>
   <string name="prompt.slant.test">斜线测试</string>
+    <string name="prompt.corner">圆角</string>
 
 </resources>

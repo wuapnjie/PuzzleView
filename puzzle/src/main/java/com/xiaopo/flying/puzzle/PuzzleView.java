@@ -2,6 +2,7 @@ package com.xiaopo.flying.puzzle;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.content.res.TypedArray;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
@@ -24,48 +25,44 @@ import java.util.List;
 public class PuzzleView extends View {
   private static final String TAG = "SlantPuzzleView";
 
-  public static final int MODE_JIGSAW_LAYOUT = 0;
-  public static final int MODE_WALL_STICKER = 1;
-
-  public int mode = MODE_JIGSAW_LAYOUT;
-
   private enum ActionMode {
     NONE, DRAG, ZOOM, MOVE, SWAP
   }
-
   private ActionMode currentMode = ActionMode.NONE;
 
   private List<PuzzlePiece> puzzlePieces = new ArrayList<>();
+
   private List<PuzzlePiece> needChangePieces = new ArrayList<>();
-
   private PuzzleLayout puzzleLayout;
+
   private RectF bounds;
+  private int lineSize;
 
-  private int lineSize = 4;
-  private int duration = 300;
-
+  private int duration;
   private Line handlingLine;
+
   private PuzzlePiece handlingPiece;
   private PuzzlePiece replacePiece;
   private PuzzlePiece previousHandlingPiece;
-
   private Paint linePaint;
+
   private Paint selectedAreaPaint;
   private Paint handleBarPaint;
-
   private float downX;
+
   private float downY;
   private float previousDistance;
   private PointF midPoint;
-
   private boolean needDrawLine;
+
   private boolean needDrawOuterLine;
   private boolean touchEnable = true;
+  private int lineColor;
 
-  private int lineColor = Color.WHITE;
-  private int selectedLineColor = Color.parseColor("#99BBFB");
-  private int handleBarColor = selectedLineColor;
+  private int selectedLineColor;
+  private int handleBarColor;
   private float piecePadding;
+  private float pieceRadian;
 
   private OnPieceSelectedListener onPieceSelectedListener;
 
@@ -86,10 +83,22 @@ public class PuzzleView extends View {
 
   public PuzzleView(Context context, AttributeSet attrs, int defStyleAttr) {
     super(context, attrs, defStyleAttr);
-    init();
+    init(context, attrs);
   }
 
-  private void init() {
+  private void init(Context context, AttributeSet attrs) {
+    TypedArray ta = context.obtainStyledAttributes(attrs, R.styleable.PuzzleView);
+    lineSize = ta.getInt(R.styleable.PuzzleView_line_size, 4);
+    lineColor = ta.getColor(R.styleable.PuzzleView_line_color, Color.WHITE);
+    selectedLineColor = ta.getColor(R.styleable.PuzzleView_selected_line_color, Color.parseColor("#99BBFB"));
+    handleBarColor = ta.getColor(R.styleable.PuzzleView_handle_bar_color, Color.parseColor("#99BBFB"));
+    piecePadding = ta.getDimensionPixelSize(R.styleable.PuzzleView_piece_padding, 0);
+    needDrawLine = ta.getBoolean(R.styleable.PuzzleView_need_draw_line, false);
+    needDrawOuterLine = ta.getBoolean(R.styleable.PuzzleView_need_draw_outer_line, false);
+    duration = ta.getInt(R.styleable.PuzzleView_animation_duration, 300);
+    pieceRadian = ta.getFloat(R.styleable.PuzzleView_radian, 0f);
+    ta.recycle();
+
     bounds = new RectF();
 
     // init some paint
@@ -97,10 +106,15 @@ public class PuzzleView extends View {
     linePaint.setAntiAlias(true);
     linePaint.setColor(lineColor);
     linePaint.setStrokeWidth(lineSize);
+    linePaint.setStyle(Paint.Style.STROKE);
+    linePaint.setStrokeJoin(Paint.Join.ROUND);
+    linePaint.setStrokeCap(Paint.Cap.SQUARE);
 
     selectedAreaPaint = new Paint();
     selectedAreaPaint.setAntiAlias(true);
     selectedAreaPaint.setStyle(Paint.Style.STROKE);
+    selectedAreaPaint.setStrokeJoin(Paint.Join.ROUND);
+    selectedAreaPaint.setStrokeCap(Paint.Cap.ROUND);
     selectedAreaPaint.setColor(selectedLineColor);
     selectedAreaPaint.setStrokeWidth(lineSize);
 
@@ -212,8 +226,13 @@ public class PuzzleView extends View {
   }
 
   private void drawLine(Canvas canvas, Line line) {
-    canvas.drawLine(line.startPoint().x, line.startPoint().y, line.endPoint().x, line.endPoint().y,
-        linePaint);
+    if (line.direction() == Line.Direction.HORIZONTAL) {
+      canvas.drawLine(line.startPoint().x - piecePadding, line.startPoint().y, line.endPoint().x + piecePadding,
+          line.endPoint().y, linePaint);
+    } else {
+      canvas.drawLine(line.startPoint().x, line.startPoint().y - piecePadding, line.endPoint().x,
+          line.endPoint().y + piecePadding, linePaint);
+    }
   }
 
   public void setPuzzleLayout(PuzzleLayout puzzleLayout) {
@@ -412,9 +431,8 @@ public class PuzzleView extends View {
       needUpdate = line.move(event.getX() - downX, 80);
     }
 
-    puzzleLayout.update();
-
     if (needUpdate) {
+      puzzleLayout.update();
       updatePiecesInArea(line, event);
     }
   }
@@ -565,7 +583,10 @@ public class PuzzleView extends View {
   }
 
   public void addPiece(Bitmap bitmap) {
-    addPiece(new BitmapDrawable(getResources(), bitmap));
+    BitmapDrawable bitmapDrawable = new BitmapDrawable(getResources(),bitmap);
+    bitmapDrawable.setAntiAlias(true);
+
+    addPiece(bitmapDrawable);
   }
 
   public void addPiece(Drawable drawable) {
@@ -589,6 +610,9 @@ public class PuzzleView extends View {
     piece.setAnimateDuration(duration);
 
     puzzlePieces.add(piece);
+
+    setPiecePadding(piecePadding);
+    setPieceRadian(pieceRadian);
 
     postInvalidate();
   }
@@ -680,6 +704,25 @@ public class PuzzleView extends View {
     for (PuzzlePiece piece : puzzlePieces) {
       piece.getArea().setPadding(padding);
     }
+
+    invalidate();
+  }
+
+  public void setPieceRadian(float radian) {
+    this.pieceRadian = radian;
+    for (PuzzlePiece piece : puzzlePieces) {
+      piece.getArea().setRadian(radian);
+    }
+
+    invalidate();
+  }
+
+  public float getPiecePadding() {
+    return piecePadding;
+  }
+
+  public float getPieceRadian() {
+    return pieceRadian;
   }
 
   public void setOnPieceSelectedListener(OnPieceSelectedListener onPieceSelectedListener) {

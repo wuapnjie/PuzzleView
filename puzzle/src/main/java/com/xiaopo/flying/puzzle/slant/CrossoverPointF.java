@@ -26,6 +26,9 @@ class CrossoverPointF extends PointF {
   }
 
   void update() {
+    if (horizontal == null || vertical == null){
+      return;
+    }
     SlantUtils.intersectionOfLines(this, horizontal, vertical);
   }
 }

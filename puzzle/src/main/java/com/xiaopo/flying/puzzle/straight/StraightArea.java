@@ -26,6 +26,7 @@ class StraightArea implements Area {
   private float paddingTop;
   private float paddingRight;
   private float paddingBottom;
+  private float radian;
 
   StraightArea(RectF baseRect) {
     setBaseRect(baseRect);
@@ -106,7 +107,8 @@ class StraightArea implements Area {
 
   @Override public Path getAreaPath() {
     areaPath.reset();
-    areaPath.addRect(getAreaRect(), Path.Direction.CCW);
+    areaPath.addRoundRect(getAreaRect(),radian,radian, Path.Direction.CCW);
+    //areaPath.addRect(getAreaRect(), Path.Direction.CCW);
     return areaPath;
   }
 
@@ -144,6 +146,16 @@ class StraightArea implements Area {
     return handleBarPoints;
   }
 
+  @Override
+  public float radian() {
+    return radian;
+  }
+
+  @Override
+  public void setRadian(float radian) {
+    this.radian = radian;
+  }
+
   @Override public float getPaddingLeft() {
     return paddingLeft;
   }
@@ -166,11 +178,6 @@ class StraightArea implements Area {
 
   @Override public void setPadding(float paddingLeft, float paddingTop, float paddingRight,
       float paddingBottom) {
-    this.paddingLeft = paddingLeft;
-    this.paddingTop = paddingTop;
-    this.paddingRight = paddingRight;
-    this.paddingBottom = paddingBottom;
-
     this.paddingLeft = paddingLeft;
     this.paddingTop = paddingTop;
     this.paddingRight = paddingRight;

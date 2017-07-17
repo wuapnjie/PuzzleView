@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="PuzzleView">
+        <attr format="integer" name="line_size"/>
+        <attr format="color" name="line_color"/>
+        <attr format="color" name="selected_line_color"/>
+        <attr format="color" name="handle_bar_color"/>
+        <attr format="boolean" name="need_draw_line"/>
+        <attr format="boolean" name="need_draw_outer_line"/>
+        <attr format="dimension" name="piece_padding"/>
+        <attr format="integer" name="animation_duration"/>
+        <attr format="float" name="radian"/>
+    </declare-styleable>
+</resources>

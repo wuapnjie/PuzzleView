@@ -123,15 +123,7 @@ class SlantLine implements Line {
 
   @Override public void update(float layoutWidth, float layoutHeight) {
     intersectionOfLines(start, this, attachLineStart);
-    start.x = max(start.x, 0);
-    start.x = min(start.x, layoutWidth);
-    start.y = max(start.y, 0);
-    start.y = min(start.y, layoutHeight);
     intersectionOfLines(end, this, attachLineEnd);
-    end.x = max(end.x, 0);
-    end.x = min(end.x, layoutWidth);
-    end.y = max(end.y, 0);
-    end.y = min(end.y, layoutHeight);
   }
 
   @Override public float minX() {

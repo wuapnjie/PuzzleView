@@ -272,10 +272,10 @@ public class DegreeSeekBar extends View {
       mMinReachableDegrees = min;
       mMaxReachableDegrees = max;
 
-      if (mCurrentDegrees >= mMaxReachableDegrees || mCurrentDegrees <= mMinReachableDegrees) {
+      if (mCurrentDegrees > mMaxReachableDegrees || mCurrentDegrees < mMinReachableDegrees) {
         mCurrentDegrees = (mMinReachableDegrees + mMaxReachableDegrees) / 2;
       }
-      mTotalScrollDistance = 0;
+      mTotalScrollDistance = (int) (mCurrentDegrees * mPointMargin / mDragFactor);
       invalidate();
     }
   }
@@ -283,7 +283,7 @@ public class DegreeSeekBar extends View {
   public void setCurrentDegrees(int degrees) {
     if (degrees <= mMaxReachableDegrees && degrees >= mMinReachableDegrees) {
       mCurrentDegrees = degrees;
-      mTotalScrollDistance = 0;
+      mTotalScrollDistance = (int) (degrees * mPointMargin / mDragFactor);
       invalidate();
     }
   }

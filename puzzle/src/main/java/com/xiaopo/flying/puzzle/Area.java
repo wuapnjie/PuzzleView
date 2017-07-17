@@ -41,6 +41,10 @@ public interface Area {
 
   PointF[] getHandleBarPoints(Line line);
 
+  float radian();
+
+  void setRadian(float radian);
+
   float getPaddingLeft();
 
   float getPaddingTop();

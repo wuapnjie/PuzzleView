@@ -9,6 +9,7 @@ import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
 
+import static com.xiaopo.flying.puzzle.slant.SlantUtils.distance;
 import static com.xiaopo.flying.puzzle.slant.SlantUtils.getPoint;
 import static com.xiaopo.flying.puzzle.slant.SlantUtils.intersectionOfLines;
 
@@ -26,10 +27,14 @@ class SlantArea implements Area {
   CrossoverPointF rightTop;
   CrossoverPointF rightBottom;
 
+  PointF tempPoint;
+  float tempRadio;
+
   private float paddingLeft;
   private float paddingTop;
   private float paddingRight;
   private float paddingBottom;
+  private float radian;
 
   private Path areaPath = new Path();
   private RectF areaRect = new RectF();
@@ -43,6 +48,8 @@ class SlantArea implements Area {
     leftBottom = new CrossoverPointF();
     rightTop = new CrossoverPointF();
     rightBottom = new CrossoverPointF();
+
+    tempPoint = new PointF();
   }
 
   SlantArea(SlantArea src) {
@@ -60,54 +67,111 @@ class SlantArea implements Area {
     updateCornerPoints();
   }
 
-  @Override public float left() {
-    return Math.min(leftTop.x, leftBottom.x);
+  @Override
+  public float left() {
+    return Math.min(leftTop.x, leftBottom.x) + paddingLeft;
   }
 
-  @Override public float top() {
-    return Math.min(leftTop.y, rightTop.y);
+  @Override
+  public float top() {
+    return Math.min(leftTop.y, rightTop.y) + paddingTop;
   }
 
-  @Override public float right() {
-    return Math.max(rightTop.x, rightBottom.x);
+  @Override
+  public float right() {
+    return Math.max(rightTop.x, rightBottom.x) - paddingRight;
   }
 
-  @Override public float bottom() {
-    return Math.max(leftBottom.y, rightBottom.y);
+  @Override
+  public float bottom() {
+    return Math.max(leftBottom.y, rightBottom.y) - paddingBottom;
   }
 
-  @Override public float centerX() {
+  @Override
+  public float centerX() {
     return (left() + right()) / 2;
   }
 
-  @Override public float centerY() {
+  @Override
+  public float centerY() {
     return (top() + bottom()) / 2;
   }
 
-  @Override public float width() {
+  @Override
+  public float width() {
     return right() - left();
   }
 
-  @Override public float height() {
+  @Override
+  public float height() {
     return bottom() - top();
   }
 
-  @Override public PointF getCenterPoint() {
+  @Override
+  public PointF getCenterPoint() {
     return new PointF(centerX(), centerY());
   }
 
   public Path getAreaPath() {
     areaPath.reset();
-    areaPath.moveTo(leftTop.x, leftTop.y);
-    areaPath.lineTo(rightTop.x, rightTop.y);
-    areaPath.lineTo(rightBottom.x, rightBottom.y);
-    areaPath.lineTo(leftBottom.x, leftBottom.y);
-    areaPath.lineTo(leftTop.x, leftTop.y);
 
+    if (radian > 0) {
+      tempRadio = radian / distance(leftTop, leftBottom);
+      getPoint(tempPoint, leftTop, leftBottom, Line.Direction.VERTICAL, tempRadio);
+      tempPoint.offset(paddingLeft, paddingTop);
+      areaPath.moveTo(tempPoint.x, tempPoint.y);
+
+      tempRadio = radian / distance(leftTop, rightTop);
+      getPoint(tempPoint, leftTop, rightTop, Line.Direction.HORIZONTAL, tempRadio);
+      tempPoint.offset(paddingLeft, paddingTop);
+      areaPath.quadTo(leftTop.x + paddingLeft, leftTop.y + paddingTop, tempPoint.x, tempPoint.y);
+
+      tempRadio = 1 - tempRadio;
+      getPoint(tempPoint, leftTop, rightTop, Line.Direction.HORIZONTAL, tempRadio);
+      tempPoint.offset(-paddingRight, paddingTop);
+      areaPath.lineTo(tempPoint.x, tempPoint.y);
+
+      tempRadio = radian / distance(rightTop, rightBottom);
+      getPoint(tempPoint, rightTop, rightBottom, Line.Direction.VERTICAL, tempRadio);
+      tempPoint.offset(-paddingRight, paddingTop);
+      areaPath.quadTo(rightTop.x - paddingLeft, rightTop.y + paddingTop, tempPoint.x, tempPoint.y);
+
+      tempRadio = 1 - tempRadio;
+      getPoint(tempPoint, rightTop, rightBottom, Line.Direction.VERTICAL, tempRadio);
+      tempPoint.offset(-paddingRight, -paddingBottom);
+      areaPath.lineTo(tempPoint.x, tempPoint.y);
+
+      tempRadio = 1 - radian / distance(leftBottom, rightBottom);
+      getPoint(tempPoint, leftBottom, rightBottom, Line.Direction.HORIZONTAL, tempRadio);
+      tempPoint.offset(-paddingRight, -paddingBottom);
+      areaPath.quadTo(rightBottom.x - paddingRight, rightBottom.y - paddingTop, tempPoint.x, tempPoint.y);
+
+      tempRadio = 1 - tempRadio;
+      getPoint(tempPoint, leftBottom, rightBottom, Line.Direction.HORIZONTAL, tempRadio);
+      tempPoint.offset(paddingLeft, -paddingBottom);
+      areaPath.lineTo(tempPoint.x, tempPoint.y);
+
+      tempRadio = 1 - radian / distance(leftTop, leftBottom);
+      getPoint(tempPoint, leftTop, leftBottom, Line.Direction.VERTICAL, tempRadio);
+      tempPoint.offset(paddingLeft, -paddingBottom);
+      areaPath.quadTo(leftBottom.x + paddingLeft, leftBottom.y - paddingBottom, tempPoint.x, tempPoint.y);
+
+      tempRadio = 1 - tempRadio;
+      getPoint(tempPoint, leftTop, leftBottom, Line.Direction.VERTICAL, tempRadio);
+      tempPoint.offset(paddingLeft, paddingTop);
+      areaPath.lineTo(tempPoint.x, tempPoint.y);
+    } else {
+      areaPath.moveTo(leftTop.x + paddingLeft, leftTop.y + paddingTop);
+      areaPath.lineTo(rightTop.x - paddingRight, rightTop.y + paddingTop);
+      areaPath.lineTo(rightBottom.x - paddingRight, rightBottom.y - paddingBottom);
+      areaPath.lineTo(leftBottom.x + paddingLeft, leftBottom.y - paddingBottom);
+      areaPath.lineTo(leftTop.x + paddingLeft, leftTop.y + paddingTop);
+    }
     return areaPath;
   }
 
-  @Override public RectF getAreaRect() {
+  @Override
+  public RectF getAreaRect() {
     areaRect.set(left(), top(), right(), bottom());
     return areaRect;
   }
@@ -116,57 +180,84 @@ class SlantArea implements Area {
     return SlantUtils.contains(this, x, y);
   }
 
-  @Override public boolean contains(Line line) {
+  @Override
+  public boolean contains(Line line) {
     return lineLeft == line || lineTop == line || lineRight == line || lineBottom == line;
   }
 
-  @Override public boolean contains(PointF point) {
+  @Override
+  public boolean contains(PointF point) {
     return contains(point.x, point.y);
   }
 
-  @Override public List<Line> getLines() {
+  @Override
+  public List<Line> getLines() {
     return Arrays.asList((Line) lineLeft, lineTop, lineRight, lineBottom);
   }
 
-  @Override public PointF[] getHandleBarPoints(Line line) {
+  @Override
+  public PointF[] getHandleBarPoints(Line line) {
     if (line == lineLeft) {
       getPoint(handleBarPoints[0], leftTop, leftBottom, line.direction(), 0.25f);
       getPoint(handleBarPoints[1], leftTop, leftBottom, line.direction(), 0.75f);
+      handleBarPoints[0].offset(paddingLeft, 0);
+      handleBarPoints[1].offset(paddingLeft, 0);
     } else if (line == lineTop) {
       getPoint(handleBarPoints[0], leftTop, rightTop, line.direction(), 0.25f);
       getPoint(handleBarPoints[1], leftTop, rightTop, line.direction(), 0.75f);
+      handleBarPoints[0].offset(0, paddingTop);
+      handleBarPoints[1].offset(0, paddingTop);
     } else if (line == lineRight) {
       getPoint(handleBarPoints[0], rightTop, rightBottom, line.direction(), 0.25f);
       getPoint(handleBarPoints[1], rightTop, rightBottom, line.direction(), 0.75f);
+      handleBarPoints[0].offset(-paddingRight, 0);
+      handleBarPoints[1].offset(-paddingRight, 0);
     } else if (line == lineBottom) {
       getPoint(handleBarPoints[0], leftBottom, rightBottom, line.direction(), 0.25f);
       getPoint(handleBarPoints[1], leftBottom, rightBottom, line.direction(), 0.75f);
+      handleBarPoints[0].offset(0, -paddingBottom);
+      handleBarPoints[1].offset(0, -paddingBottom);
     }
     return handleBarPoints;
   }
 
-  // currently not support padding
-  @Override public float getPaddingLeft() {
+  @Override
+  public float radian() {
+    return radian;
+  }
+
+  @Override
+  public void setRadian(float radian) {
+    this.radian = radian;
+  }
+
+  @Override
+  public float getPaddingLeft() {
     return paddingLeft;
   }
 
-  @Override public float getPaddingTop() {
+  @Override
+  public float getPaddingTop() {
     return paddingTop;
   }
 
-  @Override public float getPaddingRight() {
+  @Override
+  public float getPaddingRight() {
     return paddingRight;
   }
 
-  @Override public float getPaddingBottom() {
+  @Override
+  public float getPaddingBottom() {
     return paddingBottom;
   }
 
-  @Override public void setPadding(float padding) {
+  @Override
+  public void setPadding(float padding) {
+    setPadding(padding, padding, padding, padding);
   }
 
-  @Override public void setPadding(float paddingLeft, float paddingTop, float paddingRight,
-      float paddingBottom) {
+  @Override
+  public void setPadding(float paddingLeft, float paddingTop, float paddingRight, float paddingBottom) {
     this.paddingLeft = paddingLeft;
     this.paddingTop = paddingTop;
     this.paddingRight = paddingRight;
@@ -182,7 +273,8 @@ class SlantArea implements Area {
 
   static class AreaComparator implements Comparator<SlantArea> {
 
-    @Override public int compare(SlantArea one, SlantArea two) {
+    @Override
+    public int compare(SlantArea one, SlantArea two) {
       if (one.leftTop.y < two.leftTop.y) {
         return -1;
       } else if (one.leftTop.y == two.leftTop.y) {

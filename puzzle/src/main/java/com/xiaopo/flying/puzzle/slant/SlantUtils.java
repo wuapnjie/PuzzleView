@@ -27,6 +27,10 @@ class SlantUtils {
     //no instance
   }
 
+  static float distance(PointF one, PointF two) {
+    return (float) Math.sqrt(Math.pow(two.x - one.x, 2) + Math.pow(two.y - one.y, 2));
+  }
+
   static List<SlantArea> cutAreaWith(SlantArea area, SlantLine line) {
     List<SlantArea> areas = new ArrayList<>();
     SlantArea area1 = new SlantArea(area);
@@ -91,7 +95,7 @@ class SlantUtils {
     SlantArea restArea = new SlantArea(area);
     for (int i = horizontalSize + 1; i > 1; i--) {
       SlantLine horizontalLine =
-          createLine(restArea, Line.Direction.HORIZONTAL, (float) (i - 1) / i, (float) (i - 1) / i);
+          createLine(restArea, Line.Direction.HORIZONTAL, (float) (i - 1) / i - 0.025f, (float) (i - 1) / i + 0.025f);
       horizontalLines.add(horizontalLine);
       restArea.lineBottom = horizontalLine;
       restArea.leftBottom = horizontalLine.start;
@@ -102,7 +106,7 @@ class SlantUtils {
     restArea = new SlantArea(area);
     for (int i = verticalSize + 1; i > 1; i--) {
       SlantLine verticalLine =
-          createLine(restArea, Line.Direction.VERTICAL, (float) (i - 1) / i, (float) (i - 1) / i);
+          createLine(restArea, Line.Direction.VERTICAL, (float) (i - 1) / i + 0.025f, (float) (i - 1) / i - 0.025f);
       verticalLines.add(verticalLine);
       SlantArea spiltArea = new SlantArea(restArea);
       spiltArea.lineLeft = verticalLine;

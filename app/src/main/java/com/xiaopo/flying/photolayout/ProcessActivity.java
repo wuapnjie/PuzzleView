@@ -20,7 +20,6 @@ import com.xiaopo.flying.poiphoto.PhotoPicker;
 import com.xiaopo.flying.puzzle.PuzzleLayout;
 import com.xiaopo.flying.puzzle.PuzzlePiece;
 import com.xiaopo.flying.puzzle.PuzzleView;
-import com.xiaopo.flying.puzzle.straight.StraightPuzzleLayout;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
@@ -29,6 +28,8 @@ import java.util.List;
  * @author wupanjie
  */
 public class ProcessActivity extends AppCompatActivity implements View.OnClickListener {
+  private static final int FLAG_CONTROL_LINE_SIZE = 1;
+  private static final int FLAG_CONTROL_CORNER = 1 << 1;
 
   private PuzzleLayout puzzleLayout;
   private List<String> bitmapPaint;
@@ -37,6 +38,8 @@ public class ProcessActivity extends AppCompatActivity implements View.OnClickLi
 
   private List<Target> targets = new ArrayList<>();
   private int deviceWidth = 0;
+
+  private int controlFlag;
 
   @Override protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
@@ -187,21 +190,21 @@ public class ProcessActivity extends AppCompatActivity implements View.OnClickLi
     });
 
     // currently the SlantPuzzleLayout do not support padding
-    if (puzzleLayout instanceof StraightPuzzleLayout) {
-      puzzleView.setPiecePadding(10);
-    }
+    puzzleView.setPiecePadding(10);
 
     ImageView btnReplace = (ImageView) findViewById(R.id.btn_replace);
     ImageView btnRotate = (ImageView) findViewById(R.id.btn_rotate);
     ImageView btnFlipHorizontal = (ImageView) findViewById(R.id.btn_flip_horizontal);
     ImageView btnFlipVertical = (ImageView) findViewById(R.id.btn_flip_vertical);
     ImageView btnBorder = (ImageView) findViewById(R.id.btn_border);
+    ImageView btnCorner = (ImageView) findViewById(R.id.btn_corner);
 
     btnReplace.setOnClickListener(this);
     btnRotate.setOnClickListener(this);
     btnFlipHorizontal.setOnClickListener(this);
     btnFlipVertical.setOnClickListener(this);
     btnBorder.setOnClickListener(this);
+    btnCorner.setOnClickListener(this);
 
     TextView btnSave = (TextView) findViewById(R.id.btn_save);
     btnSave.setOnClickListener(new View.OnClickListener() {
@@ -227,7 +230,14 @@ public class ProcessActivity extends AppCompatActivity implements View.OnClickLi
       }
 
       @Override public void onScroll(int currentDegrees) {
-        puzzleView.setLineSize(currentDegrees);
+        switch (controlFlag) {
+          case FLAG_CONTROL_LINE_SIZE:
+            puzzleView.setLineSize(currentDegrees);
+            break;
+          case FLAG_CONTROL_CORNER:
+            puzzleView.setPieceRadian(currentDegrees);
+            break;
+        }
       }
 
       @Override public void onScrollEnd() {
@@ -274,12 +284,25 @@ public class ProcessActivity extends AppCompatActivity implements View.OnClickLi
         puzzleView.flipVertically();
         break;
       case R.id.btn_border:
+        controlFlag = FLAG_CONTROL_LINE_SIZE;
         puzzleView.setNeedDrawLine(!puzzleView.isNeedDrawLine());
         if (puzzleView.isNeedDrawLine()) {
           degreeSeekBar.setVisibility(View.VISIBLE);
+          degreeSeekBar.setCurrentDegrees(puzzleView.getLineSize());
+          degreeSeekBar.setDegreeRange(0,30);
         } else {
           degreeSeekBar.setVisibility(View.INVISIBLE);
         }
+        break;
+      case R.id.btn_corner:
+        if (controlFlag == FLAG_CONTROL_CORNER && degreeSeekBar.getVisibility() == View.VISIBLE){
+          degreeSeekBar.setVisibility(View.INVISIBLE);
+          return;
+        }
+        degreeSeekBar.setCurrentDegrees((int) puzzleView.getPieceRadian());
+        controlFlag = FLAG_CONTROL_CORNER;
+        degreeSeekBar.setVisibility(View.VISIBLE);
+        degreeSeekBar.setDegreeRange(0,100);
         break;
     }
   }
@@ -308,6 +331,7 @@ public class ProcessActivity extends AppCompatActivity implements View.OnClickLi
         }
       };
 
+      //noinspection SuspiciousNameCombination
       Picasso.with(this)
           .load("file:///" + path)
           .resize(deviceWidth, deviceWidth)
