@@ -20,25 +20,34 @@ import static com.xiaopo.flying.puzzle.slant.SlantUtils.cutAreaWith;
  * @author wupanjie
  */
 public abstract class SlantPuzzleLayout implements PuzzleLayout {
+  private RectF bounds;
   private SlantArea outerArea;
 
   private List<Line> outerLines = new ArrayList<>(4);
   private List<SlantArea> areas = new ArrayList<>();
   private List<Line> lines = new ArrayList<>();
 
+  private float padding;
+  private float radian;
+  private int color;
+
   private Comparator<SlantArea> areaComparator = new SlantArea.AreaComparator();
+
+  private ArrayList<Step> steps = new ArrayList<>();
 
   protected SlantPuzzleLayout() {
 
   }
 
-  @Override public void setOuterBounds(RectF baseRect) {
+  @Override public void setOuterBounds(RectF bounds) {
     reset();
 
-    CrossoverPointF leftTop = new CrossoverPointF(baseRect.left, baseRect.top);
-    CrossoverPointF rightTop = new CrossoverPointF(baseRect.right, baseRect.top);
-    CrossoverPointF leftBottom = new CrossoverPointF(baseRect.left, baseRect.bottom);
-    CrossoverPointF rightBottom = new CrossoverPointF(baseRect.right, baseRect.bottom);
+    this.bounds = bounds;
+
+    CrossoverPointF leftTop = new CrossoverPointF(bounds.left, bounds.top);
+    CrossoverPointF rightTop = new CrossoverPointF(bounds.right, bounds.top);
+    CrossoverPointF leftBottom = new CrossoverPointF(bounds.left, bounds.bottom);
+    CrossoverPointF rightBottom = new CrossoverPointF(bounds.right, bounds.bottom);
 
     SlantLine lineLeft = new SlantLine(leftTop, leftBottom, Line.Direction.VERTICAL);
     SlantLine lineTop = new SlantLine(leftTop, rightTop, Line.Direction.HORIZONTAL);
@@ -130,6 +139,7 @@ public abstract class SlantPuzzleLayout implements PuzzleLayout {
     lines.clear();
     areas.clear();
     areas.add(outerArea);
+    steps.clear();
   }
 
   @Override public void update() {
@@ -174,15 +184,56 @@ public abstract class SlantPuzzleLayout implements PuzzleLayout {
     return lines;
   }
 
-  protected List<SlantArea> addLine(int position, Line.Direction direction, float radio) {
-    return addLine(position, direction, radio, radio);
+  @Override
+  public void setPadding(float padding) {
+    this.padding = padding;
+    for (Area area : areas) {
+      area.setPadding(padding);
+    }
+
+    outerArea.lineLeft.startPoint().set(bounds.left + padding, bounds.top + padding);
+    outerArea.lineLeft.endPoint().set(bounds.left + padding, bounds.bottom - padding);
+
+    outerArea.lineRight.startPoint().set(bounds.right - padding, bounds.top + padding);
+    outerArea.lineRight.endPoint().set(bounds.right - padding, bounds.bottom - padding);
+
+    outerArea.updateCornerPoints();
+    update();
   }
 
-  protected List<SlantArea> addLine(int position, Line.Direction direction, float startRadio,
-      float endRadio) {
+  @Override
+  public float getPadding() {
+    return padding;
+  }
+
+  @Override public float getRadian() {
+    return radian;
+  }
+
+  @Override public void setRadian(float radian) {
+    this.radian = radian;
+    for (Area area : areas) {
+      area.setRadian(radian);
+    }
+  }
+
+  @Override public int getColor() {
+    return color;
+  }
+
+  @Override public void setColor(int color) {
+    this.color = color;
+  }
+
+  protected List<SlantArea> addLine(int position, Line.Direction direction, float ratio) {
+    return addLine(position, direction, ratio, ratio);
+  }
+
+  protected List<SlantArea> addLine(int position, Line.Direction direction, float startRatio,
+      float endRatio) {
     SlantArea area = areas.get(position);
     areas.remove(area);
-    SlantLine line = createLine(area, direction, startRadio, endRadio);
+    SlantLine line = createLine(area, direction, startRatio, endRatio);
     lines.add(line);
 
     List<SlantArea> increasedAreas = cutAreaWith(area, line);
@@ -192,16 +243,22 @@ public abstract class SlantPuzzleLayout implements PuzzleLayout {
     updateLineLimit();
     sortAreas();
 
+    Step step = new Step();
+    step.type = Step.ADD_LINE;
+    step.direction = direction == Line.Direction.HORIZONTAL ? 0 : 1;
+    step.position = position;
+    steps.add(step);
+
     return increasedAreas;
   }
 
-  protected List<SlantArea> addCross(int position, float startRadio1, float endRadio1,
-      float startRadio2, float endRadio2) {
+  protected void addCross(int position, float startRatio1, float endRatio1,
+      float startRatio2, float endRatio2) {
     SlantArea area = areas.get(position);
     areas.remove(area);
 
-    SlantLine horizontal = createLine(area, Line.Direction.HORIZONTAL, startRadio1, endRadio1);
-    SlantLine vertical = createLine(area, Line.Direction.VERTICAL, startRadio2, endRadio2);
+    SlantLine horizontal = createLine(area, Line.Direction.HORIZONTAL, startRatio1, endRatio1);
+    SlantLine vertical = createLine(area, Line.Direction.VERTICAL, startRatio2, endRatio2);
     lines.add(horizontal);
     lines.add(vertical);
 
@@ -210,15 +267,18 @@ public abstract class SlantPuzzleLayout implements PuzzleLayout {
     areas.addAll(increasedAreas);
     sortAreas();
 
-    return increasedAreas;
+    Step step = new Step();
+    step.type = Step.ADD_CROSS;
+    step.position = position;
+    steps.add(step);
   }
 
-  protected List<SlantArea> cutArea(int position, int horizontalSize, int verticalSize) {
+  protected void cutArea(int position, int hSize, int vSize) {
     SlantArea area = areas.get(position);
     areas.remove(area);
 
     Pair<List<SlantLine>, List<SlantArea>> spilt =
-        SlantUtils.cutAreaWith(area, horizontalSize, verticalSize);
+        SlantUtils.cutAreaWith(area, hSize, vSize);
 
     lines.addAll(spilt.first);
     areas.addAll(spilt.second);
@@ -226,6 +286,28 @@ public abstract class SlantPuzzleLayout implements PuzzleLayout {
     updateLineLimit();
     sortAreas();
 
-    return spilt.second;
+    Step step = new Step();
+    step.type = Step.CUT_EQUAL_PART_ONE;
+    step.position = position;
+    step.hSize = hSize;
+    step.vSize = vSize;
+    steps.add(step);
+  }
+
+  @Override
+  public Info generateInfo() {
+    Info info = new Info();
+    info.type = Info.TYPE_SLANT;
+    info.padding = padding;
+    info.radian = radian;
+    info.color = color;
+    info.steps = steps;
+    ArrayList<LineInfo> lineInfos = new ArrayList<>();
+    for (Line line : lines) {
+      LineInfo lineInfo = new LineInfo(line);
+      lineInfos.add(lineInfo);
+    }
+    info.lineInfos = lineInfos;
+    return info;
   }
 }

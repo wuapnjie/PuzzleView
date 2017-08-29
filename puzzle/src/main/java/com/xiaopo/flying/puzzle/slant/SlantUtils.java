@@ -60,13 +60,13 @@ class SlantUtils {
     return areas;
   }
 
-  static SlantLine createLine(SlantArea area, Line.Direction direction, float startRadio,
-      float endRadio) {
+  static SlantLine createLine(SlantArea area, Line.Direction direction, float startratio,
+      float endratio) {
     SlantLine line = new SlantLine(direction);
 
     if (direction == Line.Direction.HORIZONTAL) {
-      line.start = getPoint(area.leftTop, area.leftBottom, Line.Direction.VERTICAL, startRadio);
-      line.end = getPoint(area.rightTop, area.rightBottom, Line.Direction.VERTICAL, endRadio);
+      line.start = getPoint(area.leftTop, area.leftBottom, Line.Direction.VERTICAL, startratio);
+      line.end = getPoint(area.rightTop, area.rightBottom, Line.Direction.VERTICAL, endratio);
 
       line.attachLineStart = area.lineLeft;
       line.attachLineEnd = area.lineRight;
@@ -74,8 +74,8 @@ class SlantUtils {
       line.upperLine = area.lineBottom;
       line.lowerLine = area.lineTop;
     } else {
-      line.start = getPoint(area.leftTop, area.rightTop, Line.Direction.HORIZONTAL, startRadio);
-      line.end = getPoint(area.leftBottom, area.rightBottom, Line.Direction.HORIZONTAL, endRadio);
+      line.start = getPoint(area.leftTop, area.rightTop, Line.Direction.HORIZONTAL, startratio);
+      line.end = getPoint(area.leftBottom, area.rightBottom, Line.Direction.HORIZONTAL, endratio);
 
       line.attachLineStart = area.lineTop;
       line.attachLineEnd = area.lineBottom;
@@ -224,14 +224,14 @@ class SlantUtils {
   }
 
   private static CrossoverPointF getPoint(final PointF start, final PointF end,
-      final Line.Direction direction, float radio) {
+      final Line.Direction direction, float ratio) {
     CrossoverPointF point = new CrossoverPointF();
-    getPoint(point, start, end, direction, radio);
+    getPoint(point, start, end, direction, ratio);
     return point;
   }
 
   static void getPoint(final PointF dst, final PointF start, final PointF end,
-      final Line.Direction direction, float radio) {
+      final Line.Direction direction, float ratio) {
     float deltaY = Math.abs(start.y - end.y);
     float deltaX = Math.abs(start.x - end.x);
     float maxY = Math.max(start.y, end.y);
@@ -239,18 +239,18 @@ class SlantUtils {
     float maxX = Math.max(start.x, end.x);
     float minX = Math.min(start.x, end.x);
     if (direction == Line.Direction.HORIZONTAL) {
-      dst.x = minX + deltaX * radio;
+      dst.x = minX + deltaX * ratio;
       if (start.y < end.y) {
-        dst.y = minY + radio * deltaY;
+        dst.y = minY + ratio * deltaY;
       } else {
-        dst.y = maxY - radio * deltaY;
+        dst.y = maxY - ratio * deltaY;
       }
     } else {
-      dst.y = minY + deltaY * radio;
+      dst.y = minY + deltaY * ratio;
       if (start.x < end.x) {
-        dst.x = minX + radio * deltaX;
+        dst.x = minX + ratio * deltaX;
       } else {
-        dst.x = maxX - radio * deltaX;
+        dst.x = maxX - ratio * deltaX;
       }
     }
   }

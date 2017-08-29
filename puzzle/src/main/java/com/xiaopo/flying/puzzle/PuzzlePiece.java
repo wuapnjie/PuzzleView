@@ -1,11 +1,18 @@
 package com.xiaopo.flying.puzzle;
 
 import android.animation.ValueAnimator;
+import android.graphics.Bitmap;
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.Matrix;
+import android.graphics.Paint;
 import android.graphics.PointF;
+import android.graphics.PorterDuff;
+import android.graphics.PorterDuffXfermode;
 import android.graphics.Rect;
 import android.graphics.RectF;
+import android.graphics.Xfermode;
+import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.view.MotionEvent;
 import android.view.View;
@@ -19,6 +26,8 @@ import static com.xiaopo.flying.puzzle.MatrixUtils.judgeIsImageContainsBorder;
  * @author wupanjie
  */
 @SuppressWarnings("WeakerAccess") public class PuzzlePiece {
+  private static Xfermode SRC_IN = new PorterDuffXfermode(PorterDuff.Mode.SRC_IN);
+
   private Drawable drawable;
   private Matrix matrix;
   private Matrix previousMatrix;
@@ -68,17 +77,34 @@ import static com.xiaopo.flying.puzzle.MatrixUtils.judgeIsImageContainsBorder;
   }
 
   private void draw(Canvas canvas, int alpha, boolean needClip) {
-    canvas.save();
+    if (drawable instanceof BitmapDrawable){
+      int saved = canvas.saveLayer(null, null, Canvas.ALL_SAVE_FLAG);
 
-    if (needClip) {
-      canvas.clipPath(area.getAreaPath());
+      Bitmap bitmap = ((BitmapDrawable) drawable).getBitmap();
+      Paint paint= ((BitmapDrawable) drawable).getPaint();
+
+      paint.setColor(Color.WHITE);
+      paint.setAlpha(alpha);
+      if (needClip) {
+        canvas.drawPath(area.getAreaPath(), paint);
+        paint.setXfermode(SRC_IN);
+      }
+      canvas.drawBitmap(bitmap,matrix,paint);
+      paint.setXfermode(null);
+
+      canvas.restoreToCount(saved);
+    }else {
+      canvas.save();
+      if (needClip) {
+        canvas.clipPath(area.getAreaPath());
+      }
+      canvas.concat(matrix);
+      drawable.setBounds(drawableBounds);
+      drawable.setAlpha(alpha);
+      drawable.draw(canvas);
+
+      canvas.restore();
     }
-    canvas.concat(matrix);
-    drawable.setBounds(drawableBounds);
-    drawable.setAlpha(alpha);
-    drawable.draw(canvas);
-
-    canvas.restore();
   }
 
   public Area getArea() {
@@ -280,63 +306,64 @@ import static com.xiaopo.flying.puzzle.MatrixUtils.judgeIsImageContainsBorder;
 
   void fillArea(final View view, boolean quick) {
     if (isFilledArea()) return;
-    if (quick) {
-      set(MatrixUtils.generateMatrix(this, 0f));
-    } else {
-      record();
+    record();
 
-      final float startScale = getMatrixScale();
-      final float endScale = MatrixUtils.getMinMatrixScale(this);
+    final float startScale = getMatrixScale();
+    final float endScale = MatrixUtils.getMinMatrixScale(this);
 
-      final PointF midPoint = new PointF();
-      midPoint.set(getCurrentDrawableCenterPoint());
+    final PointF midPoint = new PointF();
+    midPoint.set(getCurrentDrawableCenterPoint());
 
-      tempMatrix.set(matrix);
-      tempMatrix.postScale(endScale / startScale, endScale / startScale, midPoint.x, midPoint.y);
+    tempMatrix.set(matrix);
+    tempMatrix.postScale(endScale / startScale, endScale / startScale, midPoint.x, midPoint.y);
 
-      RectF rectF = new RectF(drawableBounds);
-      tempMatrix.mapRect(rectF);
+    RectF rectF = new RectF(drawableBounds);
+    tempMatrix.mapRect(rectF);
 
-      float offsetX = 0f;
-      float offsetY = 0f;
+    float offsetX = 0f;
+    float offsetY = 0f;
 
-      if (rectF.left > area.left()) {
-        offsetX = area.left() - rectF.left;
-      }
-
-      if (rectF.top > area.top()) {
-        offsetY = area.top() - rectF.top;
-      }
-
-      if (rectF.right < area.right()) {
-        offsetX = area.right() - rectF.right;
-      }
-
-      if (rectF.bottom < area.bottom()) {
-        offsetY = area.bottom() - rectF.bottom;
-      }
-
-      final float translateX = offsetX;
-      final float translateY = offsetY;
-
-      animator.end();
-      animator.removeAllUpdateListeners();
-      animator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
-        @Override public void onAnimationUpdate(ValueAnimator animation) {
-          float value = (float) animation.getAnimatedValue();
-          float scale = (startScale + (endScale - startScale) * value) / startScale;
-          float x = translateX * value;
-          float y = translateY * value;
-
-          zoom(scale, scale, midPoint);
-          postTranslate(x, y);
-          view.invalidate();
-        }
-      });
-
-      animator.setDuration(duration);
-      animator.start();
+    if (rectF.left > area.left()) {
+      offsetX = area.left() - rectF.left;
     }
+
+    if (rectF.top > area.top()) {
+      offsetY = area.top() - rectF.top;
+    }
+
+    if (rectF.right < area.right()) {
+      offsetX = area.right() - rectF.right;
+    }
+
+    if (rectF.bottom < area.bottom()) {
+      offsetY = area.bottom() - rectF.bottom;
+    }
+
+    final float translateX = offsetX;
+    final float translateY = offsetY;
+
+    animator.end();
+    animator.removeAllUpdateListeners();
+    animator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+      @Override
+      public void onAnimationUpdate(ValueAnimator animation) {
+        float value = (float) animation.getAnimatedValue();
+        float scale = (startScale + (endScale - startScale) * value) / startScale;
+        float x = translateX * value;
+        float y = translateY * value;
+
+        zoom(scale, scale, midPoint);
+        postTranslate(x, y);
+        view.invalidate();
+      }
+    });
+
+    if (quick) {
+      animator.setDuration(0);
+    } else {
+      animator.setDuration(duration);
+    }
+    animator.start();
   }
 
   void updateWith(final MotionEvent event, final Line line) {

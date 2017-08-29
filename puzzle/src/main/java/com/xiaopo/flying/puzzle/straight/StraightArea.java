@@ -28,11 +28,14 @@ class StraightArea implements Area {
   private float paddingBottom;
   private float radian;
 
-  StraightArea(RectF baseRect) {
-    setBaseRect(baseRect);
-
+  StraightArea(){
     handleBarPoints[0] = new PointF();
     handleBarPoints[1] = new PointF();
+  }
+
+  StraightArea(RectF baseRect) {
+    this();
+    setBaseRect(baseRect);
   }
 
   private void setBaseRect(RectF baseRect) {

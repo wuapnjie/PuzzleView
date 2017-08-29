@@ -1,0 +1,46 @@
+@startuml
+
+interface Line
+
+class StraightLine
+Line <|.. StraightLine
+
+class SlantLine
+Line <|.. SlantLine
+
+interface Area
+
+class StraightArea
+Area <|.. StraightArea
+
+class SlantArea
+Area <|.. SlantArea
+
+interface PuzzleLayout
+
+abstract class StraightPuzzleLayout
+PuzzleLayout <|.. StraightPuzzleLayout
+
+abstract class SlantPuzzleLayout
+PuzzleLayout <|.. SlantPuzzleLayout
+
+Line <. Area
+Area <. PuzzleLayout
+Line <. PuzzleLayout
+
+class PuzzleView{
+  PuzzleLayout puzzleLayout
+  List<PuzzlePiece> pieces
+}
+PuzzleView "1" *-- "1" PuzzleLayout
+
+class PuzzlePiece{
+  Drawable drawable
+  Matrix matrix
+}
+PuzzleView "1" *-- "many" PuzzlePiece
+
+class SquarePuzzleView
+PuzzleView <|- SquarePuzzleView
+
+@enduml

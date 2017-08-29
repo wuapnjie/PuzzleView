@@ -1,6 +1,5 @@
 package com.xiaopo.flying.puzzle.straight;
 
-import android.graphics.Path;
 import android.graphics.PointF;
 import android.util.Pair;
 import com.xiaopo.flying.puzzle.Line;

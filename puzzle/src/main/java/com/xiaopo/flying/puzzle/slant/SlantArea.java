@@ -27,8 +27,7 @@ class SlantArea implements Area {
   CrossoverPointF rightTop;
   CrossoverPointF rightBottom;
 
-  PointF tempPoint;
-  float tempRadio;
+  private PointF tempPoint;
 
   private float paddingLeft;
   private float paddingTop;
@@ -116,48 +115,48 @@ class SlantArea implements Area {
     areaPath.reset();
 
     if (radian > 0) {
-      tempRadio = radian / distance(leftTop, leftBottom);
-      getPoint(tempPoint, leftTop, leftBottom, Line.Direction.VERTICAL, tempRadio);
+      float tempRatio = radian / distance(leftTop, leftBottom);
+      getPoint(tempPoint, leftTop, leftBottom, Line.Direction.VERTICAL, tempRatio);
       tempPoint.offset(paddingLeft, paddingTop);
       areaPath.moveTo(tempPoint.x, tempPoint.y);
 
-      tempRadio = radian / distance(leftTop, rightTop);
-      getPoint(tempPoint, leftTop, rightTop, Line.Direction.HORIZONTAL, tempRadio);
+      tempRatio = radian / distance(leftTop, rightTop);
+      getPoint(tempPoint, leftTop, rightTop, Line.Direction.HORIZONTAL, tempRatio);
       tempPoint.offset(paddingLeft, paddingTop);
       areaPath.quadTo(leftTop.x + paddingLeft, leftTop.y + paddingTop, tempPoint.x, tempPoint.y);
 
-      tempRadio = 1 - tempRadio;
-      getPoint(tempPoint, leftTop, rightTop, Line.Direction.HORIZONTAL, tempRadio);
+      tempRatio = 1 - tempRatio;
+      getPoint(tempPoint, leftTop, rightTop, Line.Direction.HORIZONTAL, tempRatio);
       tempPoint.offset(-paddingRight, paddingTop);
       areaPath.lineTo(tempPoint.x, tempPoint.y);
 
-      tempRadio = radian / distance(rightTop, rightBottom);
-      getPoint(tempPoint, rightTop, rightBottom, Line.Direction.VERTICAL, tempRadio);
+      tempRatio = radian / distance(rightTop, rightBottom);
+      getPoint(tempPoint, rightTop, rightBottom, Line.Direction.VERTICAL, tempRatio);
       tempPoint.offset(-paddingRight, paddingTop);
       areaPath.quadTo(rightTop.x - paddingLeft, rightTop.y + paddingTop, tempPoint.x, tempPoint.y);
 
-      tempRadio = 1 - tempRadio;
-      getPoint(tempPoint, rightTop, rightBottom, Line.Direction.VERTICAL, tempRadio);
+      tempRatio = 1 - tempRatio;
+      getPoint(tempPoint, rightTop, rightBottom, Line.Direction.VERTICAL, tempRatio);
       tempPoint.offset(-paddingRight, -paddingBottom);
       areaPath.lineTo(tempPoint.x, tempPoint.y);
 
-      tempRadio = 1 - radian / distance(leftBottom, rightBottom);
-      getPoint(tempPoint, leftBottom, rightBottom, Line.Direction.HORIZONTAL, tempRadio);
+      tempRatio = 1 - radian / distance(leftBottom, rightBottom);
+      getPoint(tempPoint, leftBottom, rightBottom, Line.Direction.HORIZONTAL, tempRatio);
       tempPoint.offset(-paddingRight, -paddingBottom);
       areaPath.quadTo(rightBottom.x - paddingRight, rightBottom.y - paddingTop, tempPoint.x, tempPoint.y);
 
-      tempRadio = 1 - tempRadio;
-      getPoint(tempPoint, leftBottom, rightBottom, Line.Direction.HORIZONTAL, tempRadio);
+      tempRatio = 1 - tempRatio;
+      getPoint(tempPoint, leftBottom, rightBottom, Line.Direction.HORIZONTAL, tempRatio);
       tempPoint.offset(paddingLeft, -paddingBottom);
       areaPath.lineTo(tempPoint.x, tempPoint.y);
 
-      tempRadio = 1 - radian / distance(leftTop, leftBottom);
-      getPoint(tempPoint, leftTop, leftBottom, Line.Direction.VERTICAL, tempRadio);
+      tempRatio = 1 - radian / distance(leftTop, leftBottom);
+      getPoint(tempPoint, leftTop, leftBottom, Line.Direction.VERTICAL, tempRatio);
       tempPoint.offset(paddingLeft, -paddingBottom);
       areaPath.quadTo(leftBottom.x + paddingLeft, leftBottom.y - paddingBottom, tempPoint.x, tempPoint.y);
 
-      tempRadio = 1 - tempRadio;
-      getPoint(tempPoint, leftTop, leftBottom, Line.Direction.VERTICAL, tempRadio);
+      tempRatio = 1 - tempRatio;
+      getPoint(tempPoint, leftTop, leftBottom, Line.Direction.VERTICAL, tempRatio);
       tempPoint.offset(paddingLeft, paddingTop);
       areaPath.lineTo(tempPoint.x, tempPoint.y);
     } else {
