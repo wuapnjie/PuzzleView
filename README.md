@@ -18,6 +18,7 @@ Due the size of the gif file, the example below may not render well, in that cas
 
 **Now support slant mode and round cornors**
 </br>
+</br>
 ![](https://github.com/wuapnjie/PuzzleView/blob/master/screenshots/screenshot4.png)
 
 ### Usage
@@ -58,7 +59,7 @@ puzzleView.flipHorizontally();
 puzzleView.flipVertically();
 puzzleView.setLineSize(currentDegrees);
 puzzleView.setPieceRadian(currentDegrees);
-puzzleView.setNeedDrawBorder(!mPuzzleView.isNeedDrawBorder());
+puzzleView.setNeedDrawLine(!mPuzzleView.isNeedDrawLine());
 puzzleView.replace(bitmap);
 ```
 
