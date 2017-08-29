@@ -1,6 +1,8 @@
 # PuzzleView
 Android Jigsaw puzzle support，inspired by Instagram's layout.
 
+Release to 2.0, now support slant mode and round cornors.
+
 [中文README](https://github.com/wuapnjie/PuzzleView/blob/master/README_CN.md)
 
 the apk file is here--->[http://fir.im/puzzle0607](http://fir.im/puzzle0607)
@@ -14,10 +16,14 @@ Due the size of the gif file, the example below may not render well, in that cas
 ![](https://github.com/wuapnjie/PuzzleView/blob/master/screenshots/screenshot1.png)
 ![](https://github.com/wuapnjie/PuzzleView/blob/master/screenshots/screenshot2.png)
 
+**Now support slant mode and round cornors**
+</br>
+![](https://github.com/wuapnjie/PuzzleView/blob/master/screenshots/screenshot4.png)
+
 ### Usage
 in build.gradle
 ```gradle
-compile 'com.flying.xiaopo:puzzle:1.1.2'
+compile 'com.flying.xiaopo:puzzle:2.0.0-alpha'
 ```
 
 in xml layout
@@ -35,22 +41,25 @@ in xml layout
 
 in the java code, you can change some attributes of the puzzle view
 ```java
-mPuzzleView.setPuzzleLayout(mPuzzleLayout);
-mPuzzleView.setMoveLineEnable(true);
-mPuzzleView.setNeedDrawBorder(false);
-mPuzzleView.setNeedDrawOuterBorder(false);
-mPuzzleView.setExtraSize(100);
-mPuzzleView.setBorderWidth(4);
-mPuzzleView.setBorderColor(Color.WHITE);
-mPuzzleView.setSelectedBorderColor(Color.parseColor("#99BBFB"));
+puzzleView.setPuzzleLayout(puzzleLayout);
+puzzleView.setTouchEnable(true);
+puzzleView.setNeedDrawLine(false);
+puzzleView.setNeedDrawOuterLine(false);
+puzzleView.setLineSize(4);
+puzzleView.setLineColor(Color.BLACK);
+puzzleView.setSelectedLineColor(Color.BLACK);
+puzzleView.setHandleBarColor(Color.BLACK);
+puzzleView.setAnimateDuration(300);
 ```
 and handle some actions
 ```java
-mPuzzleView.rotate(90f);
-mPuzzleView.flipHorizontally();
-mPuzzleView.flipVertically();
-mPuzzleView.setNeedDrawBorder(!mPuzzleView.isNeedDrawBorder());
-mPuzzleView.replace(bitmap);
+puzzleView.rotate(90f);
+puzzleView.flipHorizontally();
+puzzleView.flipVertically();
+puzzleView.setLineSize(currentDegrees);
+puzzleView.setPieceRadian(currentDegrees);
+puzzleView.setNeedDrawBorder(!mPuzzleView.isNeedDrawBorder());
+puzzleView.replace(bitmap);
 ```
 
 Also you can check the source code of the demo for examples of how to use these attributes.
@@ -86,6 +95,7 @@ to see some photos by puzzle
 [Click here](http://weibo.com/5350471787/E54jjxzlI)
 
 ### Update
+* **2017/08/29**  2.0.0-alpha add slant mode puzzle, and to support round cornors
 * **2017/04/15**  1.1.1 add piece select listener
 * **2017/02/15**  1.1.0 add piece padding function 
 
