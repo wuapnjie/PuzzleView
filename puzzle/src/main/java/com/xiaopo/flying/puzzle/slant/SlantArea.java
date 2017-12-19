@@ -279,6 +279,8 @@ class SlantArea implements Area {
       } else if (one.leftTop.y == two.leftTop.y) {
         if (one.leftTop.x < two.leftTop.x) {
           return -1;
+        } else if (one.leftTop.x == two.leftTop.x) {
+          return 0;
         } else {
           return 1;
         }

@@ -319,7 +319,7 @@ public class ProcessActivity extends AppCompatActivity implements View.OnClickLi
 
       final Target target = new Target() {
         @Override public void onBitmapLoaded(final Bitmap bitmap, Picasso.LoadedFrom from) {
-          puzzleView.replace(bitmap);
+          puzzleView.replace(bitmap, "");
         }
 
         @Override public void onBitmapFailed(Drawable errorDrawable) {

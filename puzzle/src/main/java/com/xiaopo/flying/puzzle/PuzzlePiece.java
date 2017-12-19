@@ -25,8 +25,9 @@ import static com.xiaopo.flying.puzzle.MatrixUtils.judgeIsImageContainsBorder;
 /**
  * @author wupanjie
  */
-@SuppressWarnings("WeakerAccess") public class PuzzlePiece {
-  private static Xfermode SRC_IN = new PorterDuffXfermode(PorterDuff.Mode.SRC_IN);
+@SuppressWarnings("WeakerAccess")
+public class PuzzlePiece {
+  private static final Xfermode SRC_IN = new PorterDuffXfermode(PorterDuff.Mode.SRC_IN);
 
   private Drawable drawable;
   private Matrix matrix;
@@ -46,6 +47,7 @@ import static com.xiaopo.flying.puzzle.MatrixUtils.judgeIsImageContainsBorder;
   private ValueAnimator animator;
   private int duration = 300;
   private Matrix tempMatrix;
+  private String path = "";
 
   PuzzlePiece(Drawable drawable, Area area, Matrix matrix) {
     this.drawable = drawable;
@@ -53,7 +55,7 @@ import static com.xiaopo.flying.puzzle.MatrixUtils.judgeIsImageContainsBorder;
     this.matrix = matrix;
     this.previousMatrix = new Matrix();
     this.drawableBounds = new Rect(0, 0, getWidth(), getHeight());
-    this.drawablePoints = new float[] {
+    this.drawablePoints = new float[]{
         0f, 0f, getWidth(), 0f, getWidth(), getHeight(), 0f, getHeight()
     };
     this.mappedDrawablePoints = new float[8];
@@ -68,20 +70,20 @@ import static com.xiaopo.flying.puzzle.MatrixUtils.judgeIsImageContainsBorder;
     this.tempMatrix = new Matrix();
   }
 
-  void draw(Canvas canvas) {
-    draw(canvas, 255, true);
+  void draw(Canvas canvas, boolean quickMode) {
+    draw(canvas, 255, true, quickMode);
   }
 
-  void draw(Canvas canvas, int alpha) {
-    draw(canvas, alpha, false);
+  void draw(Canvas canvas, int alpha, boolean quickMode) {
+    draw(canvas, alpha, false, quickMode);
   }
 
-  private void draw(Canvas canvas, int alpha, boolean needClip) {
-    if (drawable instanceof BitmapDrawable){
+  private void draw(Canvas canvas, int alpha, boolean needClip, boolean quickMode) {
+    if ((drawable instanceof BitmapDrawable) && !quickMode) {
       int saved = canvas.saveLayer(null, null, Canvas.ALL_SAVE_FLAG);
 
       Bitmap bitmap = ((BitmapDrawable) drawable).getBitmap();
-      Paint paint= ((BitmapDrawable) drawable).getPaint();
+      Paint paint = ((BitmapDrawable) drawable).getPaint();
 
       paint.setColor(Color.WHITE);
       paint.setAlpha(alpha);
@@ -89,11 +91,11 @@ import static com.xiaopo.flying.puzzle.MatrixUtils.judgeIsImageContainsBorder;
         canvas.drawPath(area.getAreaPath(), paint);
         paint.setXfermode(SRC_IN);
       }
-      canvas.drawBitmap(bitmap,matrix,paint);
+      canvas.drawBitmap(bitmap, matrix, paint);
       paint.setXfermode(null);
 
       canvas.restoreToCount(saved);
-    }else {
+    } else {
       canvas.save();
       if (needClip) {
         canvas.clipPath(area.getAreaPath());
@@ -114,7 +116,7 @@ import static com.xiaopo.flying.puzzle.MatrixUtils.judgeIsImageContainsBorder;
   public void setDrawable(Drawable drawable) {
     this.drawable = drawable;
     this.drawableBounds = new Rect(0, 0, getWidth(), getHeight());
-    this.drawablePoints = new float[] {
+    this.drawablePoints = new float[]{
         0f, 0f, getWidth(), 0f, getWidth(), getHeight(), 0f, getHeight()
     };
   }
@@ -261,7 +263,8 @@ import static com.xiaopo.flying.puzzle.MatrixUtils.judgeIsImageContainsBorder;
     animator.end();
     animator.removeAllUpdateListeners();
     animator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
-      @Override public void onAnimationUpdate(ValueAnimator animation) {
+      @Override
+      public void onAnimationUpdate(ValueAnimator animation) {
         float x = translateX * (float) animation.getAnimatedValue();
         float y = translateY * (float) animation.getAnimatedValue();
 
@@ -426,5 +429,17 @@ import static com.xiaopo.flying.puzzle.MatrixUtils.judgeIsImageContainsBorder;
 
   void setAnimateDuration(int duration) {
     this.duration = duration;
+  }
+
+  public Matrix getMatrix() {
+    return matrix;
+  }
+
+  public void setPath(String path) {
+    this.path = path;
+  }
+
+  public String getPath() {
+    return path;
   }
 }

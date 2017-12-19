@@ -56,6 +56,7 @@ public interface Area {
   void setPadding(float padding);
 
   void setPadding(float paddingLeft, float paddingTop, float paddingRight, float paddingBottom);
+
 }
 
 

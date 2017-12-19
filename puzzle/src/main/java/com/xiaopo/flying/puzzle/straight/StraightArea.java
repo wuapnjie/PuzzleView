@@ -28,7 +28,7 @@ class StraightArea implements Area {
   private float paddingBottom;
   private float radian;
 
-  StraightArea(){
+  StraightArea() {
     handleBarPoints[0] = new PointF();
     handleBarPoints[1] = new PointF();
   }
@@ -110,7 +110,7 @@ class StraightArea implements Area {
 
   @Override public Path getAreaPath() {
     areaPath.reset();
-    areaPath.addRoundRect(getAreaRect(),radian,radian, Path.Direction.CCW);
+    areaPath.addRoundRect(getAreaRect(), radian, radian, Path.Direction.CCW);
     //areaPath.addRect(getAreaRect(), Path.Direction.CCW);
     return areaPath;
   }
@@ -149,13 +149,11 @@ class StraightArea implements Area {
     return handleBarPoints;
   }
 
-  @Override
-  public float radian() {
+  @Override public float radian() {
     return radian;
   }
 
-  @Override
-  public void setRadian(float radian) {
+  @Override public void setRadian(float radian) {
     this.radian = radian;
   }
 
@@ -180,7 +178,7 @@ class StraightArea implements Area {
   }
 
   @Override public void setPadding(float paddingLeft, float paddingTop, float paddingRight,
-      float paddingBottom) {
+                         float paddingBottom) {
     this.paddingLeft = paddingLeft;
     this.paddingTop = paddingTop;
     this.paddingRight = paddingRight;
@@ -194,6 +192,8 @@ class StraightArea implements Area {
       } else if (lhs.top() == rhs.top()) {
         if (lhs.left() < rhs.left()) {
           return -1;
+        } else if (lhs.left() == rhs.left()) {
+          return 0;
         } else {
           return 1;
         }
@@ -202,4 +202,5 @@ class StraightArea implements Area {
       }
     }
   }
+
 }

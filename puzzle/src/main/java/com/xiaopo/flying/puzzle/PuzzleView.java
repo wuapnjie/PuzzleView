@@ -17,13 +17,16 @@ import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author wupanjie
  */
+@SuppressWarnings({"unused", "SameParameterValue"})
 public class PuzzleView extends View {
-  private static final String TAG = "SlantPuzzleView";
+  private static final String TAG = "PuzzleView";
 
   private enum ActionMode {
     NONE, DRAG, ZOOM, MOVE, SWAP
@@ -32,9 +35,11 @@ public class PuzzleView extends View {
   private ActionMode currentMode = ActionMode.NONE;
 
   private List<PuzzlePiece> puzzlePieces = new ArrayList<>();
-
   private List<PuzzlePiece> needChangePieces = new ArrayList<>();
+  private Map<Area, PuzzlePiece> areaPieceMap = new HashMap<>();
+
   private PuzzleLayout puzzleLayout;
+  private PuzzleLayout.Info initialInfo;
 
   private RectF bounds;
   private int lineSize;
@@ -66,11 +71,18 @@ public class PuzzleView extends View {
   private float pieceRadian;
 
   private boolean needResetPieceMatrix = true;
+  private boolean quickMode = false;
+
+  private boolean canDrag = true;
+  private boolean canMoveLine = true;
+  private boolean canZoom = true;
+  private boolean canSwap = true;
 
   private OnPieceSelectedListener onPieceSelectedListener;
 
   private Runnable switchToSwapAction = new Runnable() {
     @Override public void run() {
+      if (!canSwap) return;
       currentMode = ActionMode.SWAP;
       invalidate();
     }
@@ -136,10 +148,13 @@ public class PuzzleView extends View {
     super.onSizeChanged(w, h, oldw, oldh);
     resetPuzzleBounds();
 
+    areaPieceMap.clear();
     if (puzzlePieces.size() != 0) {
       for (int i = 0; i < puzzlePieces.size(); i++) {
         PuzzlePiece piece = puzzlePieces.get(i);
-        piece.setArea(puzzleLayout.getArea(i));
+        Area area = puzzleLayout.getArea(i);
+        piece.setArea(area);
+        areaPieceMap.put(area, piece);
         if (needResetPieceMatrix) {
           piece.set(MatrixUtils.generateMatrix(piece, 0f));
         } else {
@@ -162,6 +177,21 @@ public class PuzzleView extends View {
       puzzleLayout.layout();
       puzzleLayout.setPadding(piecePadding);
       puzzleLayout.setRadian(pieceRadian);
+
+      if (initialInfo != null) {
+        final int size = initialInfo.lineInfos.size();
+        for (int i = 0; i < size; i++) {
+          PuzzleLayout.LineInfo lineInfo = initialInfo.lineInfos.get(i);
+          Line line = puzzleLayout.getLines().get(i);
+          line.startPoint().x = lineInfo.startX;
+          line.startPoint().y = lineInfo.startY;
+          line.endPoint().x = lineInfo.endX;
+          line.endPoint().y = lineInfo.endY;
+        }
+      }
+
+      puzzleLayout.sortAreas();
+      puzzleLayout.update();
     }
   }
 
@@ -189,7 +219,7 @@ public class PuzzleView extends View {
       }
 
       if (puzzlePieces.size() > i) {
-        piece.draw(canvas);
+        piece.draw(canvas, quickMode);
       }
     }
 
@@ -214,7 +244,7 @@ public class PuzzleView extends View {
 
     // draw swap piece
     if (handlingPiece != null && currentMode == ActionMode.SWAP) {
-      handlingPiece.draw(canvas, 128);
+      handlingPiece.draw(canvas, 128, quickMode);
       if (replacePiece != null) {
         drawSelectedArea(canvas, replacePiece);
       }
@@ -250,13 +280,31 @@ public class PuzzleView extends View {
 
     this.puzzleLayout = puzzleLayout;
 
-    this.puzzleLayout.setOuterBounds(bounds);
-    this.puzzleLayout.layout();
+    puzzleLayout.setOuterBounds(bounds);
+    puzzleLayout.layout();
 
     invalidate();
   }
 
-  @SuppressLint("ClickableViewAccessibility") @Override
+  public void setPuzzleLayout(PuzzleLayout.Info info) {
+    this.initialInfo = info;
+    clearPieces();
+
+    this.puzzleLayout = PuzzleLayoutParser.parse(info);
+
+    this.piecePadding = info.padding;
+    this.pieceRadian = info.radian;
+    setBackgroundColor(info.color);
+
+    invalidate();
+  }
+
+  public PuzzleLayout getPuzzleLayout() {
+    return puzzleLayout;
+  }
+
+  @SuppressLint("ClickableViewAccessibility")
+  @Override
   public boolean onTouchEvent(MotionEvent event) {
     if (!touchEnable) {
       return super.onTouchEvent(event);
@@ -310,17 +358,12 @@ public class PuzzleView extends View {
 
     if (event.getPointerCount() == 1) {
       handlingLine = findHandlingLine();
-      if (handlingLine != null) {
+      if (handlingLine != null && canMoveLine) {
         currentMode = ActionMode.MOVE;
       } else {
         handlingPiece = findHandlingPiece();
-        // trigger listener
-        if (handlingPiece != null && onPieceSelectedListener != null) {
-          onPieceSelectedListener.onPieceSelected(handlingPiece,
-              puzzlePieces.indexOf(handlingPiece));
-        }
 
-        if (handlingPiece != null) {
+        if (handlingPiece != null && canDrag) {
           currentMode = ActionMode.DRAG;
 
           postDelayed(switchToSwapAction, 500);
@@ -329,14 +372,16 @@ public class PuzzleView extends View {
     } else if (event.getPointerCount() > 1) {
       if (handlingPiece != null
           && handlingPiece.contains(event.getX(1), event.getY(1))
-          && currentMode == ActionMode.DRAG) {
+          && currentMode == ActionMode.DRAG
+          && canZoom) {
         currentMode = ActionMode.ZOOM;
       }
     }
   }
 
   // 执行Action前的准备工作
-  @SuppressWarnings("unused") private void prepareAction(MotionEvent event) {
+  @SuppressWarnings("unused")
+  private void prepareAction(MotionEvent event) {
     switch (currentMode) {
       case NONE:
         break;
@@ -412,13 +457,7 @@ public class PuzzleView extends View {
         break;
       case SWAP:
         if (handlingPiece != null && replacePiece != null) {
-          Drawable temp = handlingPiece.getDrawable();
-
-          handlingPiece.setDrawable(replacePiece.getDrawable());
-          replacePiece.setDrawable(temp);
-
-          handlingPiece.fillArea(this, true);
-          replacePiece.fillArea(this, true);
+          swapPiece();
 
           handlingPiece = null;
           replacePiece = null;
@@ -427,8 +466,27 @@ public class PuzzleView extends View {
         break;
     }
 
+    // trigger listener
+    if (handlingPiece != null && onPieceSelectedListener != null) {
+      onPieceSelectedListener.onPieceSelected(handlingPiece,
+          puzzlePieces.indexOf(handlingPiece));
+    }
+
     handlingLine = null;
     needChangePieces.clear();
+  }
+
+  private void swapPiece() {
+    Drawable temp = handlingPiece.getDrawable();
+    String tempPath = handlingPiece.getPath();
+
+    handlingPiece.setDrawable(replacePiece.getDrawable());
+    handlingPiece.setPath(replacePiece.getPath());
+    replacePiece.setDrawable(temp);
+    replacePiece.setPath(tempPath);
+
+    handlingPiece.fillArea(this, true);
+    replacePiece.fillArea(this, true);
   }
 
   private void moveLine(Line line, MotionEvent event) {
@@ -443,6 +501,7 @@ public class PuzzleView extends View {
 
     if (needUpdate) {
       puzzleLayout.update();
+      puzzleLayout.sortAreas();
       updatePiecesInArea(line, event);
     }
   }
@@ -464,23 +523,24 @@ public class PuzzleView extends View {
     piece.translate(event.getX() - downX, event.getY() - downY);
   }
 
-  public void replace(Bitmap bitmap) {
-    replace(new BitmapDrawable(getResources(), bitmap));
+  public void replace(Bitmap bitmap, String path) {
+    BitmapDrawable bitmapDrawable = new BitmapDrawable(getResources(), bitmap);
+    bitmapDrawable.setAntiAlias(true);
+    bitmapDrawable.setFilterBitmap(true);
+
+    replace(bitmapDrawable, path);
   }
 
-  public void replace(final Drawable bitmapDrawable) {
-    post(new Runnable() {
-      @Override public void run() {
-        if (handlingPiece == null) {
-          return;
-        }
+  public void replace(final Drawable bitmapDrawable, String path) {
+    if (handlingPiece == null) {
+      return;
+    }
 
-        handlingPiece.setDrawable(bitmapDrawable);
-        handlingPiece.set(MatrixUtils.generateMatrix(handlingPiece, 0f));
+    handlingPiece.setPath(path);
+    handlingPiece.setDrawable(bitmapDrawable);
+    handlingPiece.set(MatrixUtils.generateMatrix(handlingPiece, 0f));
 
-        postInvalidate();
-      }
-    });
+    invalidate();
   }
 
   public void flipVertically() {
@@ -577,11 +637,19 @@ public class PuzzleView extends View {
   }
 
   public void clearPieces() {
+    clearHandlingPieces();
+    puzzlePieces.clear();
+
+    invalidate();
+  }
+
+  public void clearHandlingPieces() {
     handlingLine = null;
     handlingPiece = null;
     replacePiece = null;
     needChangePieces.clear();
-    puzzlePieces.clear();
+
+    invalidate();
   }
 
   public void addPieces(List<Bitmap> bitmaps) {
@@ -592,15 +660,44 @@ public class PuzzleView extends View {
     postInvalidate();
   }
 
+  public void addDrawablePieces(List<Drawable> drawables) {
+    for (Drawable drawable : drawables) {
+      addPiece(drawable);
+    }
+
+    postInvalidate();
+  }
+
   public void addPiece(Bitmap bitmap) {
     BitmapDrawable bitmapDrawable = new BitmapDrawable(getResources(), bitmap);
     bitmapDrawable.setAntiAlias(true);
     bitmapDrawable.setFilterBitmap(true);
 
-    addPiece(bitmapDrawable);
+    addPiece(bitmapDrawable, null);
   }
 
+  public void addPiece(Bitmap bitmap, Matrix initialMatrix) {
+    addPiece(bitmap, initialMatrix, "");
+  }
+
+  public void addPiece(Bitmap bitmap, Matrix initialMatrix, String path) {
+    BitmapDrawable bitmapDrawable = new BitmapDrawable(getResources(), bitmap);
+    bitmapDrawable.setAntiAlias(true);
+    bitmapDrawable.setFilterBitmap(true);
+
+    addPiece(bitmapDrawable, initialMatrix, path);
+  }
+
+
   public void addPiece(Drawable drawable) {
+    addPiece(drawable, null);
+  }
+
+  public void addPiece(Drawable drawable, Matrix initialMatrix) {
+    addPiece(drawable, initialMatrix, "");
+  }
+
+  public void addPiece(Drawable drawable, Matrix initialMatrix, String path) {
     int position = puzzlePieces.size();
 
     if (position >= puzzleLayout.getAreaCount()) {
@@ -615,17 +712,50 @@ public class PuzzleView extends View {
 
     PuzzlePiece piece = new PuzzlePiece(drawable, area, new Matrix());
 
-    final Matrix matrix = MatrixUtils.generateMatrix(area, drawable, 0f);
+    final Matrix matrix = initialMatrix != null
+        ? new Matrix(initialMatrix) : MatrixUtils.generateMatrix(area, drawable, 0f);
     piece.set(matrix);
 
     piece.setAnimateDuration(duration);
+    piece.setPath(path);
 
     puzzlePieces.add(piece);
+    areaPieceMap.put(area, piece);
 
     setPiecePadding(piecePadding);
     setPieceRadian(pieceRadian);
 
     invalidate();
+  }
+
+  public void setSelected(final int position) {
+    post(new Runnable() {
+      @Override public void run() {
+        if (position >= puzzlePieces.size()) return;
+        previousHandlingPiece = handlingPiece = puzzlePieces.get(position);
+
+        if (onPieceSelectedListener != null) {
+          onPieceSelectedListener.onPieceSelected(handlingPiece, position);
+        }
+        invalidate();
+      }
+    });
+  }
+
+  public PuzzlePiece getHandlingPiece() {
+    return handlingPiece;
+  }
+
+  public int getHandlingPiecePosition() {
+    if (handlingPiece == null) {
+      return -1;
+    }
+    return puzzlePieces.indexOf(handlingPiece);
+  }
+
+  // can be null
+  public boolean hasPieceSelected() {
+    return handlingPiece != null;
   }
 
   public void setAnimateDuration(int duration) {
@@ -714,6 +844,15 @@ public class PuzzleView extends View {
     this.piecePadding = padding;
     if (puzzleLayout != null) {
       puzzleLayout.setPadding(padding);
+      final int size = puzzlePieces.size();
+      for (int i = 0; i < size; i++) {
+        PuzzlePiece puzzlePiece = puzzlePieces.get(i);
+        if (puzzlePiece.canFilledArea()) {
+          puzzlePiece.moveToFillArea(null);
+        } else {
+          puzzlePiece.fillArea(this, true);
+        }
+      }
     }
 
     invalidate();
@@ -725,6 +864,11 @@ public class PuzzleView extends View {
       puzzleLayout.setRadian(radian);
     }
 
+    invalidate();
+  }
+
+  public void setQuickMode(boolean quickMode) {
+    this.quickMode = quickMode;
     invalidate();
   }
 
@@ -745,6 +889,51 @@ public class PuzzleView extends View {
 
   public float getPieceRadian() {
     return pieceRadian;
+  }
+
+  public List<PuzzlePiece> getPuzzlePieces() {
+    final int size = puzzlePieces.size();
+    final List<PuzzlePiece> pieces = new ArrayList<>(size);
+    puzzleLayout.sortAreas();
+    for (int i = 0; i < size; i++) {
+      Area area = puzzleLayout.getArea(i);
+      PuzzlePiece piece = areaPieceMap.get(area);
+      pieces.add(piece);
+    }
+
+    return pieces;
+  }
+
+  public boolean canDrag() {
+    return canDrag;
+  }
+
+  public void setCanDrag(boolean canDrag) {
+    this.canDrag = canDrag;
+  }
+
+  public boolean canMoveLine() {
+    return canMoveLine;
+  }
+
+  public void setCanMoveLine(boolean canMoveLine) {
+    this.canMoveLine = canMoveLine;
+  }
+
+  public boolean canZoom() {
+    return canZoom;
+  }
+
+  public void setCanZoom(boolean canZoom) {
+    this.canZoom = canZoom;
+  }
+
+  public boolean canSwap() {
+    return canSwap;
+  }
+
+  public void setCanSwap(boolean canSwap) {
+    this.canSwap = canSwap;
   }
 
   public void setOnPieceSelectedListener(OnPieceSelectedListener onPieceSelectedListener) {
