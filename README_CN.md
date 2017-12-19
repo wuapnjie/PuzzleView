@@ -1,6 +1,8 @@
 # PuzzleView
 Android拼图支持库，想法来自Layout for Instagram。
 
+2.0发布了，支持超级酷炫的斜线拼图，圆角模式
+
 英文[README](https://github.com/wuapnjie/PuzzleView/blob/master/README.md)
 
 ### Demo
@@ -14,10 +16,15 @@ Android拼图支持库，想法来自Layout for Instagram。
 ![](https://github.com/wuapnjie/PuzzleView/blob/master/screenshots/screenshot1.png)
 ![](https://github.com/wuapnjie/PuzzleView/blob/master/screenshots/screenshot2.png)
 
+**现在支持斜线模式和圆角拼图了**
+</br>
+</br>
+![](https://github.com/wuapnjie/PuzzleView/blob/master/screenshots/screenshot4.png)
+
 ### 使用
 在build.gradle添加，当然你也可以直接导入library module，方便修改。
 ```gradle
-compile 'com.flying.xiaopo:puzzle:1.1.2'
+compile 'com.flying.xiaopo:puzzle:2.0.0-alpha'
 ```
 
 在xml布局中
@@ -35,22 +42,25 @@ compile 'com.flying.xiaopo:puzzle:1.1.2'
 
 在Java代码中, 可以更改一些PuzzleView的属性，比如选中边框的颜色之类的属性。
 ```java
-mPuzzleView.setPuzzleLayout(mPuzzleLayout);
-mPuzzleView.setMoveLineEnable(true);
-mPuzzleView.setNeedDrawBorder(false);
-mPuzzleView.setNeedDrawOuterBorder(false);
-mPuzzleView.setExtraSize(100);
-mPuzzleView.setBorderWidth(4);
-mPuzzleView.setBorderColor(Color.WHITE);
-mPuzzleView.setSelectedBorderColor(Color.parseColor("#99BBFB"));
+puzzleView.setPuzzleLayout(puzzleLayout);
+puzzleView.setTouchEnable(true);
+puzzleView.setNeedDrawLine(false);
+puzzleView.setNeedDrawOuterLine(false);
+puzzleView.setLineSize(4);
+puzzleView.setLineColor(Color.BLACK);
+puzzleView.setSelectedLineColor(Color.BLACK);
+puzzleView.setHandleBarColor(Color.BLACK);
+puzzleView.setAnimateDuration(300);
 ```
 控制一些图形的变换，旋转，镜像，翻转，画边框，替换。
 ```java
 mPuzzleView.rotate(90f);
-mPuzzleView.flipHorizontally();
-mPuzzleView.flipVertically();
-mPuzzleView.setNeedDrawBorder(!mPuzzleView.isNeedDrawBorder());
-mPuzzleView.replace(bitmap);
+puzzleView.flipHorizontally();
+puzzleView.flipVertically();
+puzzleView.setLineSize(currentDegrees);
+puzzleView.setPieceRadian(currentDegrees);
+puzzleView.setNeedDrawLine(!mPuzzleView.isNeedDrawLine());
+puzzleView.replace(bitmap);
 ```
 
 当然更快的了解方式还是看demo的源码，额，这个demo写的有点急，如果代码不是很好看的话，请原谅我。
@@ -90,6 +100,7 @@ public class CustomLayout extends PuzzleLayout {
 [Click here](http://weibo.com/5350471787/E54jjxzlI)
 
 ### 更新
+* **2017/08/29**  2.0.0-alpha add slant mode puzzle, and to support round cornors
 * **2017/04/15**  1.1.1 add piece select listener
 * **2017/02/15**  1.1.0 add piece padding function 
 ### License
